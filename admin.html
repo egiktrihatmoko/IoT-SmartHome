@@ -222,10 +222,13 @@
         <label for="loginPassword">Password</label>
         <input type="password" id="loginPassword" name="password"
           placeholder="Masukkan password"
-          autocomplete="current-password" required>
+          autocomplete="current-password"
+          maxlength="128" required>
       </div>
 
-      <button type="submit" class="submit-btn">Masuk</button>
+      <button type="submit" class="submit-btn" id="loginButton">
+        Masuk
+      </button>
     </form>
 
     <form id="registerForm" hidden>
@@ -256,7 +259,9 @@
           autocomplete="new-password" required>
       </div>
 
-      <button type="submit" class="submit-btn">Daftar Admin</button>
+      <button type="submit" class="submit-btn" id="registerButton">
+        Daftar Admin
+      </button>
     </form>
 
     <div class="message" id="message"
@@ -268,11 +273,15 @@
   </main>
 
   <script>
+    "use strict";
+
     const loginTab = document.getElementById("loginTab");
     const registerTab = document.getElementById("registerTab");
     const loginForm = document.getElementById("loginForm");
     const registerForm = document.getElementById("registerForm");
     const message = document.getElementById("message");
+    const loginButton = document.getElementById("loginButton");
+    const registerButton = document.getElementById("registerButton");
 
     function showTab(tab) {
       const isLogin = tab === "login";
@@ -304,44 +313,48 @@
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Accept": "application/json"
         },
         credentials: "same-origin",
+        cache: "no-store",
         body: JSON.stringify(payload)
       });
 
       const data = await response.json().catch(() => ({}));
 
-      if (!response.ok) {
+      if (!response.ok || data.success !== true) {
         throw new Error(data.message || "Permintaan gagal.");
       }
 
       return data;
     }
 
+    // PENDAFTARAN ADMIN
     registerForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
       const email =
         document.getElementById("registerEmail").value.trim();
+
       const password =
         document.getElementById("registerPassword").value;
+
       const confirmPassword =
         document.getElementById("confirmPassword").value;
+
+      if (password.length < 12 || password.length > 128) {
+        showMessage("Password harus terdiri dari 12–128 karakter.");
+        return;
+      }
 
       if (password !== confirmPassword) {
         showMessage("Konfirmasi password tidak sama.");
         return;
       }
 
-      if (password.length < 12) {
-        showMessage("Password minimal 12 karakter.");
-        return;
-      }
-
-      const button = registerForm.querySelector('button[type="submit"]');
-      button.disabled = true;
-      button.textContent = "Mendaftarkan...";
+      registerButton.disabled = true;
+      registerButton.textContent = "Mendaftarkan...";
 
       try {
         const data = await sendRequest("/api/admin/register", {
@@ -351,6 +364,9 @@
 
         registerForm.reset();
         showTab("login");
+
+        document.getElementById("loginEmail").value = email;
+
         showMessage(
           data.message || "Pendaftaran berhasil. Silakan masuk.",
           true
@@ -358,22 +374,23 @@
       } catch (error) {
         showMessage(error.message || "Pendaftaran gagal.");
       } finally {
-        button.disabled = false;
-        button.textContent = "Daftar Admin";
+        registerButton.disabled = false;
+        registerButton.textContent = "Daftar Admin";
       }
     });
 
+    // LOGIN ADMIN DAN REDIRECT KE DASHBOARD
     loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
       const email =
         document.getElementById("loginEmail").value.trim();
+
       const password =
         document.getElementById("loginPassword").value;
 
-      const button = loginForm.querySelector('button[type="submit"]');
-      button.disabled = true;
-      button.textContent = "Memeriksa...";
+      loginButton.disabled = true;
+      loginButton.textContent = "Memeriksa...";
 
       try {
         const data = await sendRequest("/api/admin/login", {
@@ -381,17 +398,51 @@
           password
         });
 
-        showMessage(data.message || "Login berhasil.", true);
+        showMessage(
+          data.message || "Login berhasil. Mengalihkan...",
+          true
+        );
 
-        // Arahkan ke dashboard hanya setelah endpoint dashboard
-        // dan pemeriksaan sesi benar-benar tersedia.
+        // Cookie sesi dibuat oleh API login.
+        // Setelah login berhasil, buka dashboard.
+        window.location.replace("/dashboard.html");
+
       } catch (error) {
         showMessage(error.message || "Login gagal.");
-      } finally {
-        button.disabled = false;
-        button.textContent = "Masuk";
+        loginButton.disabled = false;
+        loginButton.textContent = "Masuk";
       }
     });
+
+    // Jika sesi admin masih aktif, langsung menuju dashboard.
+    async function checkExistingSession() {
+      try {
+        const response = await fetch("/api/admin/check", {
+          method: "GET",
+          credentials: "same-origin",
+          cache: "no-store",
+          headers: {
+            "Accept": "application/json"
+          }
+        });
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        if (
+          data.success === true &&
+          data.user &&
+          data.user.role === "admin"
+        ) {
+          window.location.replace("/dashboard.html");
+        }
+      } catch (error) {
+        // Jika pemeriksaan sesi gagal, form login tetap tersedia.
+      }
+    }
+
+    checkExistingSession();
   </script>
 </body>
 </html>
