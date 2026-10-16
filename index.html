@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Kalkulator Harga Tayang</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #fff5f5;
+            color: #222;
+            min-height: 100vh;
+            padding: 40px 15px;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: auto;
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #a80000;
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #777;
+            font-size: 14px;
+        }
+
+        /* CARD */
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 10px 35px rgba(150, 0, 0, 0.10);
+            border: 1px solid #f2dede;
+        }
+
+        /* SECTION */
+        .section {
+            margin-bottom: 28px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #a80000;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .number {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #c90000;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        /* INPUT */
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label.input-label {
+            display: block;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 7px;
+        }
+
+        .input-note {
+            color: #888;
+            font-weight: normal;
+            font-size: 12px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 14px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            transition: 0.2s;
+            background: #fff;
+        }
+
+        input[type="number"]:focus {
+            border-color: #c90000;
+            box-shadow: 0 0 0 3px rgba(201, 0, 0, 0.08);
+        }
+
+        /* OPTIONS */
+        .options {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option {
+            border: 1.5px solid #ddd;
+            border-radius: 11px;
+            padding: 15px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #e00000;
+            background: #fff8f8;
+        }
+
+        .option:has(input:checked) {
+            border-color: #c90000;
+            background: #fff0f0;
+            color: #a80000;
+        }
+
+        .option input {
+            accent-color: #c90000;
+            margin-right: 8px;
+        }
+
+        /* RESULT */
+        .result {
+            background: #fff8f8;
+            border: 1px solid #f2dede;
+            border-radius: 14px;
+            padding: 22px;
+            margin-top: 5px;
+        }
+
+        .result-title {
+            color: #a80000;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0d0d0;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 13px 0;
+            border-bottom: 1px solid #eadede;
+        }
+
+        /* SPACE ANTAR BAGIAN */
+        .row.space-top {
+            margin-top: 20px;
+        }
+
+        .row-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .calculation {
+            color: #888;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .amount {
+            text-align: right;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        /* HARGA DASAR DISABLED */
+        .disabled-row {
+            background: #f1f1f1;
+            color: #999;
+            margin-left: -10px;
+            margin-right: -10px;
+            padding: 13px 10px;
+            border-radius: 8px;
+            border-bottom: none;
+        }
+
+        .disabled-row .row-title {
+            color: #888;
+        }
+
+        .disabled-row .calculation {
+            color: #aaa;
+        }
+
+        .disabled-row .amount {
+            color: #999;
+        }
+
+        /* SUBTOTAL */
+        .subtotal {
+            background: #fff0f0;
+            margin-left: -10px;
+            margin-right: -10px;
+            padding: 13px 10px;
+            border-radius: 8px;
+        }
+
+        .subtotal .row-title {
+            color: #a80000;
+        }
+
+        /* FINAL */
+        .final {
+            margin-top: 20px;
+            padding: 22px;
+            background: linear-gradient(135deg, #a80000, #e00000);
+            color: white;
+            border-radius: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 8px 20px rgba(180, 0, 0, 0.22);
+        }
+
+        .final-label {
+            font-size: 15px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .final-price {
+            font-size: 25px;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        /* BUTTON */
+        .reset {
+            width: 100%;
+            margin-top: 20px;
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            color: #555;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .reset:hover {
+            background: #fff0f0;
+            color: #a80000;
+            border-color: #e00000;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        /* MOBILE */
+        @media (max-width: 600px) {
+
+            body {
+                padding: 25px 12px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 25px;
+            }
+
+            .options {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .row {
+                align-items: flex-start;
+            }
+
+            .amount {
+                text-align: right;
+            }
+
+            .final {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .final-price {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+
+        <h1>Kalkulator Harga Tayang</h1>
+
+        <p>
+            Perhitungan harga dasar, pajak, PPh dan fee
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <!-- INPUT HARGA -->
+        <div class="section">
+
+            <div class="section-title">
+                <div class="number">1</div>
+                Masukkan Harga
+            </div>
+
+            <div class="input-group">
+
+                <label class="input-label">
+                    Harga Dasar
+                    <span class="input-note">
+                        (sudah termasuk ongkir)
+                    </span>
+                </label>
+
+                <input
+                    type="number"
+                    id="hargaDasar"
+                    placeholder="Contoh: 2000000"
+                    min="0"
+                    oninput="hitung()"
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- PAJAK -->
+        <div class="section">
+
+            <div class="section-title">
+                <div class="number">2</div>
+                Pilih Pajak
+            </div>
+
+            <div class="options">
+
+                <label class="option">
+
+                    <input
+                        type="radio"
+                        name="pajak"
+                        value="12"
+                        checked
+                        onchange="hitung()"
+                    >
+
+                    PPN 12%
+
+                </label>
+
+
+                <label class="option">
+
+                    <input
+                        type="radio"
+                        name="pajak"
+                        value="10"
+                        onchange="hitung()"
+                    >
+
+                    Pajak Daerah 10%
+
+                </label>
+
+            </div>
+
+        </div>
+
+
+        <!-- PPH -->
+        <div class="section">
+
+            <div class="section-title">
+                <div class="number">3</div>
+                Pilih Jenis PPh
+            </div>
+
+            <div class="options">
+
+                <label class="option">
+
+                    <input
+                        type="radio"
+                        name="pph"
+                        value="1.5"
+                        checked
+                        onchange="hitung()"
+                    >
+
+                    PPh 1,5% — Barang
+
+                </label>
+
+
+                <label class="option">
+
+                    <input
+                        type="radio"
+                        name="pph"
+                        value="2"
+                        onchange="hitung()"
+                    >
+
+                    PPh 23 2% — Jasa
+
+                </label>
+
+            </div>
+
+        </div>
+
+
+        <!-- HASIL -->
+        <div class="result">
+
+            <div class="result-title">
+                Rincian Perhitungan
+            </div>
+
+
+            <!-- HARGA DASAR -->
+            <div class="row disabled-row">
+
+                <div>
+
+                    <div class="row-title">
+                        Harga Dasar
+                    </div>
+
+                    <div class="calculation">
+                        Sudah termasuk ongkir
+                    </div>
+
+                </div>
+
+                <div
+                    class="amount"
+                    id="hasilHargaDasar"
+                >
+                    Rp0
+                </div>
+
+            </div>
+
+
+            <!-- DASAR PAJAK -->
+            <div class="row subtotal space-top">
+
+                <div>
+
+                    <div class="row-title">
+                        Dasar Perhitungan Pajak
+                    </div>
+
+                    <div
+                        class="calculation"
+                        id="hitungDasarPajak"
+                    >
+                        Rp0
+                    </div>
+
+                </div>
+
+                <div
+                    class="amount"
+                    id="hasilDasarPajak"
+                >
+                    Rp0
+                </div>
+
+            </div>
+
+
+            <!-- PAJAK -->
+            <div class="row space-top">
+
+                <div>
+
+                    <div
+                        class="row-title"
+                        id="namaPajak"
+                    >
+                        PPN 12%
+                    </div>
+
+                    <div
+                        class="calculation"
+                        id="hitungPajak"
+                    >
+                        Rp0 × 12%
+                    </div>
+
+                </div>
+
+                <div
+                    class="amount"
+                    id="hasilPajak"
+                >
+                    Rp0
+                </div>
+
+            </div>
+
+
+            <!-- PPH -->
+            <div class="row space-top">
+
+                <div>
+
+                    <div
+                        class="row-title"
+                        id="namaPph"
+                    >
+                        PPh 1,5% — Barang
+                    </div>
+
+                    <div
+                        class="calculation"
+                        id="hitungPph"
+                    >
+                        Rp0 × 1,5%
+                    </div>
+
+                </div>
+
+                <div
+                    class="amount"
+                    id="hasilPph"
+                >
+                    Rp0
+                </div>
+
+            </div>
+
+
+            <!-- TOTAL -->
+            <div class="row subtotal space-top">
+
+                <div>
+
+                    <div class="row-title">
+                        Total Sebelum Fee
+                    </div>
+
+                    <div
+                        class="calculation"
+                        id="hitungSubtotal"
+                    >
+                        Rp0 + Rp0 + Rp0
+                    </div>
+
+                </div>
+
+                <div
+                    class="amount"
+                    id="hasilSubtotal"
+                >
+                    Rp0
+                </div>
+
+            </div>
+
+
+            <!-- FEE -->
+            <div class="row space-top">
+
+                <div>
+
+                    <div class="row-title">
+                        Fee 0,5%
+                    </div>
+
+                    <div
+                        class="calculation"
+                        id="hitungFee"
+                    >
+                        Rp0 × 0,5%
+                    </div>
+
+                </div>
+
+                <div
+                    class="amount"
+                    id="hasilFee"
+                >
+                    Rp0
+                </div>
+
+            </div>
+
+
+            <!-- HARGA TAYANG -->
+            <div class="final">
+
+                <div class="final-label">
+                    HARGA TAYANG
+                </div>
+
+                <div
+                    class="final-price"
+                    id="hargaTayang"
+                >
+                    Rp0
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RESET -->
+        <button
+            class="reset"
+            onclick="resetForm()"
+        >
+            ↻ Reset Perhitungan
+        </button>
+
+    </div>
+
+
+    <!-- FOOTER -->
+    <div class="footer">
+        Credit by <strong>Kalkulator</strong>
+    </div>
+
+</div>
+
+
+<script>
+
+function rupiah(angka) {
+
+    return new Intl.NumberFormat('id-ID', {
+
+        style: 'currency',
+
+        currency: 'IDR',
+
+        minimumFractionDigits: 0
+
+    }).format(angka);
+
+}
+
+
+function hitung() {
+
+    // HARGA DASAR
+    const hargaDasar =
+        Number(
+            document.getElementById("hargaDasar").value
+        ) || 0;
+
+
+    // PAJAK
+    const pajak =
+        Number(
+            document.querySelector(
+                'input[name="pajak"]:checked'
+            ).value
+        );
+
+
+    // PPH
+    const pph =
+        Number(
+            document.querySelector(
+                'input[name="pph"]:checked'
+            ).value
+        );
+
+
+    // DASAR PAJAK
+    // Harga dasar sudah termasuk ongkir
+    const dasarPajak =
+        hargaDasar;
+
+
+    // HASIL PAJAK
+    const hasilPajak =
+        dasarPajak * (pajak / 100);
+
+
+    // HASIL PPH
+    const hasilPph =
+        dasarPajak * (pph / 100);
+
+
+    // TOTAL SEBELUM FEE
+    const subtotal =
+        dasarPajak +
+        hasilPajak +
+        hasilPph;
+
+
+    // FEE 0,5%
+    const fee =
+        subtotal * 0.005;
+
+
+    // HARGA TAYANG
+    const hargaTayang =
+        subtotal + fee;
+
+
+    // NAMA PAJAK
+    const namaPajak =
+        pajak === 12
+            ? "PPN 12%"
+            : "Pajak Daerah 10%";
+
+
+    // NAMA PPH
+    const namaPph =
+        pph === 1.5
+            ? "PPh 1,5% — Barang"
+            : "PPh 23 2% — Jasa";
+
+
+    // TAMPILKAN HARGA DASAR
+    document.getElementById(
+        "hasilHargaDasar"
+    ).textContent =
+        rupiah(hargaDasar);
+
+
+    // TAMPILKAN DASAR PAJAK
+    document.getElementById(
+        "hitungDasarPajak"
+    ).textContent =
+        rupiah(hargaDasar);
+
+
+    document.getElementById(
+        "hasilDasarPajak"
+    ).textContent =
+        rupiah(dasarPajak);
+
+
+    // TAMPILKAN PAJAK
+    document.getElementById(
+        "namaPajak"
+    ).textContent =
+        namaPajak;
+
+
+    document.getElementById(
+        "hitungPajak"
+    ).textContent =
+        rupiah(dasarPajak) +
+        " × " +
+        pajak +
+        "%";
+
+
+    document.getElementById(
+        "hasilPajak"
+    ).textContent =
+        rupiah(hasilPajak);
+
+
+    // TAMPILKAN PPH
+    document.getElementById(
+        "namaPph"
+    ).textContent =
+        namaPph;
+
+
+    document.getElementById(
+        "hitungPph"
+    ).textContent =
+        rupiah(dasarPajak) +
+        " × " +
+        pph +
+        "%";
+
+
+    document.getElementById(
+        "hasilPph"
+    ).textContent =
+        rupiah(hasilPph);
+
+
+    // TAMPILKAN TOTAL
+    document.getElementById(
+        "hitungSubtotal"
+    ).textContent =
+        rupiah(dasarPajak) +
+        " + " +
+        rupiah(hasilPajak) +
+        " + " +
+        rupiah(hasilPph);
+
+
+    document.getElementById(
+        "hasilSubtotal"
+    ).textContent =
+        rupiah(subtotal);
+
+
+    // TAMPILKAN FEE
+    document.getElementById(
+        "hitungFee"
+    ).textContent =
+        rupiah(subtotal) +
+        " × 0,5%";
+
+
+    document.getElementById(
+        "hasilFee"
+    ).textContent =
+        rupiah(fee);
+
+
+    // TAMPILKAN HARGA TAYANG
+    document.getElementById(
+        "hargaTayang"
+    ).textContent =
+        rupiah(hargaTayang);
+
+}
+
+
+function resetForm() {
+
+    document.getElementById(
+        "hargaDasar"
+    ).value = "";
+
+
+    document.querySelector(
+        'input[name="pajak"][value="12"]'
+    ).checked = true;
+
+
+    document.querySelector(
+        'input[name="pph"][value="1.5"]'
+    ).checked = true;
+
+
+    hitung();
+
+}
+
+
+hitung();
+
+</script>
+
+</body>
+</html>
