@@ -1,18 +1,224 @@
-<!doctype html>
-<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Admin | Kalkulator Harga Tayang</title>
-<style>
-:root{--red:#b40000;--bg:#fff5f5;--line:#f0dada;--muted:#737373}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#222;font-family:Arial,Helvetica,sans-serif;min-height:100vh;padding:24px 14px}.wrap{max-width:920px;margin:0 auto}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:12px 0 24px}h1{font-size:clamp(24px,5vw,32px);color:var(--red);margin:0 0 7px}.sub{margin:0;color:var(--muted);font-size:14px}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:clamp(18px,4vw,28px);box-shadow:0 8px 28px #9600000d}.login{max-width:430px;margin:8vh auto}.field{display:block;width:100%;padding:14px;border:1px solid #ddd;border-radius:10px;font-size:16px;margin:8px 0 16px}label{font-size:14px;font-weight:bold}button{border:0;border-radius:10px;padding:13px 16px;font-size:15px;font-weight:bold;cursor:pointer}.primary{background:var(--red);color:white;width:100%}.secondary{background:white;border:1px solid #ddd;color:#333}.danger{background:#fff0f0;color:var(--red);border:1px solid var(--line)}.error{color:#b00020;font-size:14px;min-height:20px;margin:10px 0}.hidden{display:none!important}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin:20px 0}.stat{border:1px solid var(--line);border-radius:14px;padding:20px;background:#fffafa}.stat-label{font-size:14px;color:var(--muted)}.stat-value{font-size:clamp(26px,6vw,38px);font-weight:bold;color:var(--red);margin-top:10px;overflow-wrap:anywhere}.actions{display:flex;gap:10px;flex-wrap:wrap}.note{font-size:13px;color:var(--muted);line-height:1.6;margin-top:20px}@media(max-width:520px){body{padding:16px 10px}.top{align-items:flex-start;flex-direction:column}.card{border-radius:14px}}
-</style></head><body><main class="wrap">
-<section id="loginView" class="card login"><h1>Admin Kalkulator</h1><p class="sub">Masuk untuk melihat statistik website.</p><form id="loginForm"><label for="password">Password admin</label><input class="field" id="password" name="password" type="password" autocomplete="current-password" required><button class="primary" type="submit">Masuk</button><p id="loginError" class="error" role="status"></p></form><p class="note">Pemeriksaan password dilakukan di server, bukan di halaman ini.</p></section>
-<section id="dashboardView" class="hidden"><header class="top"><div><h1>Dashboard Admin</h1><p class="sub">Kalkulator Harga Tayang · Statistik Upstash Redis</p></div><div class="actions"><button class="secondary" id="refreshBtn">↻ Muat ulang</button><button class="danger" id="logoutBtn">Keluar</button></div></header><div class="card"><div class="grid"><article class="stat"><div class="stat-label">Total kunjungan global</div><div class="stat-value" id="totalVisits">—</div></article><article class="stat"><div class="stat-label">Status Redis</div><div class="stat-value" style="font-size:24px" id="redisStatus">Memeriksa…</div></article></div><p class="note">Total dibaca dari Redis key <code>kalkulator:total_kunjungan</code>. Membuka dashboard tidak menambah hitungan. Grafik harian/bulanan belum tersedia karena data saat ini hanya menyimpan total global.</p><p id="dashError" class="error" role="status"></p></div></section>
-</main><script>
-const $=id=>document.getElementById(id);
-function showDashboard(){ $("loginView").classList.add("hidden");$("dashboardView").classList.remove("hidden");loadStats(); }
-function showLogin(){ $("dashboardView").classList.add("hidden");$("loginView").classList.remove("hidden"); }
-async function api(url,options={}){const r=await fetch(url,{...options,credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json",...(options.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||"Permintaan gagal ("+r.status+")");e.status=r.status;throw e;}return d;}
-$("loginForm").addEventListener("submit",async e=>{e.preventDefault();$("loginError").textContent="";try{await api("/api/admin/login",{method:"POST",body:JSON.stringify({password:$("password").value})});$("password").value="";showDashboard();}catch(err){$("loginError").textContent=err.message;}});
-async function loadStats(){$("dashError").textContent="";$("totalVisits").textContent="Memuat…";$("redisStatus").textContent="Memeriksa…";try{const d=await api("/api/admin/stats");$("totalVisits").textContent=Number(d.total).toLocaleString("id-ID");$("redisStatus").textContent="Terhubung";}catch(err){$("totalVisits").textContent="—";$("redisStatus").textContent="Tidak tersedia";$("dashError").textContent=err.message;if(err.status===401)showLogin();}}
-$("refreshBtn").addEventListener("click",loadStats);
-$("logoutBtn").addEventListener("click",async()=>{try{await api("/api/admin/logout",{method:"POST",body:"{}"});}finally{showLogin();}});
-(async()=>{try{await api("/api/admin/stats");showDashboard();}catch(e){showLogin();}})();
-</script></body></html>
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pendaftaran Admin</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: #fff5f5;
+      color: #222;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 390px;
+      background: #fff;
+      padding: 30px 24px;
+      border-radius: 16px;
+      border: 1px solid #f3dada;
+      box-shadow: 0 8px 30px rgba(150, 0, 0, 0.08);
+    }
+
+    .logo {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #b91c1c;
+      color: white;
+      border-radius: 14px;
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 23px;
+      margin-bottom: 8px;
+      color: #991b1b;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #777;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 17px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 12px;
+      border: 1px solid #ddd;
+      border-radius: 9px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 9px;
+      padding: 14px;
+      margin-top: 5px;
+      background: #b91c1c;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #991b1b;
+    }
+
+    .message {
+      display: none;
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.5;
+      background: #fff1f2;
+      color: #991b1b;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 22px;
+      font-size: 11px;
+      color: #999;
+    }
+
+    @media (max-width: 400px) {
+      .container {
+        padding: 25px 19px;
+      }
+
+      h1 {
+        font-size: 21px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <div class="logo">A</div>
+
+    <h1>Pendaftaran Admin</h1>
+    <p class="subtitle">
+      Buat akun admin untuk mengelola website
+      Kalkulator Harga Tayang.
+    </p>
+
+    <form id="registerForm">
+      <div class="form-group">
+        <label for="email">Email Admin</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="admin@email.com"
+          autocomplete="email"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Minimal 12 karakter"
+          minlength="12"
+          autocomplete="new-password"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Konfirmasi Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          placeholder="Ulangi password"
+          minlength="12"
+          autocomplete="new-password"
+          required
+        >
+      </div>
+
+      <button type="submit">Daftar Admin</button>
+
+      <div class="message" id="message" role="status"></div>
+    </form>
+
+    <p class="footer">
+      &copy; 2026 Kalkulator Harga Tayang
+    </p>
+  </main>
+
+  <script>
+    const form = document.getElementById("registerForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword =
+        document.getElementById("confirmPassword").value;
+
+      message.style.display = "block";
+
+      if (password !== confirmPassword) {
+        message.textContent =
+          "Konfirmasi password tidak sama.";
+        return;
+      }
+
+      message.textContent =
+        "Tampilan pendaftaran sudah siap. Pendaftaran belum aktif karena perlu dihubungkan ke API server yang aman.";
+    });
+  </script>
+</body>
+</html>
