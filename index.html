@@ -789,17 +789,18 @@ async function muatTotalKunjungan() {
             cache: "no-store"
         });
 
-        // Baca respons API terlebih dahulu agar pesan error terlihat jelas.
         const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-            throw new Error(data.error || `HTTP ${response.status}`);
+            throw new Error(
+                data.detail || data.error || `HTTP ${response.status}`
+            );
         }
 
         const total = Number(data.total);
 
         if (!Number.isSafeInteger(total) || total < 0) {
-            throw new Error(data.error || "Data total kunjungan tidak valid");
+            throw new Error("Data kunjungan tidak valid");
         }
 
         elemen.textContent = total.toLocaleString("id-ID");
