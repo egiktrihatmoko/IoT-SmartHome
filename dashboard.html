@@ -1,0 +1,1052 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#b91c1c">
+<title>Dashboard Admin</title>
+
+<style>
+:root {
+  --red: #c91f2c;
+  --red-dark: #991b1b;
+  --red-light: #fff1f2;
+  --bg: #f7f7f9;
+  --text: #20212a;
+  --muted: #777985;
+  --border: #eeeef2;
+  --white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+button, a {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+}
+
+.sidebar {
+  width: 245px;
+  background: var(--white);
+  border-right: 1px solid var(--border);
+  padding: 25px 17px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 9px;
+  margin-bottom: 38px;
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: linear-gradient(140deg, #ef4444, #a30e20);
+  border-radius: 13px;
+  font-size: 23px;
+  font-weight: 800;
+  box-shadow: 0 5px 14px #c91f2c2a;
+}
+
+.brand-name {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -.4px;
+}
+
+.brand-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.nav-label {
+  padding: 0 12px;
+  margin: 0 0 12px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #a0a0aa;
+  letter-spacing: 1.3px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border-radius: 11px;
+  margin-bottom: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666774;
+  transition: .2s;
+}
+
+.nav-link:hover {
+  background: var(--red-light);
+  color: var(--red);
+}
+
+.nav-link.active {
+  background: var(--red-light);
+  color: var(--red);
+  font-weight: 750;
+}
+
+.nav-icon {
+  width: 22px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding-top: 25px;
+}
+
+.account-mini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 9px;
+  border-top: 1px solid var(--border);
+  margin-bottom: 8px;
+  min-width: 0;
+}
+
+.avatar {
+  width: 37px;
+  height: 37px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--red-light);
+  color: var(--red);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.account-info {
+  min-width: 0;
+}
+
+.account-name {
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.account-email {
+  color: var(--muted);
+  font-size: 10px;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 30px 36px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.breadcrumb {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.breadcrumb span {
+  color: var(--red);
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(23px, 3vw, 30px);
+  letter-spacing: -1px;
+}
+
+.subtitle {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 9px 0 0;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #ecfdf3;
+  color: #16834a;
+  border: 1px solid #d1f5df;
+  padding: 9px 12px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 15px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: var(--red);
+  color: white;
+  border-color: var(--red);
+  box-shadow: 0 5px 12px #c91f2c20;
+}
+
+.btn-primary:hover {
+  background: var(--red-dark);
+}
+
+.btn-logout {
+  width: 100%;
+  justify-content: flex-start;
+  border: 0;
+  background: transparent;
+  color: #777985;
+  box-shadow: none;
+}
+
+.btn-logout:hover {
+  background: var(--red-light);
+  color: var(--red);
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 29px 30px;
+  border-radius: 18px;
+  color: white;
+  background: linear-gradient(115deg, #a90f24 0%, #d32635 58%, #ef4444 100%);
+  box-shadow: 0 12px 28px #c91f2c18;
+  margin-bottom: 27px;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  right: -65px;
+  top: -110px;
+  border-radius: 50%;
+  border: 35px solid #ffffff13;
+  pointer-events: none;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  width: 125px;
+  height: 125px;
+  right: 105px;
+  bottom: -100px;
+  border-radius: 50%;
+  background: #ffffff12;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+}
+
+.hero-tag {
+  display: inline-block;
+  padding: 6px 10px;
+  background: #ffffff20;
+  border: 1px solid #ffffff24;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .7px;
+  margin-bottom: 15px;
+}
+
+.hero h2 {
+  font-size: clamp(21px, 3vw, 28px);
+  line-height: 1.35;
+  letter-spacing: -.7px;
+  margin: 0;
+}
+
+.hero p {
+  color: #ffe4e6;
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 10px 0 20px;
+  max-width: 420px;
+}
+
+.hero .btn {
+  background: white;
+  border-color: white;
+  color: var(--red-dark);
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+.section-heading h2 {
+  font-size: 16px;
+  letter-spacing: -.3px;
+  margin: 0;
+}
+
+.section-heading p {
+  color: var(--muted);
+  font-size: 11px;
+  margin: 5px 0 0;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 17px;
+  margin-bottom: 30px;
+}
+
+.card {
+  min-width: 0;
+  padding: 21px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  transition: .2s;
+}
+
+.card:hover {
+  border-color: #f1c3c7;
+  transform: translateY(-2px);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.card-label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 650;
+}
+
+.card-icon {
+  display: grid;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  border-radius: 12px;
+  background: var(--red-light);
+  color: var(--red);
+  font-size: 19px;
+}
+
+.card-value {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+  overflow-wrap: anywhere;
+}
+
+.card-note {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 8px;
+  line-height: 1.6;
+}
+
+.card-note strong {
+  color: #16834a;
+}
+
+.bottom-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 18px;
+}
+
+.panel {
+  min-width: 0;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 22px;
+}
+
+.panel h3 {
+  font-size: 14px;
+  margin: 0;
+}
+
+.panel-desc {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 7px 0 18px;
+}
+
+.quick-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-top: 1px solid #f1f1f4;
+}
+
+.quick-link:first-of-type {
+  border-top: 0;
+}
+
+.quick-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  background: #fff1f2;
+  font-size: 18px;
+}
+
+.quick-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.quick-title {
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.quick-desc {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.6;
+  margin-top: 4px;
+}
+
+.arrow {
+  color: #a3a3ad;
+  font-size: 18px;
+}
+
+.security-box {
+  background: #fffafa;
+  border: 1px solid #ffe0e3;
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.security-title {
+  color: var(--red-dark);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.security-text {
+  color: #77717a;
+  font-size: 11px;
+  line-height: 1.8;
+  margin-top: 7px;
+}
+
+.footer {
+  text-align: center;
+  color: #9a9aa4;
+  font-size: 10px;
+  margin-top: 30px;
+  padding-bottom: 5px;
+}
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.loader {
+  width: 34px;
+  height: 34px;
+  border: 3px solid #fee2e2;
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin: 0 auto 15px;
+}
+
+.loading-text {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 1000px) {
+  .sidebar {
+    width: 215px;
+  }
+
+  .main {
+    padding: 25px 22px;
+  }
+
+  .cards {
+    gap: 11px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 760px) {
+  .layout {
+    display: block;
+    padding-bottom: 70px;
+  }
+
+  .sidebar {
+    position: fixed;
+    z-index: 5;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 64px;
+    padding: 6px 10px;
+    border-right: 0;
+    border-top: 1px solid var(--border);
+    display: block;
+    background: #fffffffa;
+  }
+
+  .brand,
+  .nav-label,
+  .sidebar-bottom {
+    display: none;
+  }
+
+  .sidebar nav {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    height: 100%;
+  }
+
+  .nav-link {
+    justify-content: center;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    padding: 5px 3px;
+    font-size: 10px;
+    border-radius: 9px;
+  }
+
+  .nav-icon {
+    font-size: 18px;
+  }
+
+  .main {
+    padding: 23px 16px 20px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+
+  .top-actions {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .status {
+    padding: 7px 9px;
+    font-size: 10px;
+  }
+
+  .top-actions .btn {
+    min-height: 35px;
+    padding: 0 10px;
+    font-size: 10px;
+  }
+
+  .hero {
+    padding: 24px 21px;
+    border-radius: 15px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .card {
+    padding: 15px 17px;
+  }
+
+  .card-top {
+    margin-bottom: 12px;
+  }
+
+  .card-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .card-value {
+    font-size: 18px;
+  }
+
+  .bottom-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 380px) {
+  .main {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .topbar {
+    gap: 8px;
+  }
+
+  .subtitle {
+    font-size: 11px;
+  }
+
+  .hero h2 {
+    font-size: 21px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="loading-screen" id="loadingScreen">
+  <div>
+    <div class="loader"></div>
+    <div class="loading-text" id="loadingText">
+      Memeriksa sesi admin...
+    </div>
+  </div>
+</div>
+
+<div class="layout" id="dashboard" hidden>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">K</div>
+      <div>
+        <div class="brand-name">Kalkulator</div>
+        <div class="brand-sub">ADMIN DASHBOARD</div>
+      </div>
+    </div>
+
+    <div class="nav-label">MENU UTAMA</div>
+
+    <nav>
+      <a class="nav-link active" href="dashboard.html">
+        <span class="nav-icon">▦</span>
+        <span>Dashboard</span>
+      </a>
+
+      <a class="nav-link" href="index.html">
+        <span class="nav-icon">▤</span>
+        <span>Kalkulator</span>
+      </a>
+
+      <a class="nav-link" href="#akun">
+        <span class="nav-icon">♙</span>
+        <span>Akun Admin</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="account-mini">
+        <div class="avatar" id="sideAvatar">A</div>
+        <div class="account-info">
+          <div class="account-name">Administrator</div>
+          <div class="account-email" id="sideEmail">Memuat...</div>
+        </div>
+      </div>
+
+      <button class="btn btn-logout" id="logoutButton">
+        ↪ &nbsp; Keluar dari akun
+      </button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+      <div>
+        <div class="breadcrumb">Menu / <span>Dashboard</span></div>
+        <h1>Dashboard</h1>
+        <p class="subtitle">
+          Selamat datang di panel admin Kalkulator Harga Tayang.
+        </p>
+      </div>
+
+      <div class="top-actions">
+        <div class="status">
+          <span class="status-dot"></span>
+          Sesi aktif
+        </div>
+        <button class="btn" id="topLogoutButton">↪ Keluar</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-tag">✦ PANEL ADMINISTRATOR</div>
+        <h2>Kelola website dengan lebih mudah.</h2>
+        <p>
+          Semua akses utama website kamu bisa dimulai dari satu
+          tempat. Praktis, ringkas, dan nyaman digunakan.
+        </p>
+        <a class="btn" href="index.html">
+          Buka Kalkulator <span>→</span>
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <div>
+          <h2>Ringkasan</h2>
+          <p>Informasi akun dan status panel admin.</p>
+        </div>
+      </div>
+
+      <div class="cards">
+        <article class="card">
+          <div class="card-top">
+            <div class="card-label">Status Akun</div>
+            <div class="card-icon">♙</div>
+          </div>
+          <div class="card-value">Administrator</div>
+          <div class="card-note">
+            Hak akses akun admin terverifikasi.
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <div class="card-label">Status Sesi</div>
+            <div class="card-icon">◉</div>
+          </div>
+          <div class="card-value">Aktif</div>
+          <div class="card-note">
+            Sesi login berhasil diperiksa oleh server.
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <div class="card-label">Aplikasi</div>
+            <div class="card-icon">▤</div>
+          </div>
+          <div class="card-value">Harga Tayang</div>
+          <div class="card-note">
+            Kalkulator siap dibuka melalui tombol akses.
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="bottom-grid">
+      <div class="panel">
+        <h3>Akses Cepat</h3>
+        <p class="panel-desc">
+          Pilih halaman yang ingin kamu buka.
+        </p>
+
+        <a class="quick-link" href="index.html">
+          <div class="quick-icon">🧮</div>
+          <div class="quick-text">
+            <div class="quick-title">Kalkulator Harga Tayang</div>
+            <div class="quick-desc">
+              Buka kalkulator untuk melakukan perhitungan.
+            </div>
+          </div>
+          <span class="arrow">›</span>
+        </a>
+
+        <a class="quick-link" href="#akun">
+          <div class="quick-icon">👤</div>
+          <div class="quick-text">
+            <div class="quick-title">Informasi Akun</div>
+            <div class="quick-desc">
+              Lihat email akun yang sedang digunakan.
+            </div>
+          </div>
+          <span class="arrow">›</span>
+        </a>
+
+        <button class="quick-link" id="quickLogout"
+          style="width:100%;text-align:left;background:white;border:0;cursor:pointer">
+          <div class="quick-icon">↪</div>
+          <div class="quick-text">
+            <div class="quick-title">Logout</div>
+            <div class="quick-desc">
+              Akhiri sesi login admin.
+            </div>
+          </div>
+          <span class="arrow">›</span>
+        </button>
+      </div>
+
+      <div class="panel" id="akun">
+        <h3>Informasi Akun</h3>
+        <p class="panel-desc">
+          Detail akun yang saat ini masuk ke dashboard.
+        </p>
+
+        <div class="account-mini" style="padding:8px 0 15px;border:0">
+          <div class="avatar" id="mainAvatar">A</div>
+          <div class="account-info">
+            <div class="account-name">Administrator</div>
+            <div class="account-email" id="mainEmail">Memuat...</div>
+          </div>
+        </div>
+
+        <div class="security-box">
+          <div class="security-title">♢ &nbsp; Sesi Terverifikasi</div>
+          <div class="security-text">
+            Identitas akun diperiksa menggunakan API server.
+            Jangan bagikan akses akun atau kredensial admin
+            kepada orang lain.
+          </div>
+        </div>
+
+        <div style="margin-top:17px">
+          <button class="btn btn-primary" id="accountLogout"
+            style="width:100%">
+            Keluar dari Dashboard
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      © <span id="year"></span> Kalkulator Harga Tayang · Admin Panel
+    </footer>
+
+  </main>
+</div>
+
+<script>
+"use strict";
+
+const loadingScreen = document.getElementById("loadingScreen");
+const loadingText = document.getElementById("loadingText");
+const dashboard = document.getElementById("dashboard");
+
+document.getElementById("year").textContent =
+  new Date().getFullYear();
+
+function showLogin() {
+  window.location.replace("/admin.html");
+}
+
+async function checkSession() {
+  try {
+    const response = await fetch("/api/admin/check", {
+      method: "GET",
+      credentials: "same-origin",
+      cache: "no-store",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || !data.success ||
+        !data.user || data.user.role !== "admin") {
+      showLogin();
+      return;
+    }
+
+    const email = typeof data.user.email === "string"
+      ? data.user.email : "Admin";
+
+    const initial = email.charAt(0).toUpperCase() || "A";
+
+    document.getElementById("sideEmail").textContent = email;
+    document.getElementById("mainEmail").textContent = email;
+    document.getElementById("sideAvatar").textContent = initial;
+    document.getElementById("mainAvatar").textContent = initial;
+
+    loadingScreen.style.display = "none";
+    dashboard.hidden = false;
+  } catch (error) {
+    loadingText.textContent =
+      "Tidak dapat memeriksa sesi. Periksa koneksi lalu muat ulang.";
+  }
+}
+
+let loggingOut = false;
+
+async function logout() {
+  if (loggingOut) return;
+
+  loggingOut = true;
+
+  const buttons = [
+    document.getElementById("logoutButton"),
+    document.getElementById("topLogoutButton"),
+    document.getElementById("quickLogout"),
+    document.getElementById("accountLogout")
+  ];
+
+  buttons.forEach(button => {
+    button.disabled = true;
+  });
+
+  try {
+    const response = await fetch("/api/admin/logout", {
+      method: "POST",
+      credentials: "same-origin",
+      cache: "no-store",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || !data.success) {
+      throw new Error("Logout gagal");
+    }
+
+    window.location.replace("/admin.html");
+  } catch (error) {
+    loggingOut = false;
+    buttons.forEach(button => {
+      button.disabled = false;
+    });
+
+    alert(
+      "Logout belum berhasil. Pastikan file " +
+      "api/admin/logout.js sudah dibuat dan deployment selesai."
+    );
+  }
+}
+
+document.getElementById("logoutButton")
+  .addEventListener("click", logout);
+
+document.getElementById("topLogoutButton")
+  .addEventListener("click", logout);
+
+document.getElementById("quickLogout")
+  .addEventListener("click", logout);
+
+document.getElementById("accountLogout")
+  .addEventListener("click", logout);
+
+checkSession();
+</script>
+
+</body>
+</html>
