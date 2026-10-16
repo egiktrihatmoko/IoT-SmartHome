@@ -130,8 +130,7 @@
             font-size: 12px;
         }
 
-        input[type="number"],
-        input[type="text"] {
+        input[type="number"] {
             width: 100%;
             padding: 14px 15px;
             border: 1px solid #ddd;
@@ -142,8 +141,7 @@
             background: #fff;
         }
 
-        input[type="number"]:focus,
-        input[type="text"]:focus {
+        input[type="number"]:focus {
             border-color: #c90000;
             box-shadow: 0 0 0 3px rgba(201, 0, 0, 0.08);
         }
@@ -439,12 +437,11 @@
                 </label>
 
                 <input
-                    type="text"
+                    type="number"
                     id="hargaDasar"
-                    inputmode="numeric"
-                    autocomplete="off"
-                    placeholder="Contoh: 2.000.000"
-                    oninput="formatHargaDasar(this)"
+                    placeholder="Contoh: 2000000"
+                    min="0"
+                    oninput="hitung()"
                 >
             </div>
         </div>
@@ -658,7 +655,7 @@
         </p>
 
         <p style="margin-top: 10px;">
-            Credit by <strong>Kalkulator</strong>
+            Credit by <strong>eth production</strong>
         </p>
     </div>
 
@@ -674,31 +671,11 @@ function rupiah(angka) {
     }).format(angka);
 }
 
-// Menambahkan titik ribuan tanpa membuat kursor meloncat saat mengetik.
-function formatHargaDasar(input) {
-    const posisiAwal = input.selectionStart;
-    const sebelumKursor = input.value.slice(0, posisiAwal);
-    const jumlahDigitSebelum = sebelumKursor.replace(/\\D/g, "").length;
-    const angka = input.value.replace(/\\D/g, "");
-
-    input.value = angka ? Number(angka).toLocaleString("id-ID") : "";
-
-    let posisiBaru = 0;
-    let digitTerhitung = 0;
-    while (posisiBaru < input.value.length && digitTerhitung < jumlahDigitSebelum) {
-        if (/\\d/.test(input.value[posisiBaru])) digitTerhitung++;
-        posisiBaru++;
-    }
-    input.setSelectionRange(posisiBaru, posisiBaru);
-    hitung();
-}
-
 function hitung() {
-    const nilaiHargaDasar = document.getElementById("hargaDasar").value;
-    const hargaDasar = Math.max(
-        0,
-        Number(nilaiHargaDasar.replace(/\\./g, "").replace(/\\D/g, "")) || 0
-    );
+    const hargaDasar =
+        Math.max(0, Number(
+            document.getElementById("hargaDasar").value
+        ) || 0);
 
     const pajak = Number(
         document.querySelector(
