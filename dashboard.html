@@ -716,6 +716,23 @@ h1 {
     font-size: 21px;
   }
 }
+
+/* Statistik kunjungan */
+.stats-section { margin: 0 0 28px; }
+.stats-total { font-size: clamp(25px, 3vw, 34px); font-weight: 850; letter-spacing: -1px; }
+.chart-panel { background:#fff; border:1px solid var(--border); border-radius:15px; padding:22px; min-width:0; }
+.chart-toolbar { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; margin-bottom:15px; }
+.chart-toolbar h3 { margin:0; font-size:15px; }
+.chart-toolbar p { margin:6px 0 0; color:var(--muted); font-size:11px; line-height:1.6; }
+.chart-controls { display:flex; gap:6px; }
+.chart-range { border:1px solid var(--border); background:#fff; border-radius:8px; padding:8px 10px; font-size:11px; font-weight:700; cursor:pointer; color:#666; }
+.chart-range.active { background:var(--red-light); border-color:#fecdd3; color:var(--red); }
+.chart-wrap { position:relative; width:100%; height:260px; }
+#visitorChart { display:block; width:100%; height:100%; }
+.chart-status { color:var(--muted); font-size:11px; margin-top:10px; }
+.stats-note { background:#fffafa; border:1px solid #ffe0e3; border-radius:10px; padding:12px 14px; color:#77717a; font-size:11px; line-height:1.7; margin-top:13px; }
+@media (max-width:760px) { .chart-panel { padding:17px; } .chart-wrap { height:225px; } .chart-toolbar { gap:10px; } .chart-controls { width:100%; } .chart-range { flex:1; } }
+
 </style>
 </head>
 
@@ -850,6 +867,50 @@ h1 {
             Kalkulator siap dibuka melalui tombol akses.
           </div>
         </article>
+      </div>
+    </section>
+
+
+    <section class="stats-section">
+      <div class="section-heading">
+        <div>
+          <h2>Statistik Pengunjung</h2>
+          <p>Data kunjungan website yang tersimpan di Upstash Redis.</p>
+        </div>
+      </div>
+      <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin-bottom:16px">
+        <article class="card">
+          <div class="card-top">
+            <div class="card-label">Total Kunjungan Website</div>
+            <div class="card-icon">👁</div>
+          </div>
+          <div class="stats-total" id="visitorTotal">—</div>
+          <div class="card-note">Total global dari penghitung kunjungan kalkulator.</div>
+        </article>
+        <article class="card">
+          <div class="card-top">
+            <div class="card-label">Kunjungan Hari Ini</div>
+            <div class="card-icon">📈</div>
+          </div>
+          <div class="stats-total" id="visitorToday">—</div>
+          <div class="card-note" id="visitorTodayLabel">Hari ini · WIB</div>
+        </article>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-toolbar">
+          <div>
+            <h3>Grafik Kunjungan</h3>
+            <p id="chartSubtitle">Jumlah kunjungan per hari.</p>
+          </div>
+          <div class="chart-controls" aria-label="Rentang grafik">
+            <button class="chart-range active" data-range="7" type="button">7 Hari</button>
+            <button class="chart-range" data-range="30" type="button">30 Hari</button>
+            <button class="chart-range" data-range="365" type="button">12 Bulan</button>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="visitorChart" role="img" aria-label="Grafik jumlah kunjungan website"></canvas></div>
+        <div class="chart-status" id="chartStatus" aria-live="polite">Memuat data kunjungan...</div>
+        <div class="stats-note">Catatan: data harian mulai terkumpul setelah endpoint kunjungan diperbarui. Total kunjungan lama tetap dipertahankan, tetapi riwayat harian sebelum perubahan tidak bisa dibuat ulang jika sebelumnya belum disimpan.</div>
       </div>
     </section>
 
@@ -1045,7 +1106,136 @@ document.getElementById("quickLogout")
 document.getElementById("accountLogout")
   .addEventListener("click", logout);
 
-checkSession();
+
+const visitorTotalEl = document.getElementById("visitorTotal");
+const visitorTodayEl = document.getElementById("visitorToday");
+const chartCanvas = document.getElementById("visitorChart");
+const chartStatus = document.getElementById("chartStatus");
+const chartSubtitle = document.getElementById("chartSubtitle");
+let visitorStats = null;
+let currentRange = 7;
+
+function formatNumber(value) {
+  return Number(value || 0).toLocaleString("id-ID");
+}
+
+function drawVisitorChart(range) {
+  if (!visitorStats || !Array.isArray(visitorStats.daily)) return;
+  const canvas = chartCanvas;
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+  canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+  const ctx = canvas.getContext("2d");
+  ctx.scale(dpr, dpr);
+  const width = rect.width, height = rect.height;
+  const isYear = range === 365;
+  const raw = visitorStats.daily.slice(-range);
+  let points;
+  if (isYear) {
+    const buckets = new Map();
+    raw.forEach(item => {
+      const key = item.date.slice(0, 7);
+      buckets.set(key, (buckets.get(key) || 0) + Number(item.count || 0));
+    });
+    points = Array.from(buckets, ([date, count]) => ({date, count}));
+    chartSubtitle.textContent = "Total kunjungan per bulan selama 12 bulan terakhir.";
+  } else {
+    points = raw;
+    chartSubtitle.textContent = "Jumlah kunjungan per hari.";
+  }
+  const pad = {left:42, right:12, top:16, bottom:35};
+  const plotW = Math.max(1, width-pad.left-pad.right);
+  const plotH = Math.max(1, height-pad.top-pad.bottom);
+  const maxValue = Math.max(1, ...points.map(p => Number(p.count || 0)));
+  const topValue = maxValue <= 5 ? 5 : Math.ceil(maxValue / 5) * 5;
+  ctx.clearRect(0,0,width,height);
+  ctx.font = "10px sans-serif";
+  ctx.textBaseline = "middle";
+  for (let i=0; i<=4; i++) {
+    const val = topValue * (1-i/4);
+    const y = pad.top + plotH*i/4;
+    ctx.strokeStyle = "#eeeeF2";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(width-pad.right,y); ctx.stroke();
+    ctx.fillStyle = "#888894";
+    ctx.textAlign = "right";
+    ctx.fillText(formatNumber(Math.round(val)), pad.left-8, y);
+  }
+  if (!points.length) {
+    ctx.fillStyle="#777985"; ctx.textAlign="center";
+    ctx.fillText("Belum ada data kunjungan", width/2, height/2);
+    return;
+  }
+  const step = points.length > 1 ? plotW/(points.length-1) : 0;
+  const coords = points.map((p,i)=>({
+    x: points.length === 1 ? pad.left+plotW/2 : pad.left+i*step,
+    y: pad.top+plotH-(Number(p.count||0)/topValue)*plotH
+  }));
+  if (coords.length > 1) {
+    ctx.beginPath();
+    coords.forEach((p,i)=> i ? ctx.lineTo(p.x,p.y) : ctx.moveTo(p.x,p.y));
+    ctx.lineTo(coords[coords.length-1].x,pad.top+plotH);
+    ctx.lineTo(coords[0].x,pad.top+plotH);
+    ctx.closePath();
+    ctx.fillStyle="rgba(201,31,44,0.09)";
+    ctx.fill();
+  }
+  ctx.beginPath();
+  coords.forEach((p,i)=> i ? ctx.lineTo(p.x,p.y) : ctx.moveTo(p.x,p.y));
+  ctx.strokeStyle="#c91f2c"; ctx.lineWidth=2.5; ctx.lineJoin="round"; ctx.lineCap="round"; ctx.stroke();
+  coords.forEach(p=>{
+    ctx.beginPath(); ctx.arc(p.x,p.y,3,0,Math.PI*2);
+    ctx.fillStyle="#c91f2c"; ctx.fill();
+    ctx.strokeStyle="#fff"; ctx.lineWidth=1.5; ctx.stroke();
+  });
+  const labelEvery = isYear ? 1 : (range === 30 ? 5 : 1);
+  points.forEach((p,i)=>{
+    if (i % labelEvery !== 0 && i !== points.length-1) return;
+    const date = isYear ? new Date(p.date+"-01T00:00:00") : new Date(p.date+"T00:00:00");
+    const label = isYear
+      ? date.toLocaleDateString("id-ID",{month:"short"})
+      : (range===7 ? date.toLocaleDateString("id-ID",{day:"2-digit",month:"short"}) : date.toLocaleDateString("id-ID",{day:"2-digit",month:"short"}));
+    ctx.fillStyle="#777985"; ctx.textAlign="center"; ctx.textBaseline="top";
+    ctx.fillText(label, coords[i].x, pad.top+plotH+10);
+  });
+}
+
+async function loadVisitorStats() {
+  chartStatus.textContent = "Memuat data kunjungan...";
+  try {
+    const response = await fetch("/api/admin/stats", {
+      method:"GET", credentials:"same-origin", cache:"no-store",
+      headers:{"Accept":"application/json"}
+    });
+    const data = await response.json().catch(()=>({}));
+    if (!response.ok || data.success !== true) {
+      if (response.status === 401 || response.status === 403) { showLogin(); return; }
+      throw new Error(data.error || "Gagal mengambil statistik.");
+    }
+    visitorStats = data;
+    visitorTotalEl.textContent = formatNumber(data.total);
+    visitorTodayEl.textContent = formatNumber(data.today);
+    visitorTodayEl.title = "Kunjungan pada tanggal " + data.todayDate + " WIB";
+    chartStatus.textContent = "Data diperbarui: " + new Date().toLocaleString("id-ID");
+    drawVisitorChart(currentRange);
+  } catch (error) {
+    visitorTotalEl.textContent = "—";
+    visitorTodayEl.textContent = "—";
+    chartStatus.textContent = "Statistik gagal dimuat. Pastikan api/admin/stats.js dan api/visits.js sudah diperbarui, lalu coba muat ulang.";
+    console.error("Statistik pengunjung:", error);
+  }
+}
+document.querySelectorAll(".chart-range").forEach(button => {
+  button.addEventListener("click", () => {
+    currentRange = Number(button.dataset.range);
+    document.querySelectorAll(".chart-range").forEach(b => b.classList.toggle("active", b === button));
+    if (visitorStats) drawVisitorChart(currentRange);
+  });
+});
+window.addEventListener("resize", () => { if (visitorStats) drawVisitorChart(currentRange); });
+
+checkSession().then(() => { if (!dashboard.hidden) loadVisitorStats(); });
 </script>
 
 </body>
