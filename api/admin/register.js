@@ -1,109 +1,78 @@
 
-import { Redis } from "@upstash/redis";
-import bcrypt from "bcryptjs";
+module.exports = async function handler(req, res) {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
 
-const redis = Redis.fromEnv();
+    // Pastikan environment variable tersedia di Vercel.
+    const url = process.env.UPSTASH_REDIS_REST_URL;
+    const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-export default async function handler(req, res) {
-  // Hanya menerima request POST
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
-    return res.status(405).json({
-      success: false,
-      message: "Method tidak diizinkan. Gunakan POST.",
-    });
-  }
-
-  try {
-    const { email, password } = req.body || {};
-
-    // Validasi input
-    if (
-      typeof email !== "string" ||
-      typeof password !== "string" ||
-      !email.trim() ||
-      !password
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Email dan password wajib diisi.",
-      });
+    if (!url || !token) {
+        return res.status(500).json({
+            error: "Environment variable Upstash belum diatur di Vercel."
+        });
     }
 
-    const normalizedEmail = email.trim().toLowerCase();
-
-    if (
-      normalizedEmail.length > 254 ||
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Format email tidak valid.",
-      });
+    // GET hanya mengetes koneksi, tidak menambah kunjungan.
+    // POST menambah total kunjungan global.
+    if (req.method !== "GET" && req.method !== "POST") {
+        res.setHeader("Allow", "GET, POST");
+        return res.status(405).json({
+            error: "Method tidak diizinkan."
+        });
     }
 
-    if (password.length < 12) {
-      return res.status(400).json({
-        success: false,
-        message: "Password minimal 12 karakter.",
-      });
+    try {
+        const command = req.method === "GET"
+            ? ["PING"]
+            : ["INCR", "kalkulator:total_kunjungan"];
+
+        const response = await fetch(
+            url.replace(/\/+$/, ""),
+            {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(command),
+                cache: "no-store"
+            }
+        );
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok || data.error) {
+            console.error("Upstash Redis error:", data.error || response.status);
+
+            return res.status(502).json({
+                error: "Perintah Redis gagal dijalankan.",
+                detail: data.error || `HTTP ${response.status}`
+            });
+        }
+
+        if (req.method === "GET") {
+            return res.status(200).json({
+                status: "ok",
+                redis: "connected"
+            });
+        }
+
+        const total = Number(data.result);
+
+        if (!Number.isSafeInteger(total) || total < 1) {
+            return res.status(502).json({
+                error: "Redis tidak mengembalikan total kunjungan yang valid."
+            });
+        }
+
+        return res.status(200).json({ total });
+
+    } catch (error) {
+        console.error("Kesalahan API kunjungan:", error);
+
+        return res.status(500).json({
+            error: "Koneksi ke Redis gagal.",
+            detail: error.message
+        });
     }
-
-    if (password.length > 128) {
-      return res.status(400).json({
-        success: false,
-        message: "Password terlalu panjang.",
-      });
-    }
-
-    const userKey = `admin_user:${normalizedEmail}`;
-
-    // Cek apakah email sudah terdaftar
-    const existingUser = await redis.get(userKey);
-
-    if (existingUser) {
-      return res.status(409).json({
-        success: false,
-        message: "Email sudah terdaftar.",
-      });
-    }
-
-    // Hash password sebelum disimpan ke Redis
-    const passwordHash = await bcrypt.hash(password, 12);
-
-    // Sesuai permintaanmu: semua akun yang mendaftar mendapat role admin.
-    // Perhatian: siapa pun yang bisa mendaftar akan memperoleh hak admin.
-    const user = {
-      email: normalizedEmail,
-      passwordHash,
-      role: "admin",
-      createdAt: new Date().toISOString(),
-    };
-
-    // Simpan hanya jika email belum ada agar tidak menimpa akun lama
-    const result = await redis.set(userKey, user, { nx: true });
-
-    if (result !== "OK") {
-      return res.status(409).json({
-        success: false,
-        message: "Email sudah terdaftar.",
-      });
-    }
-
-    return res.status(201).json({
-      success: true,
-      message: "Pendaftaran berhasil. Silakan login.",
-      user: {
-        email: user.email,
-        role: user.role,
-      },
-    });
-  } catch (error) {
-    console.error("Register error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Pendaftaran gagal karena kesalahan server.",
-    });
-  }
-}
+};
