@@ -1,85 +1,109 @@
+
 import { Redis } from "@upstash/redis";
 import bcrypt from "bcryptjs";
 
 const redis = Redis.fromEnv();
 
 export default async function handler(req, res) {
+  // Hanya menerima request POST
   if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method tidak diizinkan" });
+    res.setHeader("Allow", "POST");
+    return res.status(405).json({
+      success: false,
+      message: "Method tidak diizinkan. Gunakan POST.",
+    });
   }
 
   try {
     const { email, password } = req.body || {};
 
-    if (!email || !password) {
+    // Validasi input
+    if (
+      typeof email !== "string" ||
+      typeof password !== "string" ||
+      !email.trim() ||
+      !password
+    ) {
       return res.status(400).json({
-        message: "Email dan password wajib diisi",
+        success: false,
+        message: "Email dan password wajib diisi.",
       });
     }
 
-    const normalizedEmail = String(email).trim().toLowerCase();
+    const normalizedEmail = email.trim().toLowerCase();
 
     if (
       normalizedEmail.length > 254 ||
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)
     ) {
-      return res.status(400).json({ message: "Format email tidak valid" });
+      return res.status(400).json({
+        success: false,
+        message: "Format email tidak valid.",
+      });
     }
 
-    if (typeof password !== "string" || password.length < 2) {
+    if (password.length < 12) {
       return res.status(400).json({
-        message: "Password minimal 12 karakter",
+        success: false,
+        message: "Password minimal 12 karakter.",
       });
     }
 
     if (password.length > 128) {
-      return res.status(400).json({ message: "Password terlalu panjang" });
+      return res.status(400).json({
+        success: false,
+        message: "Password terlalu panjang.",
+      });
     }
 
     const userKey = `admin_user:${normalizedEmail}`;
 
+    // Cek apakah email sudah terdaftar
     const existingUser = await redis.get(userKey);
 
     if (existingUser) {
       return res.status(409).json({
-        message: "Email sudah terdaftar",
+        success: false,
+        message: "Email sudah terdaftar.",
       });
     }
 
+    // Hash password sebelum disimpan ke Redis
     const passwordHash = await bcrypt.hash(password, 12);
 
-    const role =
-      normalizedEmail === String(process.env.ADMIN_EMAIL || "").trim().toLowerCase()
-        ? "admin";
-
+    // Sesuai permintaanmu: semua akun yang mendaftar mendapat role admin.
+    // Perhatian: siapa pun yang bisa mendaftar akan memperoleh hak admin.
     const user = {
       email: normalizedEmail,
       passwordHash,
-      role,
+      role: "admin",
       createdAt: new Date().toISOString(),
     };
 
-    // Mencegah dua pendaftaran dengan email sama secara bersamaan.
+    // Simpan hanya jika email belum ada agar tidak menimpa akun lama
     const result = await redis.set(userKey, user, { nx: true });
 
     if (result !== "OK") {
       return res.status(409).json({
-        message: "Email sudah terdaftar",
+        success: false,
+        message: "Email sudah terdaftar.",
       });
     }
 
     return res.status(201).json({
-      message: "Pendaftaran berhasil",
+      success: true,
+      message: "Pendaftaran berhasil. Silakan login.",
       user: {
         email: user.email,
         role: user.role,
       },
     });
   } catch (error) {
-    console.error("Register error:", error.message);
+    console.error("Register error:", error);
 
     return res.status(500).json({
-      message: "Terjadi kesalahan server",
+      success: false,
+      message: "Pendaftaran gagal karena kesalahan server.",
     });
   }
 }
