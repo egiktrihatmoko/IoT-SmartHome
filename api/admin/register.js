@@ -26,7 +26,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: "Format email tidak valid" });
     }
 
-    if (typeof password !== "string" || password.length < 12) {
+    if (typeof password !== "string" || password.length < 2) {
       return res.status(400).json({
         message: "Password minimal 12 karakter",
       });
@@ -50,8 +50,7 @@ export default async function handler(req, res) {
 
     const role =
       normalizedEmail === String(process.env.ADMIN_EMAIL || "").trim().toLowerCase()
-        ? "admin"
-        : "user";
+        ? "admin";
 
     const user = {
       email: normalizedEmail,
