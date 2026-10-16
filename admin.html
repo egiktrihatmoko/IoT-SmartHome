@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pendaftaran Admin</title>
+  <meta name="theme-color" content="#b91c1c">
+  <title>Admin Panel - Kalkulator Harga Tayang</title>
 
   <style>
     * {
@@ -14,12 +14,12 @@
     }
 
     body {
-      font-family: Arial, sans-serif;
       min-height: 100vh;
+      padding: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      font-family: Arial, Helvetica, sans-serif;
       background: #fff5f5;
       color: #222;
     }
@@ -27,23 +27,23 @@
     .container {
       width: 100%;
       max-width: 390px;
+      padding: 28px 24px;
       background: #fff;
-      padding: 30px 24px;
-      border-radius: 16px;
       border: 1px solid #f3dada;
+      border-radius: 16px;
       box-shadow: 0 8px 30px rgba(150, 0, 0, 0.08);
     }
 
     .logo {
-      width: 54px;
-      height: 54px;
-      margin: 0 auto 16px;
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #b91c1c;
-      color: white;
       border-radius: 14px;
+      background: #b91c1c;
+      color: #fff;
       font-size: 25px;
       font-weight: bold;
     }
@@ -51,8 +51,8 @@
     h1 {
       text-align: center;
       font-size: 23px;
-      margin-bottom: 8px;
       color: #991b1b;
+      margin-bottom: 8px;
     }
 
     .subtitle {
@@ -60,18 +60,56 @@
       color: #777;
       font-size: 13px;
       line-height: 1.5;
-      margin-bottom: 25px;
+      margin-bottom: 24px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 5px;
+      padding: 5px;
+      margin-bottom: 24px;
+      border-radius: 10px;
+      background: #fee2e2;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 11px 8px;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      color: #991b1b;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: #b91c1c;
+      color: #fff;
+      box-shadow: 0 2px 6px rgba(185, 28, 28, 0.2);
+    }
+
+    .form-title {
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .form-description {
+      color: #777;
+      font-size: 13px;
+      margin-bottom: 20px;
     }
 
     .form-group {
-      margin-bottom: 17px;
+      margin-bottom: 16px;
     }
 
     label {
       display: block;
+      margin-bottom: 8px;
       font-size: 13px;
       font-weight: bold;
-      margin-bottom: 8px;
     }
 
     input {
@@ -79,9 +117,10 @@
       padding: 13px 12px;
       border: 1px solid #ddd;
       border-radius: 9px;
-      font-size: 14px;
       outline: none;
-      transition: border-color 0.2s;
+      font-size: 14px;
+      background: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     input:focus {
@@ -89,49 +128,50 @@
       box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
     }
 
-    button {
+    .submit-btn {
       width: 100%;
+      padding: 14px;
+      margin-top: 4px;
       border: none;
       border-radius: 9px;
-      padding: 14px;
-      margin-top: 5px;
       background: #b91c1c;
-      color: white;
+      color: #fff;
       font-size: 14px;
       font-weight: bold;
       cursor: pointer;
       transition: background 0.2s;
     }
 
-    button:hover {
+    .submit-btn:hover {
       background: #991b1b;
     }
 
     .message {
       display: none;
-      margin-top: 16px;
       padding: 12px;
+      margin-top: 16px;
       border-radius: 8px;
-      font-size: 13px;
-      line-height: 1.5;
       background: #fff1f2;
       color: #991b1b;
+      font-size: 13px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
     }
 
     .footer {
+      margin-top: 24px;
       text-align: center;
-      margin-top: 22px;
       font-size: 11px;
       color: #999;
     }
 
-    @media (max-width: 400px) {
-      .container {
-        padding: 25px 19px;
-      }
+    [hidden] {
+      display: none !important;
+    }
 
-      h1 {
-        font-size: 21px;
+    @media (max-width: 420px) {
+      .container {
+        padding: 24px 19px;
       }
     }
   </style>
@@ -141,30 +181,87 @@
   <main class="container">
     <div class="logo">A</div>
 
-    <h1>Pendaftaran Admin</h1>
-    <p class="subtitle">
-      Buat akun admin untuk mengelola website
-      Kalkulator Harga Tayang.
-    </p>
+    <h1>Admin Panel</h1>
+    <p class="subtitle">Kalkulator Harga Tayang</p>
 
-    <form id="registerForm">
+    <div class="tabs" role="tablist" aria-label="Menu akun">
+      <button
+        type="button"
+        class="tab active"
+        id="loginTab"
+        role="tab"
+        aria-selected="true"
+        aria-controls="loginForm"
+      >
+        Masuk
+      </button>
+
+      <button
+        type="button"
+        class="tab"
+        id="registerTab"
+        role="tab"
+        aria-selected="false"
+        aria-controls="registerForm"
+      >
+        Mendaftar
+      </button>
+    </div>
+
+    <!-- FORM MASUK -->
+    <form id="loginForm">
+      <h2 class="form-title">Selamat datang!</h2>
+      <p class="form-description">Masuk ke akun admin kamu.</p>
+
       <div class="form-group">
-        <label for="email">Email Admin</label>
+        <label for="loginEmail">Email</label>
         <input
           type="email"
-          id="email"
+          id="loginEmail"
           name="email"
-          placeholder="admin@email.com"
+          placeholder="Masukkan email"
+          autocomplete="username"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <input
+          type="password"
+          id="loginPassword"
+          name="password"
+          placeholder="Masukkan password"
+          autocomplete="current-password"
+          required
+        >
+      </div>
+
+      <button type="submit" class="submit-btn">Masuk</button>
+    </form>
+
+    <!-- FORM PENDAFTARAN -->
+    <form id="registerForm" hidden>
+      <h2 class="form-title">Buat akun admin</h2>
+      <p class="form-description">Isi data untuk mendaftar.</p>
+
+      <div class="form-group">
+        <label for="registerEmail">Email</label>
+        <input
+          type="email"
+          id="registerEmail"
+          name="email"
+          placeholder="Masukkan email"
           autocomplete="email"
           required
         >
       </div>
 
       <div class="form-group">
-        <label for="password">Password</label>
+        <label for="registerPassword">Password</label>
         <input
           type="password"
-          id="password"
+          id="registerPassword"
           name="password"
           placeholder="Minimal 12 karakter"
           minlength="12"
@@ -186,10 +283,10 @@
         >
       </div>
 
-      <button type="submit">Daftar Admin</button>
-
-      <div class="message" id="message" role="status"></div>
+      <button type="submit" class="submit-btn">Daftar Admin</button>
     </form>
+
+    <div class="message" id="message" role="status" aria-live="polite"></div>
 
     <p class="footer">
       &copy; 2026 Kalkulator Harga Tayang
@@ -197,27 +294,60 @@
   </main>
 
   <script>
-    const form = document.getElementById("registerForm");
+    const loginTab = document.getElementById("loginTab");
+    const registerTab = document.getElementById("registerTab");
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
     const message = document.getElementById("message");
 
-    form.addEventListener("submit", function (event) {
+    function showTab(tab) {
+      const isLogin = tab === "login";
+
+      loginForm.hidden = !isLogin;
+      registerForm.hidden = isLogin;
+
+      loginTab.classList.toggle("active", isLogin);
+      registerTab.classList.toggle("active", !isLogin);
+
+      loginTab.setAttribute("aria-selected", String(isLogin));
+      registerTab.setAttribute("aria-selected", String(!isLogin));
+
+      message.style.display = "none";
+      message.textContent = "";
+    }
+
+    loginTab.addEventListener("click", () => showTab("login"));
+    registerTab.addEventListener("click", () => showTab("register"));
+
+    function showMessage(text) {
+      message.textContent = text;
+      message.style.display = "block";
+    }
+
+    loginForm.addEventListener("submit", function (event) {
       event.preventDefault();
 
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+      showMessage(
+        "Fitur masuk belum aktif. Hubungkan formulir ke API autentikasi server Vercel terlebih dahulu."
+      );
+    });
+
+    registerForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const password =
+        document.getElementById("registerPassword").value;
       const confirmPassword =
         document.getElementById("confirmPassword").value;
 
-      message.style.display = "block";
-
       if (password !== confirmPassword) {
-        message.textContent =
-          "Konfirmasi password tidak sama.";
+        showMessage("Konfirmasi password tidak sama.");
         return;
       }
 
-      message.textContent =
-        "Tampilan pendaftaran sudah siap. Pendaftaran belum aktif karena perlu dihubungkan ke API server yang aman.";
+      showMessage(
+        "Formulir siap. Pendaftaran belum aktif sampai API server yang aman dibuat."
+      );
     });
   </script>
 </body>
