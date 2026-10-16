@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#e63946">
+
     <title>Kalkulator Harga Tayang</title>
 
     <style>
@@ -17,654 +17,704 @@
         body {
             font-family: Arial, Helvetica, sans-serif;
             background: #fff5f5;
-            color: #333;
+            color: #222;
             min-height: 100vh;
-            padding: 24px 14px;
+            padding: 40px 15px;
         }
 
         .container {
-            max-width: 540px;
-            margin: 0 auto;
+            max-width: 760px;
+            margin: auto;
         }
 
+        /* HEADER */
         .header {
             text-align: center;
-            margin-bottom: 22px;
+            margin-bottom: 25px;
         }
 
         .header h1 {
-            font-size: 27px;
-            color: #d62839;
+            color: #a80000;
+            font-size: 30px;
             margin-bottom: 8px;
         }
 
         .header p {
+            color: #777;
             font-size: 14px;
-            line-height: 1.6;
-            color: #666;
         }
 
-        .calculator {
-            background: #fff;
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 5px 22px rgba(150, 20, 35, 0.09);
-            border: 1px solid #ffe0e3;
+        /* CARD */
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 10px 35px rgba(150, 0, 0, 0.10);
+            border: 1px solid #f2dede;
+        }
+
+        /* SECTION */
+        .section {
+            margin-bottom: 28px;
         }
 
         .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #a80000;
             font-size: 17px;
             font-weight: bold;
-            margin-bottom: 16px;
-            color: #c92035;
+            margin-bottom: 15px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        .number {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #c90000;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
         }
 
-        .form-group > label {
+        /* INPUT */
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label.input-label {
             display: block;
+            font-weight: bold;
             font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 9px;
+            margin-bottom: 7px;
         }
 
-        .input-wrapper {
-            position: relative;
+        .input-note {
+            color: #888;
+            font-weight: normal;
+            font-size: 12px;
         }
 
-        .currency {
-            position: absolute;
-            left: 13px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #777;
-            font-weight: bold;
-        }
-
-        input[type="text"] {
+        input[type="number"] {
             width: 100%;
-            padding: 13px 13px 13px 47px;
+            padding: 14px 15px;
             border: 1px solid #ddd;
-            border-radius: 9px;
-            font-size: 17px;
+            border-radius: 10px;
+            font-size: 16px;
             outline: none;
-            transition: border 0.2s;
+            transition: 0.2s;
+            background: #fff;
         }
 
-        input[type="text"]:focus {
-            border-color: #e63946;
-            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+        input[type="number"]:focus {
+            border-color: #c90000;
+            box-shadow: 0 0 0 3px rgba(201, 0, 0, 0.08);
         }
 
+        /* OPTIONS */
         .options {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            align-items: center;
+            gap: 12px;
         }
 
         .option {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 12px;
-            border: 1px solid #eee;
-            border-radius: 9px;
+            border: 1.5px solid #ddd;
+            border-radius: 11px;
+            padding: 15px;
             cursor: pointer;
-            background: #fff;
-            line-height: 1.5;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #e00000;
+            background: #fff8f8;
         }
 
         .option:has(input:checked) {
-            border-color: #e63946;
-            background: #fff5f5;
+            border-color: #c90000;
+            background: #fff0f0;
+            color: #a80000;
         }
 
         .option input {
-            margin-top: 4px;
-            accent-color: #e63946;
-            flex-shrink: 0;
+            accent-color: #c90000;
+            margin-right: 8px;
         }
 
-        .option strong {
-            display: block;
-            font-size: 14px;
+        /* RESULT */
+        .result {
+            background: #fff8f8;
+            border: 1px solid #f2dede;
+            border-radius: 14px;
+            padding: 22px;
+            margin-top: 5px;
         }
 
-        .option small {
-            display: block;
-            color: #777;
-            font-size: 12px;
-            margin-top: 2px;
+        .result-title {
+            color: #a80000;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0d0d0;
         }
 
-        .button-group {
+        .row {
             display: flex;
-            gap: 10px;
-            margin-top: 24px;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 13px 0;
+            border-bottom: 1px solid #eadede;
         }
 
-        button {
-            border: none;
-            border-radius: 9px;
-            padding: 13px 16px;
+        /* SPACE ANTAR BAGIAN */
+        .row.space-top {
+            margin-top: 20px;
+        }
+
+        .row-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .calculation {
+            color: #888;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .amount {
+            text-align: right;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        /* HARGA DASAR DISABLED */
+        .disabled-row {
+            background: #f1f1f1;
+            color: #999;
+            margin-left: -10px;
+            margin-right: -10px;
+            padding: 13px 10px;
+            border-radius: 8px;
+            border-bottom: none;
+        }
+
+        .disabled-row .row-title {
+            color: #888;
+        }
+
+        .disabled-row .calculation {
+            color: #aaa;
+        }
+
+        .disabled-row .amount {
+            color: #999;
+        }
+
+        /* SUBTOTAL */
+        .subtotal {
+            background: #fff0f0;
+            margin-left: -10px;
+            margin-right: -10px;
+            padding: 13px 10px;
+            border-radius: 8px;
+        }
+
+        .subtotal .row-title {
+            color: #a80000;
+        }
+
+        /* FINAL */
+        .final {
+            margin-top: 20px;
+            padding: 22px;
+            background: linear-gradient(135deg, #a80000, #e00000);
+            color: white;
+            border-radius: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 8px 20px rgba(180, 0, 0, 0.22);
+        }
+
+        .final-label {
             font-size: 15px;
             font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .final-price {
+            font-size: 25px;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        /* BUTTON */
+        .reset {
+            width: 100%;
+            margin-top: 20px;
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            color: #555;
             cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
             transition: 0.2s;
         }
 
-        .btn-calculate {
-            flex: 1;
-            color: white;
-            background: #e63946;
+        .reset:hover {
+            background: #fff0f0;
+            color: #a80000;
+            border-color: #e00000;
         }
 
-        .btn-calculate:hover {
-            background: #c92035;
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+            font-size: 12px;
         }
 
-        .btn-reset {
-            color: #444;
-            background: #eee;
-        }
-
-        .btn-reset:hover {
-            background: #ddd;
-        }
-
-        .result {
-            margin-top: 24px;
-            padding: 18px;
-            border-radius: 12px;
-            background: #fff5f5;
-            border: 1px solid #ffd9de;
-            display: none;
-        }
-
-        .result.show {
-            display: block;
-        }
-
-        .result h2 {
-            font-size: 18px;
-            color: #c92035;
-            margin-bottom: 16px;
-        }
-
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px dashed #e8c9cc;
-            font-size: 13px;
+        /* FOOTER CONTACT PERSON */
+        .footer .contact-question {
+            font-size: 17px;
             line-height: 1.5;
         }
 
-        .result-row span:first-child {
-            color: #555;
+        .footer .contact-instruction {
+            font-size: 15px;
+            line-height: 1.5;
         }
 
-        .result-row strong {
-            text-align: right;
-            overflow-wrap: anywhere;
+        .footer .contact-link {
+            display: inline-block;
+            font-size: 18px;
+            line-height: 1.5;
         }
 
-        .result-row.total {
-            border-bottom: none;
-            border-top: 2px solid #e63946;
-            margin-top: 8px;
-            padding-top: 15px;
-            color: #c92035;
-            font-size: 16px;
-        }
-
-        .result-row.total span:first-child {
-            color: #c92035;
-            font-weight: bold;
-        }
-
-        .note {
-            margin-top: 13px;
-            color: #777;
-            font-size: 11px;
-            line-height: 1.6;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 25px;
-            padding: 0 5px;
-            color: #666;
-            font-size: 13px;
-            line-height: 1.8;
-        }
-
-        .footer a {
-            color: #d62839;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
-        .visitor-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 22px;
-        }
-
-        .visitor-counter {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            padding: 10px 13px;
-            background: #fff;
-            border: 1px solid #ffe0e3;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(150, 20, 35, 0.05);
-        }
-
-        .visitor-icon {
-            font-size: 21px;
-        }
-
-        .visitor-info {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-
-        .visitor-label {
-            font-size: 11px;
-            color: #777;
-        }
-
-        .visitor-total {
-            font-size: 16px;
-            font-weight: bold;
-            color: #d62839;
-        }
-
-        @media (max-width: 400px) {
+        /* MOBILE */
+        @media (max-width: 600px) {
             body {
-                padding: 18px 10px;
+                padding: 25px 12px;
             }
 
-            .calculator {
-                padding: 18px 15px;
+            .card {
+                padding: 20px;
             }
 
             .header h1 {
-                font-size: 23px;
+                font-size: 25px;
             }
 
-            .button-group {
+            .options {
                 flex-direction: column;
+                align-items: stretch;
             }
 
-            .btn-reset {
-                width: 100%;
+            .row {
+                align-items: flex-start;
             }
 
-            .visitor-container {
-                margin-top: 18px;
+            .amount {
+                text-align: right;
+            }
+
+            .final {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .final-price {
+                text-align: left;
             }
         }
     </style>
 </head>
 
 <body>
-    <main class="container">
-        <header class="header">
-            <h1>Kalkulator Harga Tayang</h1>
-            <p>
-                Hitung komponen pajak berdasarkan harga dasar
-                dengan mudah dan praktis.
-            </p>
-        </header>
 
-        <section class="calculator">
-            <div class="section-title">Masukkan Data Harga</div>
+<div class="container">
 
-            <div class="form-group">
-                <label for="hargaDasar">Harga Dasar</label>
-                <div class="input-wrapper">
-                    <span class="currency">Rp</span>
+    <!-- HEADER -->
+    <div class="header">
+        <h1>Kalkulator Harga Tayang</h1>
+        <p>Perhitungan harga dasar, pajak, PPh dan fee</p>
+    </div>
+
+    <div class="card">
+
+        <!-- INPUT HARGA -->
+        <div class="section">
+            <div class="section-title">
+                <div class="number">1</div>
+                Masukkan Harga
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="hargaDasar">
+                    Harga Dasar
+                    <span class="input-note">
+                        (sudah termasuk ongkir)
+                    </span>
+                </label>
+
+                <input
+                    type="number"
+                    id="hargaDasar"
+                    placeholder="Contoh: 2000000"
+                    min="0"
+                    oninput="hitung()"
+                >
+            </div>
+        </div>
+
+        <!-- PAJAK -->
+        <div class="section">
+            <div class="section-title">
+                <div class="number">2</div>
+                Pilih Pajak
+            </div>
+
+            <div class="options">
+                <label class="option">
                     <input
-                        type="text"
-                        id="hargaDasar"
-                        inputmode="numeric"
-                        autocomplete="off"
-                        placeholder="Masukkan harga"
-                        aria-label="Harga dasar dalam rupiah"
+                        type="radio"
+                        name="pajak"
+                        value="12"
+                        checked
+                        onchange="hitung()"
                     >
-                </div>
-            </div>
+                    PPN 12%
+                </label>
 
-            <div class="form-group">
-                <label>Pilih Jenis Pajak</label>
-
-                <div class="options">
-                    <label class="option">
-                        <input
-                            type="radio"
-                            name="jenisPajak"
-                            value="ppn"
-                            checked
-                        >
-                        <span>
-                            <strong>PPN 12%</strong>
-                            <small>Pajak Pertambahan Nilai</small>
-                        </span>
-                    </label>
-
-                    <label class="option">
-                        <input
-                            type="radio"
-                            name="jenisPajak"
-                            value="daerah"
-                        >
-                        <span>
-                            <strong>Pajak Daerah 10%</strong>
-                            <small>Pilih sesuai ketentuan transaksi</small>
-                        </span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Jenis PPh</label>
-
-                <div class="options">
-                    <label class="option">
-                        <input
-                            type="radio"
-                            name="jenisPph"
-                            value="barang"
-                            checked
-                        >
-                        <span>
-                            <strong>PPh Barang 1,5%</strong>
-                            <small>Tarif sesuai asumsi kalkulator</small>
-                        </span>
-                    </label>
-
-                    <label class="option">
-                        <input
-                            type="radio"
-                            name="jenisPph"
-                            value="jasa"
-                        >
-                        <span>
-                            <strong>PPh 23 Jasa 2%</strong>
-                            <small>Tarif sesuai asumsi kalkulator</small>
-                        </span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="button-group">
-                <button
-                    type="button"
-                    class="btn-calculate"
-                    id="btnHitung"
-                >
-                    Hitung
-                </button>
-
-                <button
-                    type="button"
-                    class="btn-reset"
-                    id="btnReset"
-                >
-                    Reset
-                </button>
-            </div>
-
-            <div class="result" id="hasil" aria-live="polite">
-                <h2>Hasil Perhitungan</h2>
-
-                <div class="result-row">
-                    <span>Harga Dasar</span>
-                    <strong id="hasilDasar">Rp0</strong>
-                </div>
-
-                <div class="result-row">
-                    <span id="labelPajak">PPN 12%</span>
-                    <strong id="hasilPajak">Rp0</strong>
-                </div>
-
-                <div class="result-row">
-                    <span id="labelPph">PPh Barang 1,5%</span>
-                    <strong id="hasilPph">Rp0</strong>
-                </div>
-
-                <div class="result-row total">
-                    <span>Total Harga Tayang</span>
-                    <strong id="hasilTotal">Rp0</strong>
-                </div>
-
-                <p class="note">
-                    Perhitungan ini merupakan estimasi berdasarkan
-                    tarif yang dipilih. Penerapan pajak sebenarnya
-                    bergantung pada jenis transaksi, dasar pengenaan
-                    pajak, status wajib pajak, dan ketentuan yang berlaku.
-                </p>
-            </div>
-        </section>
-
-        <!-- Penghitung kunjungan website -->
-        <div class="visitor-container">
-            <div class="visitor-counter">
-                <div class="visitor-icon">👁️</div>
-
-                <div class="visitor-info">
-                    <span class="visitor-label">
-                        Total Kunjungan Website
-                    </span>
-
-                    <span
-                        class="visitor-total"
-                        id="totalKunjungan"
-                        aria-live="polite"
+                <label class="option">
+                    <input
+                        type="radio"
+                        name="pajak"
+                        value="10"
+                        onchange="hitung()"
                     >
-                        Memuat...
-                    </span>
+                    Pajak Daerah 10%
+                </label>
+            </div>
+        </div>
+
+        <!-- PPH -->
+        <div class="section">
+            <div class="section-title">
+                <div class="number">3</div>
+                Pilih Jenis PPh
+            </div>
+
+            <div class="options">
+                <label class="option">
+                    <input
+                        type="radio"
+                        name="pph"
+                        value="1.5"
+                        checked
+                        onchange="hitung()"
+                    >
+                    PPh 1,5% — Barang
+                </label>
+
+                <label class="option">
+                    <input
+                        type="radio"
+                        name="pph"
+                        value="2"
+                        onchange="hitung()"
+                    >
+                    PPh 23 2% — Jasa
+                </label>
+            </div>
+        </div>
+
+        <!-- HASIL -->
+        <div class="result">
+            <div class="result-title">
+                Rincian Perhitungan
+            </div>
+
+            <!-- HARGA DASAR -->
+            <div class="row disabled-row">
+                <div>
+                    <div class="row-title">Harga Dasar</div>
+                    <div class="calculation">
+                        Sudah termasuk ongkir
+                    </div>
+                </div>
+
+                <div class="amount" id="hasilHargaDasar">
+                    Rp0
+                </div>
+            </div>
+
+            <!-- DASAR PAJAK -->
+            <div class="row subtotal space-top">
+                <div>
+                    <div class="row-title">
+                        Dasar Perhitungan Pajak
+                    </div>
+                    <div class="calculation" id="hitungDasarPajak">
+                        Rp0
+                    </div>
+                </div>
+
+                <div class="amount" id="hasilDasarPajak">
+                    Rp0
+                </div>
+            </div>
+
+            <!-- PAJAK -->
+            <div class="row space-top">
+                <div>
+                    <div class="row-title" id="namaPajak">
+                        PPN 12%
+                    </div>
+                    <div class="calculation" id="hitungPajak">
+                        Rp0 × 12%
+                    </div>
+                </div>
+
+                <div class="amount" id="hasilPajak">
+                    Rp0
+                </div>
+            </div>
+
+            <!-- PPH -->
+            <div class="row space-top">
+                <div>
+                    <div class="row-title" id="namaPph">
+                        PPh 1,5% — Barang
+                    </div>
+                    <div class="calculation" id="hitungPph">
+                        Rp0 × 1,5%
+                    </div>
+                </div>
+
+                <div class="amount" id="hasilPph">
+                    Rp0
+                </div>
+            </div>
+
+            <!-- TOTAL -->
+            <div class="row subtotal space-top">
+                <div>
+                    <div class="row-title">
+                        Total Sebelum Fee
+                    </div>
+                    <div class="calculation" id="hitungSubtotal">
+                        Rp0 + Rp0 + Rp0
+                    </div>
+                </div>
+
+                <div class="amount" id="hasilSubtotal">
+                    Rp0
+                </div>
+            </div>
+
+            <!-- FEE -->
+            <div class="row space-top">
+                <div>
+                    <div class="row-title">Fee 0,5%</div>
+                    <div class="calculation" id="hitungFee">
+                        Rp0 × 0,5%
+                    </div>
+                </div>
+
+                <div class="amount" id="hasilFee">
+                    Rp0
+                </div>
+            </div>
+
+            <!-- HARGA TAYANG -->
+            <div class="final">
+                <div class="final-label">HARGA TAYANG</div>
+                <div class="final-price" id="hargaTayang">
+                    Rp0
                 </div>
             </div>
         </div>
 
-        <footer class="footer">
-            <p>
-                Ada pertanyaan atau kendala?
-            </p>
-            <p>
-                Hubungi WhatsApp:
-                <a
-                    href="https://wa.me/6281234567890"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    0812-3456-7890
-                </a>
-            </p>
-            <p>
-                © <span id="tahun"></span> Kalkulator Harga Tayang
-            </p>
-        </footer>
-    </main>
+        <!-- RESET -->
+        <button
+            class="reset"
+            type="button"
+            onclick="resetForm()"
+        >
+            ↻ Reset Perhitungan
+        </button>
 
-    <script>
-        const inputHarga = document.getElementById("hargaDasar");
-        const tombolHitung = document.getElementById("btnHitung");
-        const tombolReset = document.getElementById("btnReset");
-        const hasil = document.getElementById("hasil");
+    </div>
 
-        // Memformat angka dengan titik sebagai pemisah ribuan.
-        function formatRibuan(angka) {
-            return angka.toLocaleString("id-ID");
-        }
+    <!-- FOOTER / CONTACT PERSON -->
+    <div class="footer">
+        <p
+            class="contact-question"
+            style="font-weight: bold; color: #a80000; margin-bottom: 8px;"
+        >
+            Ada saran atau pertanyaan?
+        </p>
 
-        // Mengambil angka saja dari input.
-        function ambilAngka(nilai) {
-            const angka = nilai.replace(/\D/g, "");
-            return angka === "" ? 0 : Number(angka);
-        }
+        <p
+            class="contact-instruction"
+            style="margin-bottom: 8px;"
+        >
+            Silakan hubungi nomor di bawah ini:
+        </p>
 
-        // Format harga saat pengguna mengetik.
-        inputHarga.addEventListener("input", function () {
-            const posisiAwal = this.selectionStart;
-            const panjangAwal = this.value.length;
-            const angka = ambilAngka(this.value);
+        <p>
+            <a
+                class="contact-link"
+                href="https://wa.me/6281125213879"
+                target="_blank"
+                rel="noopener noreferrer"
+                style="color: #25D366; text-decoration: none; font-weight: bold;"
+            >
+                ☎ 081125213879 (Egik)
+            </a>
+        </p>
 
-            this.value = angka === 0 && !/\d/.test(this.value)
-                ? ""
-                : formatRibuan(angka);
+        <p style="margin-top: 10px;">
+            Credit by <strong>Kalkulator</strong>
+        </p>
+    </div>
 
-            const selisih = this.value.length - panjangAwal;
-            const posisiBaru = Math.max(0, posisiAwal + selisih);
+</div>
 
-            this.setSelectionRange(posisiBaru, posisiBaru);
-        });
+<script>
+function rupiah(angka) {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+    }).format(angka);
+}
 
-        // Format rupiah.
-        function formatRupiah(angka) {
-            return "Rp" + formatRibuan(angka);
-        }
+function hitung() {
+    // HARGA DASAR
+    const hargaDasar =
+        Number(document.getElementById("hargaDasar").value) || 0;
 
-        function hitung() {
-            const hargaDasar = ambilAngka(inputHarga.value);
+    // PAJAK
+    const pajak = Number(
+        document.querySelector('input[name="pajak"]:checked').value
+    );
 
-            if (!hargaDasar || hargaDasar <= 0) {
-                alert("Silakan masukkan harga dasar terlebih dahulu.");
-                inputHarga.focus();
-                return;
-            }
+    // PPH
+    const pph = Number(
+        document.querySelector('input[name="pph"]:checked').value
+    );
 
-            const jenisPajak = document.querySelector(
-                'input[name="jenisPajak"]:checked'
-            ).value;
+    // DASAR PAJAK
+    // Harga dasar sudah termasuk ongkir
+    const dasarPajak = hargaDasar;
 
-            const jenisPph = document.querySelector(
-                'input[name="jenisPph"]:checked'
-            ).value;
+    // HASIL PAJAK
+    const hasilPajak = dasarPajak * (pajak / 100);
 
-            let tarifPajak;
-            let namaPajak;
+    // HASIL PPH
+    const hasilPph = dasarPajak * (pph / 100);
 
-            if (jenisPajak === "ppn") {
-                tarifPajak = 0.12;
-                namaPajak = "PPN 12%";
-            } else {
-                tarifPajak = 0.10;
-                namaPajak = "Pajak Daerah 10%";
-            }
+    // TOTAL SEBELUM FEE
+    const subtotal = dasarPajak + hasilPajak + hasilPph;
 
-            let tarifPph;
-            let namaPph;
+    // FEE 0,5%
+    const fee = subtotal * 0.005;
 
-            if (jenisPph === "barang") {
-                tarifPph = 0.015;
-                namaPph = "PPh Barang 1,5%";
-            } else {
-                tarifPph = 0.02;
-                namaPph = "PPh 23 Jasa 2%";
-            }
+    // HARGA TAYANG
+    const hargaTayang = subtotal + fee;
 
-            const nilaiPajak = Math.round(hargaDasar * tarifPajak);
-            const nilaiPph = Math.round(hargaDasar * tarifPph);
+    // NAMA PAJAK
+    const namaPajak =
+        pajak === 12 ? "PPN 12%" : "Pajak Daerah 10%";
 
-            // Total harga tayang menjumlahkan harga dasar dan pajak
-            // yang dipilih. PPh ditampilkan terpisah sebagai estimasi.
-            const totalHarga = hargaDasar + nilaiPajak;
+    // NAMA PPH
+    const namaPph =
+        pph === 1.5
+            ? "PPh 1,5% — Barang"
+            : "PPh 23 2% — Jasa";
 
-            document.getElementById("hasilDasar").textContent =
-                formatRupiah(hargaDasar);
+    // TAMPILKAN HARGA DASAR
+    document.getElementById("hasilHargaDasar").textContent =
+        rupiah(hargaDasar);
 
-            document.getElementById("labelPajak").textContent =
-                namaPajak;
+    // TAMPILKAN DASAR PAJAK
+    document.getElementById("hitungDasarPajak").textContent =
+        rupiah(hargaDasar);
 
-            document.getElementById("hasilPajak").textContent =
-                formatRupiah(nilaiPajak);
+    document.getElementById("hasilDasarPajak").textContent =
+        rupiah(dasarPajak);
 
-            document.getElementById("labelPph").textContent =
-                namaPph;
+    // TAMPILKAN PAJAK
+    document.getElementById("namaPajak").textContent = namaPajak;
 
-            document.getElementById("hasilPph").textContent =
-                formatRupiah(nilaiPph);
+    document.getElementById("hitungPajak").textContent =
+        rupiah(dasarPajak) + " × " + pajak + "%";
 
-            document.getElementById("hasilTotal").textContent =
-                formatRupiah(totalHarga);
+    document.getElementById("hasilPajak").textContent =
+        rupiah(hasilPajak);
 
-            hasil.classList.add("show");
-        }
+    // TAMPILKAN PPH
+    document.getElementById("namaPph").textContent = namaPph;
 
-        function resetKalkulator() {
-            inputHarga.value = "";
+    document.getElementById("hitungPph").textContent =
+        rupiah(dasarPajak) + " × " + pph + "%";
 
-            document.querySelector(
-                'input[name="jenisPajak"][value="ppn"]'
-            ).checked = true;
+    document.getElementById("hasilPph").textContent =
+        rupiah(hasilPph);
 
-            document.querySelector(
-                'input[name="jenisPph"][value="barang"]'
-            ).checked = true;
+    // TAMPILKAN TOTAL
+    document.getElementById("hitungSubtotal").textContent =
+        rupiah(dasarPajak) + " + " +
+        rupiah(hasilPajak) + " + " +
+        rupiah(hasilPph);
 
-            hasil.classList.remove("show");
-            inputHarga.focus();
-        }
+    document.getElementById("hasilSubtotal").textContent =
+        rupiah(subtotal);
 
-        tombolHitung.addEventListener("click", hitung);
-        tombolReset.addEventListener("click", resetKalkulator);
+    // TAMPILKAN FEE
+    document.getElementById("hitungFee").textContent =
+        rupiah(subtotal) + " × 0,5%";
 
-        // Tombol Enter dapat digunakan untuk menghitung.
-        inputHarga.addEventListener("keydown", function (event) {
-            if (event.key === "Enter") {
-                hitung();
-            }
-        });
+    document.getElementById("hasilFee").textContent =
+        rupiah(fee);
 
-        document.getElementById("tahun").textContent =
-            new Date().getFullYear();
+    // TAMPILKAN HARGA TAYANG
+    document.getElementById("hargaTayang").textContent =
+        rupiah(hargaTayang);
+}
 
-        // Memuat total kunjungan dari API Vercel.
-        async function muatKunjungan() {
-            const elemen = document.getElementById("totalKunjungan");
+function resetForm() {
+    document.getElementById("hargaDasar").value = "";
 
-            try {
-                const response = await fetch("/api/kunjungan", {
-                    method: "GET",
-                    cache: "no-store"
-                });
+    document.querySelector(
+        'input[name="pajak"][value="12"]'
+    ).checked = true;
 
-                if (!response.ok) {
-                    throw new Error("Gagal mengambil data kunjungan");
-                }
+    document.querySelector(
+        'input[name="pph"][value="1.5"]'
+    ).checked = true;
 
-                const data = await response.json();
+    hitung();
+}
 
-                if (
-                    typeof data.total !== "number" ||
-                    !Number.isFinite(data.total)
-                ) {
-                    throw new Error("Data kunjungan tidak valid");
-                }
+hitung();
+</script>
 
-                elemen.textContent = formatRibuan(data.total);
-            } catch (error) {
-                elemen.textContent = "Belum tersedia";
-                console.error("Penghitung kunjungan:", error);
-            }
-        }
-
-        muatKunjungan();
-    </script>
 </body>
-</html>
-```
+                </html>.     
