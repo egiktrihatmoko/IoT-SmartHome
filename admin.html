@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -120,7 +121,6 @@
       outline: none;
       font-size: 14px;
       background: #fff;
-      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     input:focus {
@@ -139,11 +139,15 @@
       font-size: 14px;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.2s;
     }
 
     .submit-btn:hover {
       background: #991b1b;
+    }
+
+    .submit-btn:disabled {
+      opacity: .65;
+      cursor: wait;
     }
 
     .message {
@@ -156,6 +160,11 @@
       font-size: 13px;
       line-height: 1.5;
       overflow-wrap: anywhere;
+    }
+
+    .message.success {
+      background: #dcfce7;
+      color: #166534;
     }
 
     .footer {
@@ -185,108 +194,73 @@
     <p class="subtitle">Kalkulator Harga Tayang</p>
 
     <div class="tabs" role="tablist" aria-label="Menu akun">
-      <button
-        type="button"
-        class="tab active"
-        id="loginTab"
-        role="tab"
-        aria-selected="true"
-        aria-controls="loginForm"
-      >
+      <button type="button" class="tab active"
+        id="loginTab" role="tab" aria-selected="true"
+        aria-controls="loginForm">
         Masuk
       </button>
 
-      <button
-        type="button"
-        class="tab"
-        id="registerTab"
-        role="tab"
-        aria-selected="false"
-        aria-controls="registerForm"
-      >
+      <button type="button" class="tab"
+        id="registerTab" role="tab" aria-selected="false"
+        aria-controls="registerForm">
         Mendaftar
       </button>
     </div>
 
-    <!-- FORM MASUK -->
     <form id="loginForm">
       <h2 class="form-title">Selamat datang!</h2>
       <p class="form-description">Masuk ke akun admin kamu.</p>
 
       <div class="form-group">
         <label for="loginEmail">Email</label>
-        <input
-          type="email"
-          id="loginEmail"
-          name="email"
-          placeholder="Masukkan email"
-          autocomplete="username"
-          required
-        >
+        <input type="email" id="loginEmail" name="email"
+          placeholder="Masukkan email" autocomplete="username"
+          maxlength="254" required>
       </div>
 
       <div class="form-group">
         <label for="loginPassword">Password</label>
-        <input
-          type="password"
-          id="loginPassword"
-          name="password"
+        <input type="password" id="loginPassword" name="password"
           placeholder="Masukkan password"
-          autocomplete="current-password"
-          required
-        >
+          autocomplete="current-password" required>
       </div>
 
       <button type="submit" class="submit-btn">Masuk</button>
     </form>
 
-    <!-- FORM PENDAFTARAN -->
     <form id="registerForm" hidden>
       <h2 class="form-title">Buat akun admin</h2>
-      <p class="form-description">Isi data untuk mendaftar.</p>
+      <p class="form-description">
+        Daftar menggunakan email dan password kamu.
+      </p>
 
       <div class="form-group">
         <label for="registerEmail">Email</label>
-        <input
-          type="email"
-          id="registerEmail"
-          name="email"
-          placeholder="Masukkan email"
-          autocomplete="email"
-          required
-        >
+        <input type="email" id="registerEmail" name="email"
+          placeholder="Masukkan email" autocomplete="email"
+          maxlength="254" required>
       </div>
 
       <div class="form-group">
         <label for="registerPassword">Password</label>
-        <input
-          type="password"
-          id="registerPassword"
-          name="password"
-          placeholder="Minimal 12 karakter"
-          minlength="12"
-          autocomplete="new-password"
-          required
-        >
+        <input type="password" id="registerPassword" name="password"
+          placeholder="Minimal 12 karakter" minlength="12"
+          maxlength="128" autocomplete="new-password" required>
       </div>
 
       <div class="form-group">
         <label for="confirmPassword">Konfirmasi Password</label>
-        <input
-          type="password"
-          id="confirmPassword"
-          name="confirmPassword"
-          placeholder="Ulangi password"
-          minlength="12"
-          autocomplete="new-password"
-          required
-        >
+        <input type="password" id="confirmPassword"
+          name="confirmPassword" placeholder="Ulangi password"
+          minlength="12" maxlength="128"
+          autocomplete="new-password" required>
       </div>
 
       <button type="submit" class="submit-btn">Daftar Admin</button>
     </form>
 
-    <div class="message" id="message" role="status" aria-live="polite"></div>
+    <div class="message" id="message"
+      role="status" aria-live="polite"></div>
 
     <p class="footer">
       &copy; 2026 Kalkulator Harga Tayang
@@ -314,27 +288,42 @@
 
       message.style.display = "none";
       message.textContent = "";
+      message.classList.remove("success");
     }
 
     loginTab.addEventListener("click", () => showTab("login"));
     registerTab.addEventListener("click", () => showTab("register"));
 
-    function showMessage(text) {
+    function showMessage(text, success = false) {
       message.textContent = text;
       message.style.display = "block";
+      message.classList.toggle("success", success);
     }
 
-    loginForm.addEventListener("submit", function (event) {
+    async function sendRequest(endpoint, payload) {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "same-origin",
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.message || "Permintaan gagal.");
+      }
+
+      return data;
+    }
+
+    registerForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
-      showMessage(
-        "Fitur masuk belum aktif. Hubungkan formulir ke API autentikasi server Vercel terlebih dahulu."
-      );
-    });
-
-    registerForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-
+      const email =
+        document.getElementById("registerEmail").value.trim();
       const password =
         document.getElementById("registerPassword").value;
       const confirmPassword =
@@ -345,9 +334,63 @@
         return;
       }
 
-      showMessage(
-        "Formulir siap. Pendaftaran belum aktif sampai API server yang aman dibuat."
-      );
+      if (password.length < 12) {
+        showMessage("Password minimal 12 karakter.");
+        return;
+      }
+
+      const button = registerForm.querySelector('button[type="submit"]');
+      button.disabled = true;
+      button.textContent = "Mendaftarkan...";
+
+      try {
+        const data = await sendRequest("/api/admin/register", {
+          email,
+          password
+        });
+
+        registerForm.reset();
+        showTab("login");
+        showMessage(
+          data.message || "Pendaftaran berhasil. Silakan masuk.",
+          true
+        );
+      } catch (error) {
+        showMessage(error.message || "Pendaftaran gagal.");
+      } finally {
+        button.disabled = false;
+        button.textContent = "Daftar Admin";
+      }
+    });
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const email =
+        document.getElementById("loginEmail").value.trim();
+      const password =
+        document.getElementById("loginPassword").value;
+
+      const button = loginForm.querySelector('button[type="submit"]');
+      button.disabled = true;
+      button.textContent = "Memeriksa...";
+
+      try {
+        const data = await sendRequest("/api/admin/login", {
+          email,
+          password
+        });
+
+        showMessage(data.message || "Login berhasil.", true);
+
+        // Arahkan ke dashboard hanya setelah endpoint dashboard
+        // dan pemeriksaan sesi benar-benar tersedia.
+      } catch (error) {
+        showMessage(error.message || "Login gagal.");
+      } finally {
+        button.disabled = false;
+        button.textContent = "Masuk";
+      }
     });
   </script>
 </body>
