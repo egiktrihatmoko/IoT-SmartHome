@@ -693,7 +693,9 @@ function hitung() {
     const dasarPajak = hargaDasar;
 
     // PAJAK DAN PPH
-    const hasilPajak = dasarPajak * (pajak / 100);
+    // Label tetap PPN 12%, tetapi perhitungan memakai 11%.
+    const tarifPajakHitung = pajak === 12 ? 11 : pajak;
+    const hasilPajak = dasarPajak * (tarifPajakHitung / 100);
     const hasilPph = dasarPajak * (pph / 100);
 
     // TOTAL SEBELUM FEE
@@ -730,7 +732,7 @@ function hitung() {
     document.getElementById("namaPajak").textContent = namaPajak;
 
     document.getElementById("hitungPajak").textContent =
-        rupiah(dasarPajak) + " × " + pajak + "%";
+        rupiah(dasarPajak) + " × " + tarifPajakHitung + "%";
 
     document.getElementById("hasilPajak").textContent =
         rupiah(hasilPajak);
