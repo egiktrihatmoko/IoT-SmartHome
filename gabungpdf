@@ -1,0 +1,1486 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabungkan Foto Jadi PDF</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #fff5f5;
+            color: #222;
+            font-family: Arial, sans-serif;
+            padding: 40px 15px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: auto;
+        }
+
+        /* MENU NAVIGASI */
+        .menu-toggle {
+            position: fixed;
+            top: 18px;
+            left: 18px;
+            z-index: 1002;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            background: #a80000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(150, 0, 0, 0.18);
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 22px;
+            height: 2.5px;
+            border-radius: 3px;
+            background: #fff;
+            transition: 0.25s;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: translateY(7.5px) rotate(45deg);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: translateY(-7.5px) rotate(-45deg);
+        }
+
+        .nav-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.25s;
+        }
+
+        .nav-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .nav-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 290px;
+            max-width: 85%;
+            height: 100vh;
+            height: 100dvh;
+            background: #fff;
+            z-index: 1001;
+            padding: 85px 18px 25px;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.12);
+            transform: translateX(-105%);
+            transition: transform 0.25s ease;
+            overflow-y: auto;
+        }
+
+        .nav-drawer.show {
+            transform: translateX(0);
+        }
+
+        .nav-heading {
+            color: #a80000;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin: 0 12px 15px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 13px;
+            margin-bottom: 7px;
+            border-radius: 10px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #fff0f0;
+            color: #a80000;
+        }
+
+        .nav-link .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+
+        .nav-link.admin-link {
+            color: #a80000;
+            background: #fff0f0;
+            border: 1px solid #f2dede;
+        }
+
+        .nav-link.admin-link:hover {
+            background: #ffe0e0;
+        }
+
+        .nav-divider {
+            height: 1px;
+            background: #eee;
+            margin: 15px 0;
+        }
+
+        /* TOMBOL DARK MODE */
+        .dark-mode-button {
+            width: 100%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        /* HEADER */
+        header {
+            text-align: center;
+            padding-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: #a80000;
+            font-size: 30px;
+            line-height: 1.3;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* CARD */
+        .card {
+            background: #fff;
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 22px;
+            box-shadow: 0 5px 18px rgba(168, 0, 0, 0.07);
+            border: 1px solid #f2dede;
+        }
+
+        .section-title {
+            color: #a80000;
+            font-size: 19px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .number-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #a80000;
+            color: #fff;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 18px;
+        }
+
+        /* UPLOAD */
+        .upload-area {
+            border: 2px dashed #dbaaaa;
+            background: #fffafa;
+            border-radius: 12px;
+            padding: 30px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #a80000;
+            background: #fff0f0;
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .upload-area h3 {
+            color: #a80000;
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+
+        .upload-area p {
+            color: #777;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .upload-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 11px 20px;
+            background: #a80000;
+            color: white;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        #photoInput {
+            display: none;
+        }
+
+        .upload-info {
+            margin-top: 12px;
+            color: #777;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        /* DAFTAR FOTO */
+        .photo-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin: 22px 0 14px;
+        }
+
+        .photo-heading h3 {
+            font-size: 15px;
+            color: #333;
+        }
+
+        .photo-count {
+            color: #a80000;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .photo-list {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .photo-item {
+            position: relative;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .photo-item img {
+            display: block;
+            width: 100%;
+            height: 145px;
+            object-fit: cover;
+        }
+
+        .photo-number {
+            position: absolute;
+            top: 7px;
+            left: 7px;
+            background: rgba(168, 0, 0, 0.9);
+            color: #fff;
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+        }
+
+        .remove-photo {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 27px;
+            height: 27px;
+            border: none;
+            border-radius: 50%;
+            background: #fff;
+            color: #a80000;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .photo-name {
+            padding: 9px;
+            font-size: 11px;
+            color: #555;
+            overflow-wrap: anywhere;
+            line-height: 1.4;
+        }
+
+        .empty-photos {
+            grid-column: 1 / -1;
+            padding: 24px 12px;
+            text-align: center;
+            color: #888;
+            border: 1px dashed #ddd;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .small-button {
+            border: 1px solid #e5caca;
+            color: #a80000;
+            background: #fff5f5;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .small-button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        /* PENGATURAN */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            color: #333;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .radio-option {
+            flex: 1;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 12px;
+            border: 1px solid #e5dada;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            background: #fff;
+        }
+
+        .radio-option input {
+            accent-color: #a80000;
+        }
+
+        .form-group input[type="range"] {
+            width: 100%;
+            accent-color: #a80000;
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #777;
+            margin-top: 7px;
+        }
+
+        .margin-note {
+            font-size: 12px;
+            color: #777;
+            margin-top: 7px;
+            line-height: 1.5;
+        }
+
+        /* TOMBOL */
+        .primary-button {
+            width: 100%;
+            border: none;
+            background: #a80000;
+            color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .primary-button:hover {
+            background: #850000;
+        }
+
+        .primary-button:disabled {
+            background: #c99b9b;
+            cursor: not-allowed;
+        }
+
+        .secondary-button {
+            width: 100%;
+            border: 1px solid #e5caca;
+            background: #fff5f5;
+            color: #a80000;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .status-message {
+            display: none;
+            margin-top: 15px;
+            padding: 13px;
+            border-radius: 9px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .status-message.show {
+            display: block;
+        }
+
+        .status-message.success {
+            background: #eaf8ee;
+            color: #176b32;
+            border: 1px solid #c9e8d1;
+        }
+
+        .status-message.error {
+            background: #fff0f0;
+            color: #a80000;
+            border: 1px solid #f2caca;
+        }
+
+        .status-message.info {
+            background: #f0f5ff;
+            color: #234e91;
+            border: 1px solid #d3e0fa;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .footer .contact-question {
+            font-size: 17px;
+            line-height: 1.5;
+        }
+
+        .footer .contact-instruction {
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .footer .contact-link {
+            display: inline-block;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        /* DARK MODE */
+        body.dark-mode {
+            background: #121212;
+            color: #eee;
+        }
+
+        body.dark-mode header p,
+        body.dark-mode .description,
+        body.dark-mode footer,
+        body.dark-mode .upload-info,
+        body.dark-mode .margin-note {
+            color: #bbb;
+        }
+
+        body.dark-mode .card {
+            background: #1e1e1e;
+            border-color: #333;
+        }
+
+        body.dark-mode .dark-mode-button,
+        body.dark-mode .small-button,
+        body.dark-mode .secondary-button {
+            background: #292020;
+            color: #ff7777;
+            border-color: #583333;
+        }
+
+        body.dark-mode .nav-link {
+            color: #eee;
+        }
+
+        body.dark-mode .nav-link:hover,
+        body.dark-mode .nav-link.admin-link {
+            background: #382020;
+            color: #ff7777;
+            border-color: #493030;
+        }
+
+        body.dark-mode .nav-heading {
+            color: #ff7777;
+        }
+
+        body.dark-mode .nav-divider {
+            background: #383838;
+        }
+
+        body.dark-mode .nav-overlay {
+            background: rgba(0, 0, 0, 0.65);
+        }
+
+        body.dark-mode .nav-drawer {
+            background: #1e1e1e;
+        }
+
+        body.dark-mode .upload-area {
+            background: #242020;
+            border-color: #694040;
+        }
+
+        body.dark-mode .upload-area:hover,
+        body.dark-mode .upload-area.dragover {
+            background: #352020;
+            border-color: #a80000;
+        }
+
+        body.dark-mode .upload-area p,
+        body.dark-mode .photo-name,
+        body.dark-mode .photo-heading h3,
+        body.dark-mode .form-group label {
+            color: #ddd;
+        }
+
+        body.dark-mode .photo-item,
+        body.dark-mode .radio-option {
+            background: #242424;
+            border-color: #444;
+        }
+
+        body.dark-mode .empty-photos {
+            border-color: #444;
+            color: #aaa;
+        }
+
+        body.dark-mode .photo-count {
+            color: #ff7777;
+        }
+
+        body.dark-mode .status-message.success {
+            background: #173321;
+            color: #b5edc4;
+            border-color: #285d38;
+        }
+
+        body.dark-mode .status-message.error {
+            background: #351d1d;
+            color: #ffaaaa;
+            border-color: #683535;
+        }
+
+        body.dark-mode .status-message.info {
+            background: #1c2940;
+            color: #bdd3ff;
+            border-color: #304a75;
+        }
+
+        body.dark-mode .credit {
+            color: #888;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            body {
+                padding: 35px 12px 20px;
+            }
+
+            header {
+                padding-top: 30px;
+                margin-bottom: 23px;
+            }
+
+            header h1 {
+                font-size: 25px;
+            }
+
+            .card {
+                padding: 20px 16px;
+                border-radius: 14px;
+            }
+
+            .section-title {
+                font-size: 17px;
+            }
+
+            .photo-list {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .photo-item img {
+                height: 130px;
+            }
+
+            .upload-area {
+                padding: 25px 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOMBOL MENU GARIS TIGA -->
+    <button
+        class="menu-toggle"
+        id="menuToggle"
+        type="button"
+        aria-label="Buka menu navigasi"
+        aria-expanded="false"
+        aria-controls="navDrawer"
+    >
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- LAPISAN GELAP -->
+    <div class="nav-overlay" id="navOverlay"></div>
+
+    <!-- MENU NAVIGASI -->
+    <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
+        <div class="nav-heading">MENU NAVIGASI</div>
+
+        <a class="nav-link admin-link" href="/dashboard.html">
+            <span class="nav-icon">🔐</span>
+            <span>Dashboard Admin</span>
+        </a>
+
+        <a class="nav-link" href="/foto-ke-pdf.html">
+            <span class="nav-icon">📄</span>
+            <span>Ubah Foto ke PDF</span>
+        </a>
+
+        <a class="nav-link" href="/">
+            <span class="nav-icon">🧮</span>
+            <span>Kalkulator Harga Tayang</span>
+        </a>
+
+        <div class="nav-divider"></div>
+
+        <button
+            class="nav-link dark-mode-button"
+            id="darkModeToggle"
+            type="button"
+            aria-label="Ganti tema tampilan"
+        >
+            <span class="nav-icon" id="darkModeIcon">🌙</span>
+            <span id="darkModeText">Dark Mode</span>
+        </button>
+    </nav>
+
+    <main class="container">
+
+        <!-- HEADER -->
+        <header>
+            <h1>Gabungkan Foto Jadi PDF</h1>
+            <p>
+                Gabungkan beberapa foto menjadi satu file PDF dengan mudah,
+                cepat, dan gratis.
+            </p>
+        </header>
+
+        <!-- BAGIAN 1: UPLOAD FOTO -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="number-badge">1</span>
+                Pilih Foto
+            </h2>
+
+            <p class="description">
+                Pilih foto dari perangkat kamu. Foto akan disusun sesuai urutan
+                yang kamu pilih dan digabungkan menjadi satu file PDF.
+            </p>
+
+            <div class="upload-area" id="uploadArea" role="button" tabindex="0">
+                <div class="upload-icon">📷</div>
+                <h3>Pilih atau Masukkan Foto</h3>
+                <p>
+                    Klik area ini atau seret foto ke sini<br>
+                    Mendukung JPG, JPEG, PNG, dan WEBP
+                </p>
+                <span class="upload-button">Pilih Foto</span>
+            </div>
+
+            <input
+                type="file"
+                id="photoInput"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+            >
+
+            <p class="upload-info">
+                Maksimal 20 foto, ukuran maksimal 15 MB per foto.
+                Semua proses dilakukan di browser kamu.
+            </p>
+
+            <div class="photo-heading">
+                <h3>Foto yang Dipilih</h3>
+                <span class="photo-count" id="photoCount">0 foto</span>
+            </div>
+
+            <div class="photo-list" id="photoList">
+                <div class="empty-photos">
+                    Belum ada foto yang dipilih.
+                </div>
+            </div>
+
+            <button
+                type="button"
+                class="secondary-button"
+                id="clearButton"
+                disabled
+            >
+                Hapus Semua Foto
+            </button>
+        </section>
+
+        <!-- BAGIAN 2: PENGATURAN PDF -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="number-badge">2</span>
+                Pengaturan PDF
+            </h2>
+
+            <div class="form-group">
+                <label>Orientasi Kertas</label>
+
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input
+                            type="radio"
+                            name="orientation"
+                            value="portrait"
+                            checked
+                        >
+                        <span>📄 Potret (Portrait)</span>
+                    </label>
+
+                    <label class="radio-option">
+                        <input
+                            type="radio"
+                            name="orientation"
+                            value="landscape"
+                        >
+                        <span>🖼️ Lanskap (Landscape)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="quality">
+                    Kualitas PDF: <span id="qualityValue">85%</span>
+                </label>
+
+                <input
+                    type="range"
+                    id="quality"
+                    min="40"
+                    max="100"
+                    value="85"
+                    step="5"
+                >
+
+                <div class="range-labels">
+                    <span>Ukuran lebih kecil</span>
+                    <span>Kualitas lebih tinggi</span>
+                </div>
+
+                <p class="margin-note">
+                    Kualitas lebih tinggi dapat menghasilkan file PDF yang lebih besar.
+                </p>
+            </div>
+        </section>
+
+        <!-- BAGIAN 3: BUAT PDF -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="number-badge">3</span>
+                Buat File PDF
+            </h2>
+
+            <p class="description">
+                Setiap foto akan ditempatkan pada satu halaman PDF ukuran A4
+                dengan margin 10 mm dan disesuaikan agar muat di halaman.
+            </p>
+
+            <button
+                type="button"
+                class="primary-button"
+                id="createPdfButton"
+                disabled
+            >
+                📄 Gabungkan dan Unduh PDF
+            </button>
+
+            <div
+                class="status-message"
+                id="statusMessage"
+                role="status"
+                aria-live="polite"
+            ></div>
+        </section>
+
+            <!-- FOOTER -->
+    <div class="footer">
+        <p
+            class="contact-question"
+            style="font-weight: bold; color: #a80000; margin-bottom: 8px;"
+        >
+            Ada saran atau pertanyaan?
+        </p>
+
+        <p class="contact-instruction" style="margin-bottom: 8px;">
+            Silakan hubungi nomor di bawah ini:
+        </p>
+
+        <p>
+            <a
+                class="contact-link"
+                href="https://wa.me/6281125213879"
+                target="_blank"
+                rel="noopener noreferrer"
+                style="color: #25D366; text-decoration: none; font-weight: bold;"
+            >
+                ☎ 081125213879 (Egik)
+            </a>
+        </p>
+
+        <p style="margin-top: 10px;">
+            Credit by <strong>eth production</strong>
+        </p>
+    </div>
+
+    </main>
+
+    <script>
+        /* MENU NAVIGASI */
+        const menuToggle = document.getElementById("menuToggle");
+        const navDrawer = document.getElementById("navDrawer");
+        const navOverlay = document.getElementById("navOverlay");
+
+        function bukaMenu() {
+            menuToggle.classList.add("active");
+            navDrawer.classList.add("show");
+            navOverlay.classList.add("show");
+            menuToggle.setAttribute("aria-expanded", "true");
+            document.body.style.overflow = "hidden";
+        }
+
+        function tutupMenu() {
+            menuToggle.classList.remove("active");
+            navDrawer.classList.remove("show");
+            navOverlay.classList.remove("show");
+            menuToggle.setAttribute("aria-expanded", "false");
+            document.body.style.overflow = "";
+        }
+
+        menuToggle.addEventListener("click", function () {
+            if (navDrawer.classList.contains("show")) {
+                tutupMenu();
+            } else {
+                bukaMenu();
+            }
+        });
+
+        navOverlay.addEventListener("click", tutupMenu);
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                tutupMenu();
+            }
+        });
+
+        document.querySelectorAll("#navDrawer .nav-link").forEach(function (link) {
+            link.addEventListener("click", tutupMenu);
+        });
+
+        /* DARK MODE */
+        const darkModeToggle = document.getElementById("darkModeToggle");
+        const darkModeIcon = document.getElementById("darkModeIcon");
+        const darkModeText = document.getElementById("darkModeText");
+
+        function aturDarkMode(aktif) {
+            document.body.classList.toggle("dark-mode", aktif);
+
+            darkModeIcon.textContent = aktif ? "☀️" : "🌙";
+            darkModeText.textContent = aktif ? "Light Mode" : "Dark Mode";
+
+            try {
+                localStorage.setItem(
+                    "kalkulatorDarkMode",
+                    aktif ? "aktif" : "nonaktif"
+                );
+            } catch (error) {
+                console.warn("Pilihan tema tidak dapat disimpan.", error);
+            }
+        }
+
+        let darkModeTersimpan = false;
+
+        try {
+            darkModeTersimpan =
+                localStorage.getItem("kalkulatorDarkMode") === "aktif";
+        } catch (error) {
+            console.warn("Pilihan tema tidak dapat dibaca.", error);
+        }
+
+        aturDarkMode(darkModeTersimpan);
+
+        darkModeToggle.addEventListener("click", function () {
+            const aktif = !document.body.classList.contains("dark-mode");
+            aturDarkMode(aktif);
+            tutupMenu();
+        });
+
+        /* ELEMEN FOTO DAN PDF */
+        const uploadArea = document.getElementById("uploadArea");
+        const photoInput = document.getElementById("photoInput");
+        const photoList = document.getElementById("photoList");
+        const photoCount = document.getElementById("photoCount");
+        const clearButton = document.getElementById("clearButton");
+
+        const qualityInput = document.getElementById("quality");
+        const qualityValue = document.getElementById("qualityValue");
+
+        const createPdfButton = document.getElementById("createPdfButton");
+        const statusMessage = document.getElementById("statusMessage");
+
+        const MAX_PHOTOS = 20;
+        const MAX_FILE_SIZE = 15 * 1024 * 1024;
+
+        const ALLOWED_TYPES = [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        ];
+
+        /* PENGATURAN PDF TETAP */
+        const PDF_PAPER_SIZE = "a4";
+        const PDF_MARGIN = 10;
+
+        let photos = [];
+        let nextPhotoId = 1;
+        let isGenerating = false;
+
+        /* PESAN STATUS */
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = "status-message show " + type;
+        }
+
+        function hideStatus() {
+            statusMessage.textContent = "";
+            statusMessage.className = "status-message";
+        }
+
+        /* MEMILIH FOTO */
+        uploadArea.addEventListener("click", function () {
+            if (!isGenerating) {
+                photoInput.click();
+            }
+        });
+
+        uploadArea.addEventListener("keydown", function (event) {
+            if (
+                (event.key === "Enter" || event.key === " ") &&
+                !isGenerating
+            ) {
+                event.preventDefault();
+                photoInput.click();
+            }
+        });
+
+        photoInput.addEventListener("change", function () {
+            addPhotos(Array.from(photoInput.files || []));
+            photoInput.value = "";
+        });
+
+        /* DRAG AND DROP */
+        ["dragenter", "dragover"].forEach(function (eventName) {
+            uploadArea.addEventListener(eventName, function (event) {
+                event.preventDefault();
+
+                if (!isGenerating) {
+                    uploadArea.classList.add("dragover");
+                }
+            });
+        });
+
+        ["dragleave", "drop"].forEach(function (eventName) {
+            uploadArea.addEventListener(eventName, function (event) {
+                event.preventDefault();
+                uploadArea.classList.remove("dragover");
+            });
+        });
+
+        uploadArea.addEventListener("drop", function (event) {
+            if (isGenerating) return;
+
+            const droppedFiles = Array.from(
+                event.dataTransfer.files || []
+            );
+
+            addPhotos(droppedFiles);
+        });
+
+        /* TAMBAH FOTO */
+        function addPhotos(files) {
+            if (isGenerating) return;
+
+            hideStatus();
+
+            let added = 0;
+            let rejected = 0;
+            let duplicate = 0;
+
+            for (const file of files) {
+                if (photos.length >= MAX_PHOTOS) {
+                    rejected++;
+                    continue;
+                }
+
+                if (!ALLOWED_TYPES.includes(file.type)) {
+                    rejected++;
+                    continue;
+                }
+
+                if (file.size > MAX_FILE_SIZE) {
+                    rejected++;
+                    continue;
+                }
+
+                const isDuplicate = photos.some(function (photo) {
+                    return (
+                        photo.file.name === file.name &&
+                        photo.file.size === file.size &&
+                        photo.file.lastModified === file.lastModified
+                    );
+                });
+
+                if (isDuplicate) {
+                    duplicate++;
+                    continue;
+                }
+
+                photos.push({
+                    id: nextPhotoId++,
+                    file: file,
+                    url: URL.createObjectURL(file)
+                });
+
+                added++;
+            }
+
+            renderPhotos();
+
+            if (rejected > 0 || duplicate > 0) {
+                const messages = [];
+
+                if (added > 0) {
+                    messages.push(added + " foto berhasil ditambahkan.");
+                }
+
+                if (rejected > 0) {
+                    messages.push(
+                        rejected +
+                        " file dilewati karena format, ukuran, atau batas 20 foto."
+                    );
+                }
+
+                if (duplicate > 0) {
+                    messages.push(duplicate + " foto duplikat dilewati.");
+                }
+
+                showStatus(
+                    messages.join(" "),
+                    added > 0 ? "info" : "error"
+                );
+            } else if (added > 0) {
+                showStatus(
+                    added + " foto berhasil ditambahkan.",
+                    "success"
+                );
+            } else if (files.length === 0) {
+                hideStatus();
+            }
+        }
+
+        /* TAMPILKAN DAFTAR FOTO */
+        function renderPhotos() {
+            photoList.innerHTML = "";
+
+            photoCount.textContent = photos.length + " foto";
+
+            clearButton.disabled =
+                photos.length === 0 || isGenerating;
+
+            createPdfButton.disabled =
+                photos.length === 0 || isGenerating;
+
+            if (photos.length === 0) {
+                const empty = document.createElement("div");
+                empty.className = "empty-photos";
+                empty.textContent = "Belum ada foto yang dipilih.";
+                photoList.appendChild(empty);
+                return;
+            }
+
+            photos.forEach(function (photo, index) {
+                const item = document.createElement("div");
+                item.className = "photo-item";
+
+                const image = document.createElement("img");
+                image.src = photo.url;
+                image.alt = "Foto " + (index + 1);
+                image.loading = "lazy";
+
+                const number = document.createElement("span");
+                number.className = "photo-number";
+                number.textContent = "Foto " + (index + 1);
+
+                const removeButton = document.createElement("button");
+                removeButton.className = "remove-photo";
+                removeButton.type = "button";
+                removeButton.textContent = "×";
+
+                removeButton.setAttribute(
+                    "aria-label",
+                    "Hapus foto " + (index + 1)
+                );
+
+                removeButton.addEventListener("click", function () {
+                    removePhoto(photo.id);
+                });
+
+                const name = document.createElement("div");
+                name.className = "photo-name";
+                name.textContent = photo.file.name;
+
+                item.appendChild(image);
+                item.appendChild(number);
+                item.appendChild(removeButton);
+                item.appendChild(name);
+
+                photoList.appendChild(item);
+            });
+        }
+
+        /* HAPUS SATU FOTO */
+        function removePhoto(id) {
+            if (isGenerating) return;
+
+            const index = photos.findIndex(function (photo) {
+                return photo.id === id;
+            });
+
+            if (index === -1) return;
+
+            URL.revokeObjectURL(photos[index].url);
+            photos.splice(index, 1);
+
+            renderPhotos();
+            hideStatus();
+        }
+
+        /* HAPUS SEMUA FOTO */
+        clearButton.addEventListener("click", function () {
+            if (isGenerating) return;
+
+            photos.forEach(function (photo) {
+                URL.revokeObjectURL(photo.url);
+            });
+
+            photos = [];
+
+            renderPhotos();
+            hideStatus();
+        });
+
+        /* PENGATURAN KUALITAS */
+        qualityInput.addEventListener("input", function () {
+            qualityValue.textContent = qualityInput.value + "%";
+        });
+
+        /* BACA FOTO DAN KONVERSI KE JPEG */
+        function readImageAsJpeg(file, quality) {
+            return new Promise(function (resolve, reject) {
+                const reader = new FileReader();
+
+                reader.onerror = function () {
+                    reject(
+                        new Error("Tidak dapat membaca file " + file.name)
+                    );
+                };
+
+                reader.onload = function () {
+                    const image = new Image();
+
+                    image.onerror = function () {
+                        reject(
+                            new Error("Foto tidak dapat dibuka: " + file.name)
+                        );
+                    };
+
+                    image.onload = function () {
+                        try {
+                            const canvas = document.createElement("canvas");
+                            const context = canvas.getContext("2d");
+
+                            if (!context) {
+                                reject(
+                                    new Error(
+                                        "Browser tidak mendukung pemrosesan gambar."
+                                    )
+                                );
+                                return;
+                            }
+
+                            canvas.width = image.naturalWidth;
+                            canvas.height = image.naturalHeight;
+
+                            /* Latar putih untuk transparansi PNG */
+                            context.fillStyle = "#ffffff";
+                            context.fillRect(
+                                0,
+                                0,
+                                canvas.width,
+                                canvas.height
+                            );
+
+                            context.drawImage(image, 0, 0);
+
+                            const jpegData = canvas.toDataURL(
+                                "image/jpeg",
+                                quality
+                            );
+
+                            resolve({
+                                data: jpegData,
+                                width: image.naturalWidth,
+                                height: image.naturalHeight
+                            });
+
+                            canvas.width = 1;
+                            canvas.height = 1;
+                        } catch (error) {
+                            reject(
+                                new Error(
+                                    "Gagal memproses foto: " + file.name
+                                )
+                            );
+                        }
+                    };
+
+                    image.src = reader.result;
+                };
+
+                reader.readAsDataURL(file);
+            });
+        }
+
+        /* BUAT PDF */
+        createPdfButton.addEventListener("click", async function () {
+            if (photos.length === 0 || isGenerating) return;
+
+            if (!window.jspdf || !window.jspdf.jsPDF) {
+                showStatus(
+                    "Library PDF gagal dimuat. Periksa koneksi internet, lalu muat ulang halaman.",
+                    "error"
+                );
+                return;
+            }
+
+            isGenerating = true;
+            createPdfButton.disabled = true;
+            clearButton.disabled = true;
+            createPdfButton.textContent = "Memproses Foto...";
+            hideStatus();
+
+            try {
+                const { jsPDF } = window.jspdf;
+
+                const orientation = document.querySelector(
+                    'input[name="orientation"]:checked'
+                ).value;
+
+                const quality =
+                    Number(qualityInput.value) / 100;
+
+                const margin = PDF_MARGIN;
+                const selectedPaper = PDF_PAPER_SIZE;
+
+                const pdf = new jsPDF({
+                    orientation: orientation,
+                    unit: "mm",
+                    format: selectedPaper,
+                    compress: true
+                });
+
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+
+                const availableWidth = pageWidth - margin * 2;
+                const availableHeight = pageHeight - margin * 2;
+
+                if (
+                    availableWidth <= 0 ||
+                    availableHeight <= 0
+                ) {
+                    throw new Error(
+                        "Pengaturan halaman PDF tidak valid."
+                    );
+                }
+
+                for (let i = 0; i < photos.length; i++) {
+                    createPdfButton.textContent =
+                        "Memproses foto " +
+                        (i + 1) +
+                        " dari " +
+                        photos.length +
+                        "...";
+
+                    const image = await readImageAsJpeg(
+                        photos[i].file,
+                        quality
+                    );
+
+                    if (i > 0) {
+                        pdf.addPage(
+                            selectedPaper,
+                            orientation
+                        );
+                    }
+
+                    /* Foto disesuaikan agar muat di A4, margin 10 mm */
+                    const ratio = Math.min(
+                        availableWidth / image.width,
+                        availableHeight / image.height
+                    );
+
+                    const drawWidth = image.width * ratio;
+                    const drawHeight = image.height * ratio;
+
+                    const x = (pageWidth - drawWidth) / 2;
+                    const y = (pageHeight - drawHeight) / 2;
+
+                    pdf.addImage(
+                        image.data,
+                        "JPEG",
+                        x,
+                        y,
+                        drawWidth,
+                        drawHeight,
+                        undefined,
+                        "FAST"
+                    );
+                }
+
+                const now = new Date();
+
+                const date =
+                    now.getFullYear() +
+                    "-" +
+                    String(now.getMonth() + 1).padStart(2, "0") +
+                    "-" +
+                    String(now.getDate()).padStart(2, "0");
+
+                pdf.save("gabungan-foto-" + date + ".pdf");
+
+                showStatus(
+                    "PDF berhasil dibuat! Total " +
+                    photos.length +
+                    " foto telah digabungkan. File akan diunduh ke perangkat kamu.",
+                    "success"
+                );
+            } catch (error) {
+                console.error(error);
+
+                showStatus(
+                    error.message ||
+                    "Terjadi kesalahan saat membuat PDF. Coba gunakan foto yang lebih kecil.",
+                    "error"
+                );
+            } finally {
+                isGenerating = false;
+                createPdfButton.textContent =
+                    "📄 Gabungkan dan Unduh PDF";
+
+                renderPhotos();
+            }
+        });
+
+        /* BERSIHKAN URL SEMENTARA */
+        window.addEventListener("beforeunload", function () {
+            photos.forEach(function (photo) {
+                URL.revokeObjectURL(photo.url);
+            });
+        });
+
+        /* TAMPILKAN FOTO AWAL */
+        renderPhotos();
+    </script>
+
+</body>
+</html>
