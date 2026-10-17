@@ -507,6 +507,38 @@
             border: 1px solid #d3e0fa;
         }
 
+        
+/* PENGHITUNG TOTAL PDF */
+.pdf-counter {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 999;
+    padding: 10px 13px;
+    background: #fff0f0;
+    color: #a80000;
+    border: 1px solid #f2dede;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0 3px 10px rgba(150, 0, 0, 0.08);
+}
+
+body.dark-mode .pdf-counter {
+    background: #382020;
+    color: #ff7777;
+    border-color: #493030;
+}
+
+@media (max-width: 600px) {
+    .pdf-counter {
+        top: 18px;
+        right: 12px;
+        padding: 9px 10px;
+        font-size: 10px;
+    }
+        }
+        
         /* FOOTER */
         .footer {
             text-align: center;
@@ -681,6 +713,10 @@
 
 <body>
 
+<div class="pdf-counter">
+    📄 Total PDF dibuat: <span id="totalPdfCount">0</span>
+</div>
+    
     <!-- TOMBOL MENU GARIS TIGA -->
     <button
         class="menu-toggle"
@@ -1340,6 +1376,47 @@
             });
         }
 
+        
+/* TOTAL PDF BERHASIL DIBUAT */
+async function loadTotalPdf() {
+    const counter = document.getElementById("totalPdfCount");
+
+    try {
+        const response = await fetch("/api/pdf-count", {
+            method: "GET",
+            cache: "no-store"
+        });
+
+        if (!response.ok) throw new Error("Gagal membaca total PDF");
+
+        const data = await response.json();
+
+        counter.textContent = Number(data.total).toLocaleString("id-ID");
+    } catch (error) {
+        console.error("Gagal memuat total PDF:", error);
+    }
+}
+
+async function tambahTotalPdf() {
+    const counter = document.getElementById("totalPdfCount");
+
+    try {
+        const response = await fetch("/api/pdf-count", {
+            method: "POST"
+        });
+
+        if (!response.ok) throw new Error("Gagal menambah total PDF");
+
+        const data = await response.json();
+
+        counter.textContent = Number(data.total).toLocaleString("id-ID");
+    } catch (error) {
+        console.error("Gagal memperbarui total PDF:", error);
+    }
+}
+
+loadTotalPdf();
+        
         /* BUAT PDF */
         createPdfButton.addEventListener("click", async function () {
             if (photos.length === 0 || isGenerating) return;
@@ -1448,6 +1525,8 @@
 
                 pdf.save("gabungan-foto-" + date + ".pdf");
 
+                // Tambah total PDF berhasil dibuat
+                await tambahTotalPdf();
                 showStatus(
                     "PDF berhasil dibuat! Total " +
                     photos.length +
