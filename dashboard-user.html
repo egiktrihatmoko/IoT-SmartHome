@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b91c1c">
+  <title>Dashboard Pengguna</title>
+
+  <style>
+    /* ======================================================
+       1. WARNA DAN PENGATURAN DASAR
+       ====================================================== */
+    :root {
+      --red: #b91c1c;
+      --red-hover: #991b1b;
+      --red-light: #fff1f1;
+      --ink: #202124;
+      --muted: #777b84;
+      --line: #ececef;
+      --surface: #ffffff;
+      --page: #f7f7f8;
+      --radius: 15px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+
+    /* ======================================================
+       2. HEADER
+       ====================================================== */
+    .header {
+      height: 70px;
+      padding: 0 28px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      background: var(--red);
+      color: #fff;
+      font-size: 19px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .brand-title { font-size: 14px; font-weight: 750; }
+    .brand-subtitle { margin-top: 3px; font-size: 11px; color: var(--muted); }
+
+    .header-right { display: flex; align-items: center; gap: 13px; }
+
+    .online {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #31804b;
+      font-size: 12px;
+    }
+
+    .online-dot {
+      width: 7px;
+      height: 7px;
+      background: #35a65b;
+      border-radius: 50%;
+    }
+
+    .logout {
+      border: 1px solid #f0caca;
+      border-radius: 9px;
+      background: #fff;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 650;
+      padding: 9px 12px;
+      cursor: pointer;
+      transition: background .15s ease;
+    }
+
+    .logout:hover { background: var(--red-light); }
+
+    /* ======================================================
+       3. KONTEN DASHBOARD
+       ====================================================== */
+    .container {
+      width: min(100% - 40px, 1000px);
+      margin: 34px auto 70px;
+    }
+
+    .welcome {
+      padding: 0 0 25px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 27px;
+    }
+
+    .eyebrow {
+      color: var(--red);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: 1.1px;
+      margin: 0 0 10px;
+    }
+
+    .welcome h1 {
+      font-size: clamp(25px, 4vw, 32px);
+      line-height: 1.2;
+      letter-spacing: -.8px;
+      margin: 0 0 9px;
+      font-weight: 750;
+    }
+
+    .welcome p:last-child {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .section-top {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .section-top h2 { margin: 0; font-size: 17px; font-weight: 750; }
+    .section-top p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+
+    /* ======================================================
+       4. KARTU FITUR
+       ====================================================== */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    .feature {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      min-height: 218px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+
+    .feature:hover {
+      border-color: #e8b4b4;
+      box-shadow: 0 8px 24px rgba(50, 20, 20, .045);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      background: var(--red-light);
+      color: var(--red);
+      border-radius: 12px;
+      margin-bottom: 17px;
+    }
+
+    .feature-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .feature h3 { margin: 0 0 8px; font-size: 15px; line-height: 1.4; }
+    .feature p { margin: 0 0 20px; color: var(--muted); font-size: 12px; line-height: 1.65; flex: 1; }
+
+    .feature-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .feature-link span { font-size: 16px; transition: transform .15s ease; }
+    .feature-link:hover span { transform: translateX(3px); }
+
+    /* ======================================================
+       5. BARIS AKUN
+       ====================================================== */
+    .account {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 15px 17px;
+      margin-top: 22px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--red-light);
+      color: var(--red);
+      flex-shrink: 0;
+    }
+
+    .avatar svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .account-copy { min-width: 0; flex: 1; }
+    .account-copy strong { display: block; font-size: 13px; }
+    .account-copy small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+      overflow-wrap: anywhere;
+    }
+
+    .role {
+      color: #62646b;
+      background: #f4f4f5;
+      border-radius: 7px;
+      padding: 6px 8px;
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: .5px;
+    }
+
+    .footer {
+      margin-top: 26px;
+      color: #9698a0;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    /* ======================================================
+       6. RESPONSIF UNTUK HP
+       ====================================================== */
+    @media (max-width: 720px) {
+      .header { height: 64px; padding: 0 16px; }
+      .brand-icon { width: 35px; height: 35px; }
+      .brand-title { font-size: 12px; }
+      .brand-subtitle { font-size: 10px; }
+      .online { display: none; }
+      .container { width: calc(100% - 30px); margin-top: 26px; }
+      .welcome { padding-bottom: 22px; margin-bottom: 23px; }
+      .feature-grid { grid-template-columns: 1fr; gap: 11px; }
+      .feature {
+        min-height: 0;
+        padding: 16px;
+        display: grid;
+        grid-template-columns: 43px minmax(0, 1fr);
+        column-gap: 13px;
+        align-items: start;
+      }
+      .feature-icon { grid-column: 1; grid-row: 1 / span 3; margin: 0; }
+      .feature h3 { grid-column: 2; margin: 1px 0 5px; }
+      .feature p { grid-column: 2; margin: 0 0 10px; }
+      .feature-link { grid-column: 2; }
+      .account { margin-top: 17px; }
+      .footer { margin-top: 20px; }
+    }
+
+    @media (min-width: 480px) and (max-width: 720px) {
+      .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .feature { display: flex; }
+      .feature-icon { margin-bottom: 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header dan identitas website -->
+  <header class="header">
+    <a class="brand" href="user-dashboard.html" aria-label="Dashboard pengguna">
+      <div class="brand-icon">K</div>
+      <div>
+        <div class="brand-title">Kalkulator Harga Tayang</div>
+        <div class="brand-subtitle">Pusat layanan pengguna</div>
+      </div>
+    </a>
+
+    <div class="header-right">
+      <div class="online"><span class="online-dot"></span> Akun aktif</div>
+      <button class="logout" id="logoutButton" type="button">Keluar</button>
+    </div>
+  </header>
+
+  <!-- Konten utama dashboard -->
+  <main class="container">
+    <section class="welcome">
+      <p class="eyebrow">DASHBOARD</p>
+      <h1 id="welcomeTitle">Selamat datang!</h1>
+      <p>Pilih fitur yang kamu perlukan untuk mulai bekerja.</p>
+    </section>
+
+    <section aria-labelledby="featuresTitle">
+      <div class="section-top">
+        <div>
+          <h2 id="featuresTitle">Fitur utama</h2>
+          <p>Semua kebutuhanmu dalam satu tempat.</p>
+        </div>
+      </div>
+
+      <div class="feature-grid">
+        <!-- Fitur kalkulator harga tayang -->
+        <article class="feature">
+          <div class="feature-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M8 7h8M8 11h2m4 0h2M8 15h2m4 0h2M8 18h2m4 0h2"></path></svg>
+          </div>
+          <h3>Kalkulator Harga Tayang</h3>
+          <p>Hitung harga tayang dengan cepat dan praktis.</p>
+          <a class="feature-link" href="index.html">Buka fitur <span>→</span></a>
+        </article>
+
+        <!-- Fitur konversi foto ke PDF -->
+        <article class="feature">
+          <div class="feature-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="8.5" cy="9" r="1.5"></circle><path d="m21 15-5-5L5 20"></path></svg>
+          </div>
+          <h3>Foto ke PDF</h3>
+          <p>Gabungkan atau ubah foto menjadi dokumen PDF.</p>
+          <a class="feature-link" href="foto-ke-pdf.html">Buka fitur <span>→</span></a>
+        </article>
+
+        <!-- Fitur pembuatan surat pernyataan -->
+        <article class="feature">
+          <div class="feature-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6M8 13h8M8 17h8"></path></svg>
+          </div>
+          <h3>Surat Pernyataan</h3>
+          <p>Buat surat pernyataan dan tambahkan tanda tangan.</p>
+          <a class="feature-link" href="surat-pernyataan.html">Buka fitur <span>→</span></a>
+        </article>
+      </div>
+    </section>
+
+    <!-- Informasi singkat akun yang sedang masuk -->
+    <section class="account" aria-label="Informasi akun pengguna">
+      <div class="avatar" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+      </div>
+      <div class="account-copy">
+        <strong id="accountName">Akun pengguna</strong>
+        <small id="accountEmail">Memuat informasi akun...</small>
+      </div>
+      <span class="role">USER</span>
+    </section>
+
+    <footer class="footer">© <span id="year"></span> Kalkulator Harga Tayang</footer>
+  </main>
+
+  <script>
+    /* ======================================================
+       7. CEK SESI USER
+       Pastikan endpoint /api/user/check mengembalikan status
+       autentikasi dan data user sesuai backend kamu.
+       ====================================================== */
+    async function checkUserSession() {
+      try {
+        const response = await fetch("/api/user/check", {
+          method: "GET",
+          credentials: "include",
+          headers: { "Accept": "application/json" }
+        });
+
+        if (!response.ok) {
+          window.location.replace("login-user.html");
+          return;
+        }
+
+        const result = await response.json();
+
+        // Backend harus melakukan validasi role user di server.
+        if (result.authenticated === false || result.role === "admin") {
+          window.location.replace("login-user.html");
+          return;
+        }
+
+        const user = result.user || result.data || result;
+        const name = user.name || user.nama || user.fullName || "Pengguna";
+        const email = user.email || user.userEmail || "";
+
+        document.getElementById("welcomeTitle").textContent = `Selamat datang, ${name}!`;
+        document.getElementById("accountName").textContent = name;
+        document.getElementById("accountEmail").textContent =
+          email || "Informasi email tidak tersedia";
+      } catch (error) {
+        // Jika API gagal diakses, jangan menganggap sesi telah terverifikasi.
+        window.location.replace("login-user.html");
+      }
+    }
+
+    /* ======================================================
+       8. KELUAR DARI AKUN
+       Endpoint logout perlu menghapus sesi di sisi server.
+       ====================================================== */
+    document.getElementById("logoutButton").addEventListener("click", async () => {
+      const button = document.getElementById("logoutButton");
+      button.disabled = true;
+      button.textContent = "Memproses...";
+
+      try {
+        await fetch("/api/user/logout", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Accept": "application/json" }
+        });
+      } catch (error) {
+        // Navigasi tetap diarahkan ke login jika permintaan gagal.
+      }
+
+      window.location.replace("login-user.html");
+    });
+
+    // Tahun pada footer.
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Periksa sesi ketika dashboard dibuka.
+    checkUserSession();
+  </script>
+</body>
+</html>
