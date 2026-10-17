@@ -2,879 +2,473 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#b91c1c">
-<title>Generator Surat Pernyataan</title>
-
-<style>
-:root {
-    --red: #c62828;
-    --red-dark: #a51d24;
-    --red-light: #fff1f2;
-    --bg: #f8f8fa;
-    --text: #202124;
-    --muted: #727783;
-    --border: #e6e7eb;
-    --white: #ffffff;
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
-                 Roboto, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-}
-
-button, input, textarea {
-    font: inherit;
-}
-
-.topbar {
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-}
-
-.topbar-inner {
-    max-width: 1200px;
-    margin: auto;
-    padding: 17px 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.brand-icon {
-    width: 43px;
-    height: 43px;
-    border-radius: 12px;
-    background: var(--red-light);
-    color: var(--red);
-    display: grid;
-    place-items: center;
-    flex-shrink: 0;
-}
-
-.brand-icon svg {
-    width: 23px;
-    height: 23px;
-}
-
-.brand-title {
-    font-size: 17px;
-    font-weight: 750;
-    letter-spacing: -.3px;
-}
-
-.brand-subtitle {
-    color: var(--muted);
-    font-size: 12px;
-    margin-top: 4px;
-}
-
-.container {
-    width: min(1200px, 100%);
-    padding: 30px 24px 45px;
-    margin: auto;
-}
-
-.page-heading {
-    margin-bottom: 25px;
-}
-
-.eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    color: var(--red);
-    background: var(--red-light);
-    padding: 7px 11px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 750;
-    letter-spacing: .6px;
-    text-transform: uppercase;
-    margin-bottom: 13px;
-}
-
-.page-heading h1 {
-    font-size: clamp(23px, 3vw, 31px);
-    letter-spacing: -.8px;
-    margin-bottom: 9px;
-}
-
-.page-heading p {
-    color: var(--muted);
-    line-height: 1.65;
-    font-size: 14px;
-    max-width: 600px;
-}
-
-.main-grid {
-    display: grid;
-    grid-template-columns: minmax(310px, .85fr) minmax(0, 1.15fr);
-    gap: 22px;
-    align-items: start;
-}
-
-.card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 15px;
-    overflow: hidden;
-    min-width: 0;
-}
-
-.card-header {
-    padding: 20px 22px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.card-header-icon {
-    display: grid;
-    place-items: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    background: var(--red-light);
-    color: var(--red);
-    flex-shrink: 0;
-}
-
-.card-header-icon svg {
-    width: 20px;
-    height: 20px;
-}
-
-.card-header h2 {
-    font-size: 15px;
-    font-weight: 750;
-}
-
-.card-header p {
-    color: var(--muted);
-    font-size: 12px;
-    margin-top: 4px;
-}
-
-.card-body {
-    padding: 22px;
-}
-
-.section-heading {
-    color: var(--red);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: .8px;
-    text-transform: uppercase;
-    padding-bottom: 11px;
-    border-bottom: 1px solid #f0d9da;
-    margin: 23px 0 17px;
-}
-
-.section-heading:first-child {
-    margin-top: 0;
-}
-
-.form-group {
-    margin-bottom: 17px;
-}
-
-label {
-    display: block;
-    font-size: 12px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: #353943;
-}
-
-.required {
-    color: var(--red);
-}
-
-.input-wrap {
-    position: relative;
-}
-
-.input-icon {
-    position: absolute;
-    left: 13px;
-    top: 13px;
-    width: 17px;
-    height: 17px;
-    color: #9297a2;
-    pointer-events: none;
-}
-
-input, textarea {
-    width: 100%;
-    border: 1px solid #dfe1e7;
-    border-radius: 8px;
-    padding: 12px 13px;
-    font-size: 13px;
-    color: var(--text);
-    background: #fff;
-    outline: none;
-    transition: border-color .2s, box-shadow .2s;
-}
-
-.input-wrap input {
-    padding-left: 39px;
-}
-
-input::placeholder, textarea::placeholder {
-    color: #a2a6af;
-}
-
-input:focus, textarea:focus {
-    border-color: var(--red);
-    box-shadow: 0 0 0 3px rgba(198,40,40,.09);
-}
-
-input[readonly] {
-    background: #f7f7f8;
-    color: #555b66;
-    cursor: default;
-}
-
-textarea {
-    min-height: 90px;
-    resize: vertical;
-    line-height: 1.6;
-}
-
-.field-hint {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 7px;
-    line-height: 1.5;
-}
-
-.form-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 25px;
-}
-
-.btn {
-    border: none;
-    border-radius: 8px;
-    min-height: 43px;
-    padding: 12px 15px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    font-weight: 750;
-    cursor: pointer;
-    transition: background .2s, transform .15s;
-}
-
-.btn:active {
-    transform: scale(.98);
-}
-
-.btn svg {
-    width: 17px;
-    height: 17px;
-    flex-shrink: 0;
-}
-
-.btn-primary {
-    background: var(--red);
-    color: white;
-    flex: 1;
-}
-
-.btn-primary:hover {
-    background: var(--red-dark);
-}
-
-.btn-light {
-    background: #f3f4f6;
-    color: #454955;
-    border: 1px solid #e5e7eb;
-}
-
-.btn-light:hover {
-    background: #e9eaee;
-}
-
-.btn-print {
-    background: var(--red);
-    color: white;
-    width: 100%;
-}
-
-.btn-print:hover {
-    background: var(--red-dark);
-}
-
-.privacy-note {
-    display: flex;
-    align-items: flex-start;
-    gap: 9px;
-    background: #fafafa;
-    border: 1px solid #eeeeef;
-    border-radius: 8px;
-    padding: 12px;
-    margin-top: 17px;
-    color: #696e78;
-    font-size: 11px;
-    line-height: 1.6;
-}
-
-.privacy-note svg {
-    color: #278653;
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-    margin-top: 1px;
-}
-
-.preview-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 15px 20px;
-    border-bottom: 1px solid var(--border);
-}
-
-.preview-label {
-    font-size: 13px;
-    font-weight: 750;
-}
-
-.preview-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 10px;
-    font-weight: 700;
-    color: #25824d;
-    background: #edf9f1;
-    padding: 6px 9px;
-    border-radius: 20px;
-}
-
-.status-dot {
-    width: 6px;
-    height: 6px;
-    background: #2eaa63;
-    border-radius: 50%;
-}
-
-.preview-area {
-    background: #f0f1f4;
-    padding: 22px;
-}
-
-.paper {
-    width: 100%;
-    min-height: 640px;
-    background: white;
-    padding: 42px 35px;
-    box-shadow: 0 2px 12px rgba(0,0,0,.055);
-    color: #111;
-    font-family: "Times New Roman", serif;
-    font-size: 12pt;
-    line-height: 1.5;
-    overflow-wrap: anywhere;
-}
-
-.paper-title {
-    font-size: 14pt;
-    font-weight: bold;
-    text-decoration: underline;
-    text-align: center;
-    margin-bottom: 27px;
-}
-
-.paper p {
-    margin-bottom: 12px;
-    text-align: justify;
-}
-
-.paper table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    margin: 7px 0 14px;
-}
-
-.paper td {
-    vertical-align: top;
-    padding: 2px 0;
-}
-
-.paper .col-label {
-    width: 43%;
-}
-
-.paper .col-colon {
-    width: 14px;
-}
-
-.paper .address-value {
-    white-space: pre-line;
-}
-
-.paper .closing {
-    margin-top: 13px;
-}
-
-.paper .letter-date {
-    text-align: right;
-    margin-top: 25px;
-    margin-bottom: 8px;
-}
-
-.signature {
-    width: 205px;
-    max-width: 100%;
-    margin-left: auto;
-    text-align: center;
-}
-
-.signature p {
-    text-align: center;
-    margin-bottom: 6px;
-}
-
-.signature-space {
-    height: 77px;
-}
-
-.signature-name {
-    text-align: center;
-    text-decoration: underline;
-    overflow-wrap: anywhere;
-}
-
-.preview-footer {
-    padding: 18px 20px 20px;
-}
-
-.preview-footer p {
-    text-align: center;
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 11px;
-    line-height: 1.6;
-}
-
-.bottom-note {
-    text-align: center;
-    color: #8b909a;
-    font-size: 11px;
-    margin-top: 25px;
-}
-
-@media (max-width: 900px) {
-    .main-grid {
-        grid-template-columns: minmax(0, 1fr);
-    }
-
-    .container {
-        padding: 25px 18px 35px;
-    }
-
-    .preview-area {
-        padding: 18px;
-    }
-
-    .paper {
-        max-width: 650px;
-        margin: auto;
-        min-height: auto;
-    }
-}
-
-@media (max-width: 480px) {
-    .topbar-inner {
-        padding: 13px 16px;
-    }
-
-    .brand-icon {
-        width: 39px;
-        height: 39px;
-    }
-
-    .brand-title {
-        font-size: 15px;
-    }
-
-    .container {
-        padding: 22px 12px 30px;
-    }
-
-    .page-heading {
-        margin-bottom: 20px;
-    }
-
-    .page-heading h1 {
-        font-size: 24px;
-    }
-
-    .page-heading p {
-        font-size: 13px;
-    }
-
-    .card {
-        border-radius: 12px;
-    }
-
-    .card-header {
-        padding: 16px;
-    }
-
-    .card-body {
-        padding: 17px;
-    }
-
-    .preview-area {
-        padding: 10px;
-    }
-
-    .paper {
-        padding: 25px 18px;
-        font-size: 10pt;
-        line-height: 1.45;
-    }
-
-    .paper-title {
-        font-size: 12pt;
-        margin-bottom: 22px;
-    }
-
-    .paper .col-label {
-        width: 43%;
-    }
-
-    .paper .col-colon {
-        width: 11px;
-    }
-
-    .signature {
-        width: 175px;
-    }
-
-    .form-actions {
-        flex-direction: column;
-    }
-
-    .btn {
-        width: 100%;
-    }
-}
-
-@page {
-    size: A4;
-    margin: 20mm;
-}
-
-@media print {
-    html, body {
-        background: white !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        color: #000 !important;
-    }
-
-    .topbar,
-    .page-heading,
-    .form-card,
-    .preview-toolbar,
-    .preview-footer,
-    .bottom-note {
-        display: none !important;
-    }
-
-    .container,
-    .main-grid,
-    .preview-card,
-    .preview-area,
-    .card {
-        display: block !important;
-        width: 100% !important;
-        max-width: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        border: none !important;
-        border-radius: 0 !important;
-        box-shadow: none !important;
-        background: white !important;
-    }
-
-    .paper {
-        width: 100% !important;
-        min-height: 0 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        box-shadow: none !important;
-        border: none !important;
-        font-family: "Times New Roman", serif !important;
-        font-size: 12pt !important;
-        line-height: 1.5 !important;
-        overflow-wrap: normal !important;
-    }
-
-    .paper-title {
-        font-size: 14pt !important;
-    }
-
-    .paper p,
-    .paper table,
-    .signature {
-        break-inside: avoid;
-    }
-
-    .signature-space {
-        height: 77px !important;
-    }
-
-    * {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Surat Pernyataan</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+            color: #252525;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #c62828;
+            color: white;
+            padding: 22px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 25px;
+            margin-bottom: 4px;
+        }
+
+        header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 28px auto;
+            padding: 0 16px;
+        }
+
+        .page-title {
+            margin-bottom: 20px;
+        }
+
+        .page-title h2 {
+            font-size: 23px;
+            color: #292929;
+        }
+
+        .page-title p {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            align-items: start;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 3px 14px rgba(0, 0, 0, 0.06);
+        }
+
+        .card h3 {
+            margin-bottom: 18px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        input,
+        textarea {
+            display: block;
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #d8d8d8;
+            border-radius: 7px;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            background: white;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #c62828;
+            box-shadow: 0 0 0 2px rgba(198, 40, 40, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        input[readonly] {
+            background: #f3f3f3;
+            color: #666;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        button {
+            border: none;
+            border-radius: 7px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: #c62828;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: #a91f1f;
+        }
+
+        .btn-secondary {
+            background: #eeeeee;
+            color: #333;
+        }
+
+        .preview-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .preview-toolbar h3 {
+            margin: 0;
+        }
+
+        .paper {
+            background: white;
+            color: #000;
+            width: 100%;
+            padding: 30px 25px;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            font-family: "Times New Roman", serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .paper h2 {
+            text-align: center;
+            font-size: 14pt;
+            text-decoration: underline;
+            margin-bottom: 28px;
+            font-weight: bold;
+        }
+
+        .paper p {
+            margin-bottom: 12px;
+        }
+
+        .letter-row {
+            display: grid;
+            grid-template-columns: 185px 12px minmax(0, 1fr);
+            gap: 0;
+            margin-bottom: 5px;
+        }
+
+        .letter-row .value {
+            min-width: 0;
+            white-space: pre-wrap;
+        }
+
+        .address-value {
+            min-height: 42px;
+        }
+
+        .signature {
+            margin-top: 24px;
+            text-align: right;
+        }
+
+        .signature-space {
+            height: 65px;
+        }
+
+        .signature-name {
+            text-decoration: underline;
+        }
+
+        .footnote {
+            font-size: 12px;
+            color: #777;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 800px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .paper {
+                padding: 24px 18px;
+                font-size: 11pt;
+            }
+
+            .letter-row {
+                grid-template-columns: 155px 10px minmax(0, 1fr);
+            }
+
+            header h1 {
+                font-size: 22px;
+            }
+        }
+
+        /* KHUSUS CETAK / SIMPAN PDF */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 20mm;
+            }
+
+            html,
+            body {
+                width: 100% !important;
+                height: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+                overflow: visible !important;
+            }
+
+            body * {
+                visibility: hidden !important;
+            }
+
+            #paper,
+            #paper * {
+                visibility: visible !important;
+            }
+
+            #paper {
+                display: block !important;
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                min-height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                background: white !important;
+                color: black !important;
+                overflow: visible !important;
+                font-family: "Times New Roman", serif !important;
+                font-size: 12pt !important;
+                line-height: 1.5 !important;
+            }
+
+            #paper h2 {
+                font-size: 14pt !important;
+                color: black !important;
+            }
+
+            #paper p,
+            #paper div,
+            #paper span {
+                color: black !important;
+            }
+
+            .letter-row {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<header class="topbar">
-    <div class="topbar-inner">
-        <div class="brand-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M7 3h7l5 5v13H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/>
-                <path d="M14 3v6h5M9 14h6M9 18h6"/>
-            </svg>
+    <header>
+        <h1>Surat Pernyataan</h1>
+        <p>Generator Surat Pernyataan Kepemilikan Rekening</p>
+    </header>
+
+    <main class="container">
+        <div class="page-title">
+            <h2>Buat Surat Pernyataan</h2>
+            <p>Lengkapi data berikut untuk membuat surat secara otomatis.</p>
         </div>
-        <div>
-            <div class="brand-title">Surat Pernyataan</div>
-            <div class="brand-subtitle">Generator dokumen penyedia</div>
-        </div>
-    </div>
-</header>
 
-<main class="container">
+        <div class="content">
 
-    <section class="page-heading">
-        <div class="eyebrow">Dokumen Penyedia</div>
-        <h1>Buat Surat Pernyataan</h1>
-        <p>
-            Lengkapi data diri dan informasi rekening. Surat pernyataan akan
-            terbentuk otomatis dan siap dicetak atau disimpan sebagai PDF.
-        </p>
-    </section>
+            <!-- FORM INPUT -->
+            <section class="card" id="formCard">
+                <h3>Data Pemohon</h3>
 
-    <div class="main-grid">
-
-        <!-- FORMULIR -->
-        <section class="card form-card">
-            <div class="card-header">
-                <div class="card-header-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                         stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                </div>
-                <div>
-                    <h2>Data Penyedia</h2>
-                    <p>Isi seluruh kolom yang diperlukan</p>
-                </div>
-            </div>
-
-            <div class="card-body">
                 <form id="suratForm">
-
-                    <div class="section-heading">Informasi Pribadi</div>
-
                     <div class="form-group">
-                        <label for="nama">Nama Lengkap <span class="required">*</span></label>
-                        <div class="input-wrap">
-                            <svg class="input-icon" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="1.8"
-                                 stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="8" r="4"/>
-                                <path d="M5 21v-2a7 7 0 0 1 14 0v2"/>
-                            </svg>
-                            <input id="nama" type="text" placeholder="Masukkan nama lengkap" required>
-                        </div>
+                        <label for="nama">Nama Lengkap</label>
+                        <input
+                            type="text"
+                            id="nama"
+                            placeholder="Masukkan nama lengkap"
+                            required
+                        >
                     </div>
 
                     <div class="form-group">
-                        <label for="ttl">Tempat, Tanggal Lahir <span class="required">*</span></label>
-                        <div class="input-wrap">
-                            <svg class="input-icon" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="1.8"
-                                 stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="5" width="18" height="16" rx="2"/>
-                                <path d="M16 3v4M8 3v4M3 11h18"/>
-                            </svg>
-                            <input id="ttl" type="text"
-                                   placeholder="Contoh: Yogyakarta, 10 Januari 1998" required>
-                        </div>
+                        <label for="tempatLahir">Tempat Lahir</label>
+                        <input
+                            type="text"
+                            id="tempatLahir"
+                            placeholder="Contoh: Yogyakarta"
+                            required
+                        >
                     </div>
 
                     <div class="form-group">
-                        <label for="alamat">Alamat Lengkap <span class="required">*</span></label>
-                        <textarea id="alamat"
-                                  placeholder="Jalan, RT/RW, kelurahan, kecamatan, kota/kabupaten"
-                                  required></textarea>
-                    </div>
-
-                    <div class="section-heading">Informasi Rekening</div>
-
-                    <div class="form-group">
-                        <label for="pemilik">Nama Pemilik Rekening <span class="required">*</span></label>
-                        <div class="input-wrap">
-                            <svg class="input-icon" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="1.8"
-                                 stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="5" width="18" height="14" rx="2"/>
-                                <path d="M3 10h18M7 15h4"/>
-                            </svg>
-                            <input id="pemilik" type="text"
-                                   placeholder="Sesuai nama di rekening" required>
-                        </div>
+                        <label for="tanggalLahir">Tanggal Lahir</label>
+                        <input
+                            type="date"
+                            id="tanggalLahir"
+                            required
+                        >
                     </div>
 
                     <div class="form-group">
-                        <label for="bank">Nama Bank <span class="required">*</span></label>
-                        <div class="input-wrap">
-                            <svg class="input-icon" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="1.8"
-                                 stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 10h18M5 10v9M9 10v9M15 10v9M19 10v9M3 21h18M12 3 2 8h20L12 3z"/>
-                            </svg>
-                            <input id="bank" type="text" placeholder="Contoh: BPD DIY" required>
-                        </div>
+                        <label for="alamat">Alamat Lengkap</label>
+                        <textarea
+                            id="alamat"
+                            placeholder="Masukkan alamat lengkap"
+                            required
+                        ></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label for="rekening">Nomor Rekening <span class="required">*</span></label>
-                        <div class="input-wrap">
-                            <svg class="input-icon" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="1.8"
-                                 stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="5" width="18" height="14" rx="2"/>
-                                <path d="M7 10h10M7 14h6"/>
-                            </svg>
-                            <input id="rekening" type="text" inputmode="numeric"
-                                   placeholder="Masukkan nomor rekening" required>
-                        </div>
-                        <div class="field-hint">Pastikan nomor rekening sudah benar.</div>
-                    </div>
-
-                    <div class="section-heading">Lokasi dan Tanggal Surat</div>
-
-                    <div class="form-group">
-                        <label for="kota">Kota Tempat Surat Dibuat <span class="required">*</span></label>
-                        <div class="input-wrap">
-                            <svg class="input-icon" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="1.8"
-                                 stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0z"/>
-                                <circle cx="12" cy="10" r="2.5"/>
-                            </svg>
-                            <input id="kota" type="text" placeholder="Contoh: Yogyakarta" required>
-                        </div>
+                        <label for="pemilikRekening">Nama Pemilik Rekening</label>
+                        <input
+                            type="text"
+                            id="pemilikRekening"
+                            placeholder="Sesuai nama di rekening"
+                            required
+                        >
                     </div>
 
                     <div class="form-group">
-                        <label for="tanggal">Tanggal Surat</label>
-                        <div class="input-wrap">
-                            <svg class="input-icon" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="1.8"
-                                 stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="5" width="18" height="16" rx="2"/>
-                                <path d="M16 3v4M8 3v4M3 11h18"/>
-                            </svg>
-                            <input id="tanggal" type="date" readonly required>
-                        </div>
-                        <div class="field-hint">Terisi otomatis mengikuti tanggal hari ini.</div>
+                        <label for="namaBank">Nama Bank</label>
+                        <input
+                            type="text"
+                            id="namaBank"
+                            placeholder="Contoh: BNI, BRI, BPD DIY"
+                            required
+                        >
                     </div>
 
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 5v14M5 12l7 7 7-7"/>
-                            </svg>
-                            Perbarui Surat
-                        </button>
-                        <button type="button" class="btn btn-light" id="resetBtn">
+                    <div class="form-group">
+                        <label for="nomorRekening">Nomor Rekening</label>
+                        <input
+                            type="text"
+                            id="nomorRekening"
+                            inputmode="numeric"
+                            placeholder="Masukkan nomor rekening"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tempatSurat">Kota/Kabupaten Surat</label>
+                        <input
+                            type="text"
+                            id="tempatSurat"
+                            placeholder="Contoh: Yogyakarta"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tanggalSurat">Tanggal Surat</label>
+                        <input
+                            type="date"
+                            id="tanggalSurat"
+                            readonly
+                            required
+                        >
+                    </div>
+
+                    <div class="button-group">
+                        <button
+                            type="button"
+                            class="btn-secondary"
+                            id="resetBtn"
+                        >
                             Reset
                         </button>
+
+                        <button
+                            type="button"
+                            class="btn-primary"
+                            id="printBtn"
+                        >
+                            Simpan sebagai PDF
+                        </button>
                     </div>
-
                 </form>
+            </section>
 
-                <div class="privacy-note">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="4" y="10" width="16" height="11" rx="2"/>
-                        <path d="M8 10V7a4 4 0 1 1 8 0v3"/>
-                    </svg>
-                    <span>
-                        Data diproses langsung di browser. Kode ini tidak mengirimkan
-                        data formulir ke database atau server.
-                    </span>
+            <!-- PRATINJAU SURAT -->
+            <section class="card" id="previewCard">
+                <div class="preview-toolbar">
+                    <h3>Pratinjau Surat</h3>
                 </div>
-            </div>
-        </section>
 
-        <!-- PRATINJAU SURAT -->
-        <section class="card preview-card">
-            <div class="preview-toolbar">
-                <span class="preview-label">Pratinjau Dokumen</span>
-                <span class="preview-status">
-                    <span class="status-dot"></span>
-                    Siap dicetak
-                </span>
-            </div>
-
-            <div class="preview-area">
-                <article class="paper" id="paper">
-                    <h2 class="paper-title">SURAT PERNYATAAN</h2>
+                <!-- HANYA BAGIAN INI YANG DICETAK -->
+                <div class="paper" id="paper">
+                    <h2>SURAT PERNYATAAN</h2>
 
                     <p>Saya yang bertanda tangan di bawah ini:</p>
 
-                    <table>
-                        <tr>
-                            <td class="col-label">Nama</td>
-                            <td class="col-colon">:</td>
-                            <td id="outNama">........................................................</td>
-                        </tr>
-                        <tr>
-                            <td class="col-label">Tempat, Tanggal Lahir</td>
-                            <td class="col-colon">:</td>
-                            <td id="outTtl">........................................................</td>
-                        </tr>
-                        <tr>
-                            <td class="col-label">Alamat</td>
-                            <td class="col-colon">:</td>
-                            <td id="outAlamat" class="address-value">................................................................................</td>
-                        </tr>
-                    </table>
+                    <div class="letter-row">
+                        <span>Nama</span>
+                        <span>:</span>
+                        <span class="value" id="outNama">........................................................</span>
+                    </div>
 
-                    <p>Dengan ini menyatakan bahwa:</p>
+                    <div class="letter-row">
+                        <span>Tempat, Tanggal Lahir</span>
+                        <span>:</span>
+                        <span class="value" id="outTTL">........................................................</span>
+                    </div>
+
+                    <div class="letter-row">
+                        <span>Alamat</span>
+                        <span>:</span>
+                        <span class="value address-value" id="outAlamat">................................................................................</span>
+                    </div>
+
+                    <p style="margin-top: 18px;">Dengan ini menyatakan bahwa:</p>
 
                     <p>
                         Nomor rekening dan nama rekening di bawah ini benar
@@ -882,25 +476,25 @@ textarea {
                         atas nama saya/badan usaha:
                     </p>
 
-                    <table>
-                        <tr>
-                            <td class="col-label">Nama Pemilik Rekening</td>
-                            <td class="col-colon">:</td>
-                            <td id="outPemilik">........................................................</td>
-                        </tr>
-                        <tr>
-                            <td class="col-label">Nama Bank</td>
-                            <td class="col-colon">:</td>
-                            <td id="outBank">........................................................</td>
-                        </tr>
-                        <tr>
-                            <td class="col-label">Nomor Rekening</td>
-                            <td class="col-colon">:</td>
-                            <td id="outRekening">........................................................</td>
-                        </tr>
-                    </table>
+                    <div class="letter-row">
+                        <span>Nama Pemilik Rekening</span>
+                        <span>:</span>
+                        <span class="value" id="outPemilik">........................................................</span>
+                    </div>
 
-                    <p class="closing">
+                    <div class="letter-row">
+                        <span>Nama Bank</span>
+                        <span>:</span>
+                        <span class="value" id="outBank">........................................................</span>
+                    </div>
+
+                    <div class="letter-row">
+                        <span>Nomor Rekening</span>
+                        <span>:</span>
+                        <span class="value" id="outRekening">........................................................</span>
+                    </div>
+
+                    <p style="margin-top: 22px; text-align: justify;">
                         Demikian surat pernyataan ini saya buat dengan
                         sebenar-benarnya, tanpa ada paksaan dari pihak manapun.
                         Apabila di kemudian hari terdapat hal-hal yang tidak
@@ -908,129 +502,149 @@ textarea {
                         jawab sepenuhnya sesuai dengan ketentuan hukum yang berlaku.
                     </p>
 
-                    <p class="letter-date" id="outTanggal">
-                        ............................, .... ......... 20....
-                    </p>
-
                     <div class="signature">
+                        <p id="outTempatTanggal">
+                            ............................, .... ......... 20....
+                        </p>
+
                         <p>Yang membuat pernyataan,</p>
-                        <p style="margin-top: 12px;">Tanda tangan,</p>
+
                         <div class="signature-space"></div>
-                        <p class="signature-name" id="outNamaTtd">
+
+                        <p class="signature-name" id="outTtd">
                             ........................................................
                         </p>
                     </div>
-                </article>
-            </div>
+                </div>
 
-            <div class="preview-footer">
-                <button type="button" class="btn btn-print" id="printBtn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                         stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-                        <path d="M6 14h12v7H6z"/>
-                    </svg>
-                    Cetak / Simpan sebagai PDF
-                </button>
-                <p>Pastikan seluruh data sudah benar sebelum mencetak surat.</p>
-            </div>
-        </section>
+                <p class="footnote">
+                    Periksa kembali data sebelum menyimpan surat sebagai PDF.
+                </p>
+            </section>
 
-    </div>
+        </div>
+    </main>
 
-    <div class="bottom-note">
-        Generator Surat Pernyataan · Data tidak disimpan oleh halaman ini
-    </div>
+    <script>
+        const fields = [
+            "nama",
+            "tempatLahir",
+            "tanggalLahir",
+            "alamat",
+            "pemilikRekening",
+            "namaBank",
+            "nomorRekening",
+            "tempatSurat"
+        ];
 
-</main>
+        const form = document.getElementById("suratForm");
+        const tanggalSurat = document.getElementById("tanggalSurat");
 
-<script>
-const $ = id => document.getElementById(id);
+        function formatTanggalIndonesia(dateString) {
+            if (!dateString) return "";
 
-function setTanggalHariIni() {
-    const now = new Date();
-    const tahun = now.getFullYear();
-    const bulan = String(now.getMonth() + 1).padStart(2, "0");
-    const hari = String(now.getDate()).padStart(2, "0");
+            const parts = dateString.split("-");
+            if (parts.length !== 3) return "";
 
-    $("tanggal").value = `${tahun}-${bulan}-${hari}`;
-}
+            const tahun = Number(parts[0]);
+            const bulan = Number(parts[1]) - 1;
+            const hari = Number(parts[2]);
 
-function formatTanggal(value) {
-    if (!value) return "";
+            const tanggal = new Date(tahun, bulan, hari);
 
-    const namaBulan = [
-        "Januari", "Februari", "Maret", "April",
-        "Mei", "Juni", "Juli", "Agustus",
-        "September", "Oktober", "November", "Desember"
-    ];
+            return tanggal.toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            });
+        }
 
-    const [tahun, bulan, hari] = value.split("-").map(Number);
+        function tanggalHariIni() {
+            const sekarang = new Date();
+            const tahun = sekarang.getFullYear();
+            const bulan = String(sekarang.getMonth() + 1).padStart(2, "0");
+            const hari = String(sekarang.getDate()).padStart(2, "0");
 
-    return `${String(hari).padStart(2, "0")} ${
-        namaBulan[bulan - 1]
-    } ${tahun}`;
-}
+            return `${tahun}-${bulan}-${hari}`;
+        }
 
-function updateSurat() {
-    $("outNama").textContent =
-        $("nama").value.trim() || "........................................................";
+        function updateSurat() {
+            const nama = document.getElementById("nama").value.trim();
+            const tempatLahir = document.getElementById("tempatLahir").value.trim();
+            const tanggalLahir = document.getElementById("tanggalLahir").value;
+            const alamat = document.getElementById("alamat").value.trim();
+            const pemilik = document.getElementById("pemilikRekening").value.trim();
+            const bank = document.getElementById("namaBank").value.trim();
+            const rekening = document.getElementById("nomorRekening").value.trim();
+            const tempat = document.getElementById("tempatSurat").value.trim();
+            const tanggal = tanggalSurat.value;
 
-    $("outTtl").textContent =
-        $("ttl").value.trim() || "........................................................";
+            document.getElementById("outNama").textContent =
+                nama || "........................................................";
 
-    $("outAlamat").textContent =
-        $("alamat").value.trim() || "................................................................................";
+            const ttl = [
+                tempatLahir,
+                tanggalLahir ? formatTanggalIndonesia(tanggalLahir) : ""
+            ].filter(Boolean).join(", ");
 
-    $("outPemilik").textContent =
-        $("pemilik").value.trim() || "........................................................";
+            document.getElementById("outTTL").textContent =
+                ttl || "........................................................";
 
-    $("outBank").textContent =
-        $("bank").value.trim() || "........................................................";
+            document.getElementById("outAlamat").textContent =
+                alamat || "................................................................................";
 
-    $("outRekening").textContent =
-        $("rekening").value.trim() || "........................................................";
+            document.getElementById("outPemilik").textContent =
+                pemilik || "........................................................";
 
-    $("outNamaTtd").textContent =
-        $("nama").value.trim() || "........................................................";
+            document.getElementById("outBank").textContent =
+                bank || "........................................................";
 
-    const kota = $("kota").value.trim() || "............................";
-    const tanggal = formatTanggal($("tanggal").value) || ".... ......... 20....";
+            document.getElementById("outRekening").textContent =
+                rekening || "........................................................";
 
-    $("outTanggal").textContent = `${kota}, ${tanggal}`;
-}
+            const tempatTanggal = [
+                tempat,
+                tanggal ? formatTanggalIndonesia(tanggal) : ""
+            ].filter(Boolean).join(", ");
 
-$("suratForm").addEventListener("input", updateSurat);
-$("suratForm").addEventListener("change", updateSurat);
+            document.getElementById("outTempatTanggal").textContent =
+                tempatTanggal || "............................, .... ......... 20....";
 
-$("suratForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-    updateSurat();
+            document.getElementById("outTtd").textContent =
+                nama || "........................................................";
+        }
 
-    $("paper").scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-});
+        // Isi tanggal surat otomatis berdasarkan tanggal perangkat.
+        tanggalSurat.value = tanggalHariIni();
 
-$("printBtn").addEventListener("click", function() {
-    if (!$("suratForm").reportValidity()) return;
+        // Perbarui pratinjau saat pengguna mengisi formulir.
+        fields.forEach(function(id) {
+            document.getElementById(id).addEventListener("input", updateSurat);
+            document.getElementById(id).addEventListener("change", updateSurat);
+        });
 
-    updateSurat();
-    window.print();
-});
+        tanggalSurat.addEventListener("change", updateSurat);
 
-$("resetBtn").addEventListener("click", function() {
-    if (!confirm("Yakin ingin menghapus semua data yang sudah diisi?")) return;
+        // Simpan PDF: validasi formulir dahulu, lalu cetak hanya elemen surat.
+        document.getElementById("printBtn").addEventListener("click", function() {
+            if (!form.reportValidity()) {
+                return;
+            }
 
-    $("suratForm").reset();
-    setTanggalHariIni();
-    updateSurat();
-});
+            updateSurat();
+            window.print();
+        });
 
-setTanggalHariIni();
-updateSurat();
-</script>
+        // Reset data dan kembalikan tanggal surat ke hari ini.
+        document.getElementById("resetBtn").addEventListener("click", function() {
+            form.reset();
+            tanggalSurat.value = tanggalHariIni();
+            updateSurat();
+        });
+
+        // Isi pratinjau pertama kali.
+        updateSurat();
+    </script>
 
 </body>
 </html>
