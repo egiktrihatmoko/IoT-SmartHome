@@ -1,587 +1,462 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Admin Login</title>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --text: #0f172a;
-            --muted: #64748b;
-            --border: #e2e8f0;
-            --background: #f1f5f9;
-        }
-
-        body {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            font-family: Arial, Helvetica, sans-serif;
-            background:
-                radial-gradient(circle at top left, #dbeafe 0, transparent 38%),
-                radial-gradient(circle at bottom right, #e0e7ff 0, transparent 35%),
-                var(--background);
-            color: var(--text);
-        }
-
-        .login-container {
-            width: 100%;
-            max-width: 430px;
-        }
-
-        .brand {
-            text-align: center;
-            margin-bottom: 28px;
-        }
-
-        .brand-icon {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 20px;
-            color: white;
-            background: linear-gradient(135deg, #2563eb, #4f46e5);
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
-        }
-
-        .brand-icon svg {
-            width: 32px;
-            height: 32px;
-        }
-
-        .brand h1 {
-            font-size: 27px;
-            font-weight: 750;
-            letter-spacing: -0.7px;
-            margin-bottom: 8px;
-        }
-
-        .brand p {
-            color: var(--muted);
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .login-card {
-            background: rgba(255, 255, 255, 0.96);
-            border: 1px solid rgba(226, 232, 240, 0.9);
-            border-radius: 22px;
-            padding: 32px;
-            box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
-        }
-
-        .card-heading {
-            margin-bottom: 26px;
-        }
-
-        .card-heading h2 {
-            font-size: 21px;
-            margin-bottom: 8px;
-        }
-
-        .card-heading p {
-            font-size: 13px;
-            color: var(--muted);
-            line-height: 1.6;
-        }
-
-        .form-group {
-            margin-bottom: 19px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 9px;
-            font-size: 13px;
-            font-weight: 650;
-            color: #334155;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper input {
-            width: 100%;
-            height: 48px;
-            padding: 0 44px 0 14px;
-            border: 1px solid var(--border);
-            border-radius: 11px;
-            outline: none;
-            font-size: 14px;
-            color: var(--text);
-            background: #fff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .input-wrapper input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .input-wrapper input::placeholder {
-            color: #94a3b8;
-        }
-
-        .input-icon {
-            position: absolute;
-            right: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 18px;
-            height: 18px;
-            color: #94a3b8;
-            pointer-events: none;
-        }
-
-        .password-toggle {
-            position: absolute;
-            right: 11px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 28px;
-            height: 28px;
-            border: none;
-            background: transparent;
-            color: #64748b;
-            cursor: pointer;
-            border-radius: 6px;
-        }
-
-        .password-toggle:hover {
-            background: #f1f5f9;
-        }
-
-        .password-toggle svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        .form-options {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin: 3px 0 22px;
-        }
-
-        .remember {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: #475569;
-            cursor: pointer;
-        }
-
-        .remember input {
-            width: 15px;
-            height: 15px;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-
-        .forgot-link {
-            font-size: 12px;
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .forgot-link:hover {
-            text-decoration: underline;
-        }
-
-        .btn {
-            width: 100%;
-            min-height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            border-radius: 11px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btn-primary {
-            border: none;
-            color: white;
-            background: var(--primary);
-            box-shadow: 0 5px 12px rgba(37, 99, 235, 0.17);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.65;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 13px;
-            margin: 23px 0;
-            color: #94a3b8;
-            font-size: 12px;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: "";
-            height: 1px;
-            flex: 1;
-            background: var(--border);
-        }
-
-        .btn-google {
-            border: 1px solid var(--border);
-            color: #334155;
-            background: white;
-            text-decoration: none;
-        }
-
-        .btn-google:hover {
-            background: #f8fafc;
-            border-color: #cbd5e1;
-        }
-
-        .google-logo {
-            width: 19px;
-            height: 19px;
-            flex-shrink: 0;
-        }
-
-        .message {
-            display: none;
-            padding: 12px 13px;
-            margin-bottom: 19px;
-            border-radius: 10px;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        .message.error {
-            display: block;
-            color: #b91c1c;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-        }
-
-        .message.success {
-            display: block;
-            color: #166534;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-        }
-
-        .security-note {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 7px;
-            margin-top: 23px;
-            color: #64748b;
-            font-size: 11px;
-            text-align: center;
-            line-height: 1.6;
-        }
-
-        .security-note svg {
-            width: 15px;
-            height: 15px;
-            flex-shrink: 0;
-        }
-
-        .footer {
-            margin-top: 24px;
-            text-align: center;
-            color: #94a3b8;
-            font-size: 11px;
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 18px;
-            }
-
-            .brand {
-                margin-bottom: 22px;
-            }
-
-            .brand h1 {
-                font-size: 24px;
-            }
-
-            .login-card {
-                padding: 25px 21px;
-                border-radius: 18px;
-            }
-
-            .form-options {
-                align-items: flex-start;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <main class="login-container">
-        <header class="brand">
-            <div class="brand-icon">
-                <svg viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="1.8"
-                     stroke-linecap="round" stroke-linejoin="round"
-                     aria-hidden="true">
-                    <rect x="3" y="10" width="18" height="11" rx="2"/>
-                    <path d="M7 10V7a5 5 0 0 1 10 0v3"/>
-                    <path d="M12 14v3"/>
-                </svg>
-            </div>
-
-            <h1>Admin Panel</h1>
-            <p>Masuk ke dashboard untuk mengelola sistem Anda.</p>
-        </header>
-
-        <section class="login-card">
-            <div class="card-heading">
-                <h2>Selamat datang kembali</h2>
-                <p>Silakan masuk menggunakan akun administrator Anda.</p>
-            </div>
-
-            <div id="message" class="message" role="alert"
-                 aria-live="polite"></div>
-
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="email">Alamat email</label>
-                    <div class="input-wrapper">
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="nama@email.com"
-                            autocomplete="username"
-                            required
-                        >
-                        <svg class="input-icon" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor"
-                             stroke-width="1.7" aria-hidden="true">
-                            <rect x="3" y="5" width="18" height="14" rx="2"/>
-                            <path d="m3 7 9 6 9-6"/>
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Kata sandi</label>
-                    <div class="input-wrapper">
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Masukkan kata sandi"
-                            autocomplete="current-password"
-                            required
-                        >
-                        <button
-                            class="password-toggle"
-                            type="button"
-                            id="togglePassword"
-                            aria-label="Tampilkan kata sandi"
-                            title="Tampilkan kata sandi"
-                        >
-                            <svg id="eyeIcon" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor"
-                                 stroke-width="1.7" aria-hidden="true">
-                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
-                                <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="form-options">
-                    <label class="remember">
-                        <input type="checkbox" id="remember">
-                        <span>Ingat saya</span>
-                    </label>
-
-                    <a href="#" class="forgot-link" id="forgotLink">
-                        Lupa kata sandi?
-                    </a>
-                </div>
-
-                <button type="submit" class="btn btn-primary" id="loginButton">
-                    <span id="loginButtonText">Masuk ke Dashboard</span>
-                </button>
-            </form>
-
-            <div class="divider">atau masuk dengan</div>
-
-            <a href="/api/admin/google/start" class="btn btn-google"
-               id="googleLogin">
-                <svg class="google-logo" viewBox="0 0 48 48"
-                     aria-hidden="true">
-                    <path fill="#EA4335"
-                          d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.01 13.22l7.98 6.19C11.88 13.72 17.49 9.5 24 9.5Z"
-                          transform="translate(0 5)"/>
-                    <path fill="#4285F4"
-                          d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 37.85 46.98 31.76 46.98 24.55Z"
-                          transform="translate(0 -1)"/>
-                    <path fill="#FBBC05"
-                          d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.53 10.78l8-6.19Z"
-                          transform="translate(0 -1)"/>
-                    <path fill="#34A853"
-                          d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.51 0-12.12-4.22-14.11-10.06l-7.98 6.19C6.51 42.62 14.62 48 24 48Z"
-                          transform="translate(0 -5)"/>
-                </svg>
-                <span>Masuk dengan Google</span>
-            </a>
-
-            <div class="security-note">
-                <svg viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="1.8"
-                     stroke-linecap="round" stroke-linejoin="round"
-                     aria-hidden="true">
-                    <rect x="4" y="10" width="16" height="11" rx="2"/>
-                    <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
-                </svg>
-                <span>Halaman khusus administrator. Akses dilindungi.</span>
-            </div>
-        </section>
-
-        <footer class="footer">
-            © <span id="year"></span> Admin Panel. All rights reserved.
-        </footer>
-    </main>
-
-    <script>
-        const loginForm = document.getElementById("loginForm");
-        const loginButton = document.getElementById("loginButton");
-        const loginButtonText = document.getElementById("loginButtonText");
-        const message = document.getElementById("message");
-        const passwordInput = document.getElementById("password");
-        const togglePassword = document.getElementById("togglePassword");
-        const eyeIcon = document.getElementById("eyeIcon");
-
-        document.getElementById("year").textContent =
-            new Date().getFullYear();
-
-        function showMessage(text, type = "error") {
-            message.textContent = text;
-            message.className = "message " + type;
-        }
-
-        function hideMessage() {
-            message.textContent = "";
-            message.className = "message";
-        }
-
-        togglePassword.addEventListener("click", function () {
-            const showing = passwordInput.type === "text";
-
-            passwordInput.type = showing ? "password" : "text";
-            togglePassword.setAttribute(
-                "aria-label",
-                showing ? "Tampilkan kata sandi" : "Sembunyikan kata sandi"
-            );
-            togglePassword.title =
-                showing ? "Tampilkan kata sandi" : "Sembunyikan kata sandi";
-
-            eyeIcon.innerHTML = showing
-                ? '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>'
-                : '<path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A11.7 11.7 0 0 1 12 5c6.5 0 10 7 10 7a15.8 15.8 0 0 1-4 4.8"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.5 7 10 7c1.2 0 2.3-.2 3.3-.6"/>';
-        });
-
-        loginForm.addEventListener("submit", async function (event) {
-            event.preventDefault();
-            hideMessage();
-
-            const email = document.getElementById("email").value.trim();
-            const password = passwordInput.value;
-
-            loginButton.disabled = true;
-            loginButtonText.textContent = "Memproses...";
-
-            try {
-                const response = await fetch("/api/admin/login", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    credentials: "same-origin",
-                    body: JSON.stringify({
-                        email: email,
-                        password: password
-                    })
-                });
-
-                const data = await response.json().catch(() => ({}));
-
-                if (!response.ok || data.success !== true) {
-                    throw new Error(
-                        data.message ||
-                        data.error ||
-                        "Email atau kata sandi tidak valid."
-                    );
-                }
-
-                showMessage("Login berhasil. Mengalihkan ke dashboard...", "success");
-
-                window.location.replace("/dashboard.html");
-            } catch (error) {
-                showMessage(
-                    error.message || "Terjadi kesalahan. Silakan coba lagi."
-                );
-
-                loginButton.disabled = false;
-                loginButtonText.textContent = "Masuk ke Dashboard";
-            }
-        });
-
-        document.getElementById("forgotLink").addEventListener(
-            "click",
-            function (event) {
-                event.preventDefault();
-                showMessage(
-                    "Fitur lupa kata sandi belum dihubungkan. Silakan gunakan proses pemulihan akun yang tersedia."
-                );
-            }
-        );
-
-        // Menampilkan pesan jika proses Google OAuth nantinya mengembalikan error.
-        const params = new URLSearchParams(window.location.search);
-        if (params.get("error") === "google_login_failed") {
-            showMessage("Login Google gagal. Silakan coba lagi.");
-        } else if (params.get("error") === "google_not_authorized") {
-            showMessage("Akun Google ini tidak memiliki akses administrator.");
-        }
-    </script>
-</body>
-</html>
+<!DOCTYPE html>  <html lang="id">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <meta name="theme-color" content="#b91c1c">  
+  <title>Admin Panel - Kalkulator Harga Tayang</title>    <style>  
+    * {  
+      box-sizing: border-box;  
+      margin: 0;  
+      padding: 0;  
+    }  
+  
+    body {  
+      min-height: 100vh;  
+      padding: 20px;  
+      display: flex;  
+      align-items: center;  
+      justify-content: center;  
+      font-family: Arial, Helvetica, sans-serif;  
+      background: #fff5f5;  
+      color: #222;  
+    }  
+  
+    .container {  
+      width: 100%;  
+      max-width: 390px;  
+      padding: 28px 24px;  
+      background: #fff;  
+      border: 1px solid #f3dada;  
+      border-radius: 16px;  
+      box-shadow: 0 8px 30px rgba(150, 0, 0, 0.08);  
+    }  
+  
+    .logo {  
+      width: 52px;  
+      height: 52px;  
+      margin: 0 auto 14px;  
+      display: flex;  
+      align-items: center;  
+      justify-content: center;  
+      border-radius: 14px;  
+      background: #b91c1c;  
+      color: #fff;  
+      font-size: 25px;  
+      font-weight: bold;  
+    }  
+  
+    h1 {  
+      text-align: center;  
+      font-size: 23px;  
+      color: #991b1b;  
+      margin-bottom: 8px;  
+    }  
+  
+    .subtitle {  
+      text-align: center;  
+      color: #777;  
+      font-size: 13px;  
+      line-height: 1.5;  
+      margin-bottom: 24px;  
+    }  
+  
+    .tabs {  
+      display: flex;  
+      gap: 5px;  
+      padding: 5px;  
+      margin-bottom: 24px;  
+      border-radius: 10px;  
+      background: #fee2e2;  
+    }  
+  
+    .tab {  
+      flex: 1;  
+      padding: 11px 8px;  
+      border: none;  
+      border-radius: 7px;  
+      background: transparent;  
+      color: #991b1b;  
+      font-size: 14px;  
+      font-weight: bold;  
+      cursor: pointer;  
+    }  
+  
+    .tab.active {  
+      background: #b91c1c;  
+      color: #fff;  
+      box-shadow: 0 2px 6px rgba(185, 28, 28, 0.2);  
+    }  
+  
+    .form-title {  
+      font-size: 18px;  
+      margin-bottom: 6px;  
+    }  
+  
+    .form-description {  
+      color: #777;  
+      font-size: 13px;  
+      margin-bottom: 20px;  
+    }  
+  
+    .form-group {  
+      margin-bottom: 16px;  
+    }  
+  
+    label {  
+      display: block;  
+      margin-bottom: 8px;  
+      font-size: 13px;  
+      font-weight: bold;  
+    }  
+  
+    input {  
+      width: 100%;  
+      padding: 13px 12px;  
+      border: 1px solid #ddd;  
+      border-radius: 9px;  
+      outline: none;  
+      font-size: 14px;  
+      background: #fff;  
+    }  
+  
+    input:focus {  
+      border-color: #dc2626;  
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);  
+    }  
+  
+    .submit-btn {  
+      width: 100%;  
+      padding: 14px;  
+      margin-top: 4px;  
+      border: none;  
+      border-radius: 9px;  
+      background: #b91c1c;  
+      color: #fff;  
+      font-size: 14px;  
+      font-weight: bold;  
+      cursor: pointer;  
+    }  
+  
+    .submit-btn:hover {  
+      background: #991b1b;  
+    }  
+  
+    .submit-btn:disabled {  
+      opacity: .65;  
+      cursor: wait;  
+    }  
+  
+    .message {  
+      display: none;  
+      padding: 12px;  
+      margin-top: 16px;  
+      border-radius: 8px;  
+      background: #fff1f2;  
+      color: #991b1b;  
+      font-size: 13px;  
+      line-height: 1.5;  
+      overflow-wrap: anywhere;  
+    }  
+  
+    .message.success {  
+      background: #dcfce7;  
+      color: #166534;  
+    }  
+  
+    .footer {  
+      margin-top: 24px;  
+      text-align: center;  
+      font-size: 11px;  
+      color: #999;  
+    }  
+  
+    [hidden] {  
+      display: none !important;  
+    }  
+  
+    @media (max-width: 420px) {  
+      .container {  
+        padding: 24px 19px;  
+      }  
+    }  
+  </style>  </head>  <body>  
+  <main class="container">  
+    <div class="logo">A</div>  <h1>Admin Panel</h1>  
+<p class="subtitle">Kalkulator Harga Tayang</p>  
+
+<div class="tabs" role="tablist" aria-label="Menu akun">  
+  <button type="button" class="tab active"  
+    id="loginTab" role="tab" aria-selected="true"  
+    aria-controls="loginForm">  
+    Masuk  
+  </button>  
+
+  <button type="button" class="tab"  
+    id="registerTab" role="tab" aria-selected="false"  
+    aria-controls="registerForm">  
+    Mendaftar  
+  </button>  
+</div>  
+
+<form id="loginForm">  
+  <h2 class="form-title">Selamat datang!</h2>  
+  <p class="form-description">Masuk ke akun admin kamu.</p>  
+
+  <div class="form-group">  
+    <label for="loginEmail">Email</label>  
+    <input type="email" id="loginEmail" name="email"  
+      placeholder="Masukkan email" autocomplete="username"  
+      maxlength="254" required>  
+  </div>  
+
+  <div class="form-group">  
+    <label for="loginPassword">Password</label>  
+    <input type="password" id="loginPassword" name="password"  
+      placeholder="Masukkan password"  
+      autocomplete="current-password"  
+      maxlength="128" required>  
+  </div>  
+
+  <button type="submit" class="submit-btn" id="loginButton">  
+    Masuk  
+  </button>  
+    <!-- Pemisah -->
+<div class="google-divider">
+    <span>atau masuk dengan</span>
+</div>
+
+<!-- Tombol Login Google -->
+<a href="/api/admin/google/start" class="google-login-btn">
+    <svg viewBox="0 0 48 48" width="20" height="20"
+         xmlns="http://www.w3.org/2000/svg">
+        <path fill="#EA4335"
+              d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.01 13.22l7.98 6.19C11.88 13.72 17.49 9.5 24 9.5Z"
+              transform="translate(0 5)"/>
+        <path fill="#4285F4"
+              d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 37.85 46.98 31.76 46.98 24.55Z"
+              transform="translate(0 -1)"/>
+        <path fill="#FBBC05"
+              d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.53 10.78l8-6.19Z"
+              transform="translate(0 -1)"/>
+        <path fill="#34A853"
+              d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.51 0-12.12-4.22-14.11-10.06l-7.98 6.19C6.51 42.62 14.62 48 24 48Z"
+              transform="translate(0 -5)"/>
+    </svg>
+
+    <span>Masuk dengan Google</span>
+</a>
+</form>  
+
+<form id="registerForm" hidden>  
+  <h2 class="form-title">Buat akun admin</h2>  
+  <p class="form-description">  
+    Daftar menggunakan email dan password kamu.  
+  </p>  
+
+  <div class="form-group">  
+    <label for="registerEmail">Email</label>  
+    <input type="email" id="registerEmail" name="email"  
+      placeholder="Masukkan email" autocomplete="email"  
+      maxlength="254" required>  
+  </div>  
+
+  <div class="form-group">  
+    <label for="registerPassword">Password</label>  
+    <input type="password" id="registerPassword" name="password"  
+      placeholder="Minimal 12 karakter" minlength="12"  
+      maxlength="128" autocomplete="new-password" required>  
+  </div>  
+
+  <div class="form-group">  
+    <label for="confirmPassword">Konfirmasi Password</label>  
+    <input type="password" id="confirmPassword"  
+      name="confirmPassword" placeholder="Ulangi password"  
+      minlength="12" maxlength="128"  
+      autocomplete="new-password" required>  
+  </div>  
+
+  <button type="submit" class="submit-btn" id="registerButton">  
+    Daftar Admin  
+  </button>  
+</form>  
+
+<div class="message" id="message"  
+  role="status" aria-live="polite"></div>  
+
+<p class="footer">  
+  &copy; 2026 Kalkulator Harga Tayang  
+</p>
+
+  </main>    <script>  
+    "use strict";  
+  
+    const loginTab = document.getElementById("loginTab");  
+    const registerTab = document.getElementById("registerTab");  
+    const loginForm = document.getElementById("loginForm");  
+    const registerForm = document.getElementById("registerForm");  
+    const message = document.getElementById("message");  
+    const loginButton = document.getElementById("loginButton");  
+    const registerButton = document.getElementById("registerButton");  
+  
+    function showTab(tab) {  
+      const isLogin = tab === "login";  
+  
+      loginForm.hidden = !isLogin;  
+      registerForm.hidden = isLogin;  
+  
+      loginTab.classList.toggle("active", isLogin);  
+      registerTab.classList.toggle("active", !isLogin);  
+  
+      loginTab.setAttribute("aria-selected", String(isLogin));  
+      registerTab.setAttribute("aria-selected", String(!isLogin));  
+  
+      message.style.display = "none";  
+      message.textContent = "";  
+      message.classList.remove("success");  
+    }  
+  
+    loginTab.addEventListener("click", () => showTab("login"));  
+    registerTab.addEventListener("click", () => showTab("register"));  
+  
+    function showMessage(text, success = false) {  
+      message.textContent = text;  
+      message.style.display = "block";  
+      message.classList.toggle("success", success);  
+    }  
+  
+    async function sendRequest(endpoint, payload) {  
+      const response = await fetch(endpoint, {  
+        method: "POST",  
+        headers: {  
+          "Content-Type": "application/json",  
+          "Accept": "application/json"  
+        },  
+        credentials: "same-origin",  
+        cache: "no-store",  
+        body: JSON.stringify(payload)  
+      });  
+  
+      const data = await response.json().catch(() => ({}));  
+  
+      if (!response.ok || data.success !== true) {  
+        throw new Error(data.message || "Permintaan gagal.");  
+      }  
+  
+      return data;  
+    }  
+  
+    // PENDAFTARAN ADMIN  
+    registerForm.addEventListener("submit", async (event) => {  
+      event.preventDefault();  
+  
+      const email =  
+        document.getElementById("registerEmail").value.trim();  
+  
+      const password =  
+        document.getElementById("registerPassword").value;  
+  
+      const confirmPassword =  
+        document.getElementById("confirmPassword").value;  
+  
+      if (password.length < 12 || password.length > 128) {  
+        showMessage("Password harus terdiri dari 12–128 karakter.");  
+        return;  
+      }  
+  
+      if (password !== confirmPassword) {  
+        showMessage("Konfirmasi password tidak sama.");  
+        return;  
+      }  
+  
+      registerButton.disabled = true;  
+      registerButton.textContent = "Mendaftarkan...";  
+  
+      try {  
+        const data = await sendRequest("/api/admin/register", {  
+          email,  
+          password  
+        });  
+  
+        registerForm.reset();  
+        showTab("login");  
+  
+        document.getElementById("loginEmail").value = email;  
+  
+        showMessage(  
+          data.message || "Pendaftaran berhasil. Silakan masuk.",  
+          true  
+        );  
+      } catch (error) {  
+        showMessage(error.message || "Pendaftaran gagal.");  
+      } finally {  
+        registerButton.disabled = false;  
+        registerButton.textContent = "Daftar Admin";  
+      }  
+    });  
+  
+    // LOGIN ADMIN DAN REDIRECT KE DASHBOARD  
+    loginForm.addEventListener("submit", async (event) => {  
+      event.preventDefault();  
+  
+      const email =  
+        document.getElementById("loginEmail").value.trim();  
+  
+      const password =  
+        document.getElementById("loginPassword").value;  
+  
+      loginButton.disabled = true;  
+      loginButton.textContent = "Memeriksa...";  
+  
+      try {  
+        const data = await sendRequest("/api/admin/login", {  
+          email,  
+          password  
+        });  
+  
+        showMessage(  
+          data.message || "Login berhasil. Mengalihkan...",  
+          true  
+        );  
+  
+        // Cookie sesi dibuat oleh API login.  
+        // Setelah login berhasil, buka dashboard.  
+        window.location.replace("/dashboard.html");  
+  
+      } catch (error) {  
+        showMessage(error.message || "Login gagal.");  
+        loginButton.disabled = false;  
+        loginButton.textContent = "Masuk";  
+      }  
+    });  
+  
+    // Jika sesi admin masih aktif, langsung menuju dashboard.  
+    async function checkExistingSession() {  
+      try {  
+        const response = await fetch("/api/admin/check", {  
+          method: "GET",  
+          credentials: "same-origin",  
+          cache: "no-store",  
+          headers: {  
+            "Accept": "application/json"  
+          }  
+        });  
+  
+        if (!response.ok) return;  
+  
+        const data = await response.json();  
+  
+        if (  
+          data.success === true &&  
+          data.user &&  
+          data.user.role === "admin"  
+        ) {  
+          window.location.replace("/dashboard.html");  
+        }  
+      } catch (error) {  
+        // Jika pemeriksaan sesi gagal, form login tetap tersedia.  
+      }  
+    }  
+  
+    checkExistingSession();  
+  </script>  </body>  
+</html>  
