@@ -7,6 +7,142 @@
   <title>Dashboard Pengguna</title>
 
   <style>
+    /* MENU NAVIGASI */
+        .menu-toggle {
+            position: fixed;
+            top: 18px;
+            left: 18px;
+            z-index: 1002;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            background: #a80000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(150, 0, 0, 0.18);
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 22px;
+            height: 2.5px;
+            border-radius: 3px;
+            background: #fff;
+            transition: 0.25s;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: translateY(7.5px) rotate(45deg);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: translateY(-7.5px) rotate(-45deg);
+        }
+
+        .nav-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.25s;
+        }
+
+        .nav-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .nav-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 290px;
+            max-width: 85%;
+            height: 100vh;
+            height: 100dvh;
+            background: #fff;
+            z-index: 1001;
+            padding: 85px 18px 25px;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.12);
+            transform: translateX(-105%);
+            transition: transform 0.25s ease;
+            overflow-y: auto;
+        }
+
+        .nav-drawer.show {
+            transform: translateX(0);
+        }
+
+        .nav-heading {
+            color: #a80000;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin: 0 12px 15px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 13px;
+            margin-bottom: 7px;
+            border-radius: 10px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #fff0f0;
+            color: #a80000;
+        }
+
+        .nav-link .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+
+        .nav-link.admin-link {
+            color: #a80000;
+            background: #fff0f0;
+            border: 1px solid #f2dede;
+        }
+
+        .nav-link.admin-link:hover {
+            background: #ffe0e0;
+        }
+
+        .nav-divider {
+            height: 1px;
+            background: #eee;
+            margin: 15px 0;
+        }
+
+        /* TOMBOL DARK MODE */
+        .dark-mode-button {
+            width: 100%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            text-align: left;
+            font-family: inherit;
+          }
     /* ======================================================
        1. WARNA DAN PENGATURAN DASAR
        ====================================================== */
@@ -292,13 +428,58 @@
 
 <body>
   <!-- Header dan identitas website -->
-  <header class="header">
-    <a class="brand" href="dashboard-user.html" aria-label="Dashboard pengguna">
-      <div class="brand-icon">K</div>
-      <div>
-        <div class="brand-title">Kalkulator Harga Tayang</div>
-        <div class="brand-subtitle">Pusat layanan pengguna</div>
-      </div>
+<!-- TOMBOL MENU GARIS TIGA -->
+    <button
+        class="menu-toggle"
+        id="menuToggle"
+        type="button"
+        aria-label="Buka menu navigasi"
+        aria-expanded="false"
+        aria-controls="navDrawer"
+    >
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- LAPISAN GELAP -->
+    <div class="nav-overlay" id="navOverlay"></div>
+
+    <!-- MENU NAVIGASI -->
+    <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
+        <div class="nav-heading">MENU NAVIGASI</div>
+
+        <a class="nav-link admin-link" href="/dashboard.html">
+            <span class="nav-icon">🔐</span>
+            <span>Dashboard Admin</span>
+        </a>
+
+        <a class="nav-link" href="/gabung-foto.html">
+            <span class="nav-icon">📄</span>
+            <span>Ubah Foto ke PDF</span>
+        </a>
+
+        <a class="nav-link" href="/">
+            <span class="nav-icon">🧮</span>
+            <span>Kalkulator Harga Tayang</span>
+        </a>
+        <a class="nav-link" href="/surat-pernyataan.html">
+            <span class="nav-icon">📄</span>
+            <span>Buat Surat Pernyataan</span>
+        </a>
+
+        <div class="nav-divider"></div>
+
+        <button
+            class="nav-link dark-mode-button"
+            id="darkModeToggle"
+            type="button"
+            aria-label="Ganti tema tampilan"
+        >
+            <span class="nav-icon" id="darkModeIcon">🌙</span>
+            <span id="darkModeText">Dark Mode</span>
+        </button>
+    </nav>
     </a>
 
     <div class="header-right">
@@ -313,6 +494,7 @@
   </header>
 
   <!-- Konten utama dashboard -->
+  
   <main class="container">
     <section class="welcome">
       <p class="eyebrow">DASHBOARD</p>
