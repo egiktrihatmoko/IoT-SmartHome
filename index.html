@@ -473,10 +473,7 @@
             line-height: 1.5;
         }
 
-        /* =================================
-           DARK MODE
-        ================================= */
-
+        /* DARK MODE */
         body.dark-mode {
             background: #121212;
             color: #f1f1f1;
@@ -712,19 +709,7 @@
 
     <div class="nav-divider"></div>
 
-    <a
-        class="nav-link"
-        href="https://wa.me/6281125213879"
-        target="_blank"
-        rel="noopener noreferrer"
-    >
-        <span class="nav-icon">💬</span>
-        <span>Hubungi WhatsApp</span>
-    </a>
-
-    <!-- MENU DARK MODE DI BAGIAN PALING BAWAH -->
-    <div class="nav-divider"></div>
-
+    <!-- DARK MODE PALING BAWAH -->
     <button
         class="nav-link dark-mode-button"
         id="darkModeToggle"
@@ -1083,6 +1068,7 @@ document.addEventListener("keydown", function (event) {
     }
 });
 
+/* Tutup menu ketika tautan navigasi diklik */
 document.querySelectorAll(".nav-link").forEach(function (link) {
     link.addEventListener("click", tutupMenu);
 });
