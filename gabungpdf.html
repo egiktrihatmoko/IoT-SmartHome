@@ -193,12 +193,6 @@ input:focus, textarea:focus {
   box-shadow: 0 0 0 3px #b9001215;
 }
 
-.two-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
 .divider {
   height: 1px;
   background: #f0e6e6;
@@ -406,7 +400,6 @@ input:focus, textarea:focus {
   .brand-sub { display: none; }
   .brand-name { font-size: 14px; }
   .back { padding: 9px 10px; }
-  .two-col { grid-template-columns: 1fr; gap: 0; }
   .paper { padding: 23px 15px; font-size: 12px; }
   .identity, .bank-identity {
     grid-template-columns: 125px 1fr;
@@ -442,6 +435,7 @@ input:focus, textarea:focus {
 
   <div class="layout">
 
+    <!-- FORM DATA -->
     <section class="card form-card">
       <div class="card-head">
         <h2>Lengkapi data surat</h2>
@@ -460,17 +454,15 @@ input:focus, textarea:focus {
             placeholder="Masukkan nama lengkap" required>
         </div>
 
-        <div class="two-col">
-          <div class="field">
-            <label for="tempat">Tempat lahir *</label>
-            <input id="tempat" maxlength="100"
-              placeholder="Contoh: Klaten" required>
-          </div>
-
-          <div class="field">
-            <label for="tanggalLahir">Tanggal lahir *</label>
-            <input id="tanggalLahir" type="date" required>
-          </div>
+        <div class="field">
+          <label for="ttl">Tempat, Tanggal Lahir *</label>
+          <input
+            id="ttl"
+            type="text"
+            maxlength="150"
+            placeholder="Contoh: Klaten, 18 Desember 1999"
+            required
+          >
         </div>
 
         <div class="field">
@@ -509,21 +501,19 @@ input:focus, textarea:focus {
           <span class="step">3</span> Tanggal surat
         </h3>
 
-        <div class="two-col">
-          <div class="field">
-            <label for="kota">Kota/kabupaten *</label>
-            <input id="kota" maxlength="100"
-              placeholder="Contoh: Sragen" required>
-          </div>
+        <div class="field">
+          <label for="kota">Kota/kabupaten *</label>
+          <input id="kota" maxlength="100"
+            placeholder="Contoh: Sragen" required>
+        </div>
 
-          <div class="field">
-            <label for="tanggalSurat">Tanggal surat *</label>
-            <input id="tanggalSurat" type="date" required>
-          </div>
+        <div class="field">
+          <label for="tanggalSurat">Tanggal surat *</label>
+          <input id="tanggalSurat" type="date" required>
         </div>
 
         <p style="font-size:12px;color:#777;margin-top:-5px">
-          Tanggal surat otomatis mengikuti tanggal hari ini.
+          Tanggal surat otomatis mengikuti tanggal hari ini dan dapat diubah.
         </p>
 
         <div class="divider"></div>
@@ -576,6 +566,7 @@ input:focus, textarea:focus {
       </div>
     </section>
 
+    <!-- PRATINJAU SURAT -->
     <section class="card preview">
       <div class="card-head">
         <span class="preview-tag">PRATINJAU</span>
@@ -667,8 +658,7 @@ const $ = id => document.getElementById(id);
 
 const fieldIds = [
   'nama',
-  'tempat',
-  'tanggalLahir',
+  'ttl',
   'alamat',
   'pemilik',
   'bank',
@@ -678,7 +668,8 @@ const fieldIds = [
 ];
 
 // =======================================
-// TANGGAL HARI INI BERDASARKAN WAKTU LOKAL
+// TANGGAL SURAT OTOMATIS HARI INI
+// Menggunakan tanggal lokal perangkat.
 // =======================================
 
 function getTodayLocal() {
@@ -690,8 +681,7 @@ function getTodayLocal() {
   return `${year}-${month}-${day}`;
 }
 
-// Isi tanggal surat dengan tanggal hari ini
-// ketika halaman pertama kali dibuka.
+// Isi tanggal surat ketika halaman dibuka.
 $('tanggalSurat').value = getTodayLocal();
 
 function safeText(
@@ -722,18 +712,12 @@ function formatDate(value) {
 function updatePreview() {
   $('outNama').textContent = safeText($('nama').value);
 
-  const tempat = $('tempat').value.trim();
-  const tanggalLahir = formatDate($('tanggalLahir').value);
-
-  // Contoh hasil: Klaten, 17 Desember 1990
-  $('outTTL').textContent =
-    tempat && tanggalLahir
-      ? `${tempat}, ${tanggalLahir}`
-      : tempat
-        ? tempat
-        : tanggalLahir
-          ? tanggalLahir
-          : '........................................................';
+  // TTL diketik manual dalam satu kolom.
+  // Contoh: Klaten, 18 Desember 1999.
+  $('outTTL').textContent = safeText(
+    $('ttl').value,
+    '........................................................'
+  );
 
   $('outAlamat').textContent = safeText(
     $('alamat').value,
@@ -899,7 +883,7 @@ function useSignature() {
     $('outTtdImage').src = canvas.toDataURL('image/png');
     $('outTtdImage').hidden = false;
 
-    // Sembunyikan area cadangan agar tidak ada titik-titik.
+    // Pastikan tidak ada titik-titik di bawah tanda tangan.
     $('outTtd').hidden = true;
 
     $('ttdStatus').textContent =
@@ -936,8 +920,7 @@ $('clearTtdBtn').addEventListener('click', clearSignature);
 $('downloadBtn').addEventListener('click', async () => {
   const required = [
     ['nama', 'Nama lengkap'],
-    ['tempat', 'Tempat lahir'],
-    ['tanggalLahir', 'Tanggal lahir'],
+    ['ttl', 'Tempat dan tanggal lahir'],
     ['alamat', 'Alamat lengkap'],
     ['pemilik', 'Nama pemilik rekening'],
     ['bank', 'Nama bank'],
@@ -1037,14 +1020,14 @@ $('resetBtn').addEventListener('click', () => {
     $(id).value = '';
   });
 
-  // Setelah reset, tanggal surat kembali ke tanggal hari ini.
+  // Tanggal surat otomatis kembali ke tanggal hari ini.
   $('tanggalSurat').value = getTodayLocal();
 
   clearSignature();
   updatePreview();
 });
 
-// Perbarui tampilan awal.
+// Tampilkan pratinjau saat halaman pertama dibuka.
 updatePreview();
 </script>
 
