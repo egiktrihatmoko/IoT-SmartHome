@@ -1358,19 +1358,22 @@ $('resetBtn').addEventListener('click', () => {
 // Tampilkan pratinjau saat halaman pertama dibuka.
 updatePreview();
   
-  /* TOTAL KUNJUNGAN GLOBAL DARI UPSTASH REDIS */
-async function muatTotalKunjungan() {
+
+/* TOTAL SURAT DIBUAT DARI UPSTASH REDIS */
+async function muatTotalSurat() {
     const elemen = document.getElementById("totalsurat");
 
+    if (!elemen) return;
+
     try {
-        const response = await fetch("/api/visits", {
-            method: "POST",
+        const response = await fetch("/api/surat", {
+            method: "GET",
             cache: "no-store"
         });
 
         const data = await response.json().catch(() => ({}));
 
-        if (!response.ok) {
+        if (!response.ok || !data.success) {
             throw new Error(
                 data.detail || data.error || `HTTP ${response.status}`
             );
@@ -1379,19 +1382,19 @@ async function muatTotalKunjungan() {
         const total = Number(data.total);
 
         if (!Number.isSafeInteger(total) || total < 0) {
-            throw new Error("Data kunjungan tidak valid");
+            throw new Error("Data total surat tidak valid");
         }
 
         elemen.textContent = total.toLocaleString("id-ID");
 
     } catch (error) {
         elemen.textContent = "-";
-        console.error("Penghitung kunjungan:", error);
+        console.error("Penghitung total surat:", error);
     }
 }
 
-hitung();
-muatTotalKunjungan();
+muatTotalSurat();
+
 </script>
 
 </body>
