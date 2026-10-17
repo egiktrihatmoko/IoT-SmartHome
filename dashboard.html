@@ -733,6 +733,30 @@ h1 {
 .stats-note { background:#fffafa; border:1px solid #ffe0e3; border-radius:10px; padding:12px 14px; color:#77717a; font-size:11px; line-height:1.7; margin-top:13px; }
 @media (max-width:760px) { .chart-panel { padding:17px; } .chart-wrap { height:225px; } .chart-toolbar { gap:10px; } .chart-controls { width:100%; } .chart-range { flex:1; } }
 
+
+/* Riwayat surat */
+.history-section { margin: 0 0 28px; scroll-margin-top: 20px; }
+.history-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(165px,1fr)); gap:12px; margin-bottom:16px; }
+.history-toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+.history-search { flex:1; min-width:180px; min-height:42px; border:1px solid var(--border); border-radius:10px; padding:0 12px; font:inherit; font-size:12px; outline:none; }
+.history-search:focus { border-color:#f1a5ad; box-shadow:0 0 0 3px #c91f2c12; }
+.history-table-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; background:#fff; }
+.history-table { width:100%; border-collapse:collapse; min-width:760px; font-size:12px; }
+.history-table th { text-align:left; padding:13px 14px; color:#777985; background:#fafafa; font-size:10px; letter-spacing:.4px; text-transform:uppercase; white-space:nowrap; }
+.history-table td { padding:13px 14px; border-top:1px solid #f1f1f4; vertical-align:top; }
+.history-table tr:hover td { background:#fffafa; }
+.history-ip { font-weight:750; color:#991b1b; font-variant-numeric:tabular-nums; }
+.history-muted { color:var(--muted); }
+.history-status { font-size:11px; color:var(--muted); margin-top:12px; line-height:1.6; }
+.history-empty { padding:24px 14px !important; text-align:center; color:var(--muted); }
+.history-badge { display:inline-flex; padding:5px 8px; border-radius:20px; background:#fff1f2; color:#991b1b; font-size:10px; font-weight:750; white-space:nowrap; }
+.history-note { background:#fffafa; border:1px solid #ffe0e3; border-radius:10px; padding:12px 14px; color:#77717a; font-size:11px; line-height:1.7; margin-top:13px; }
+@media (max-width:760px) {
+  .sidebar nav { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .nav-link { font-size:9px; }
+  .history-toolbar .btn { flex:1; }
+}
+
 </style>
 </head>
 
@@ -774,6 +798,11 @@ h1 {
       <a class="nav-link" href="#akun">
         <span class="nav-icon">♙</span>
         <span>Akun Admin</span>
+      </a>
+
+      <a class="nav-link" href="#riwayat-surat" id="historyNavLink">
+        <span class="nav-icon">▤</span>
+        <span>Riwayat Surat</span>
       </a>
     </nav>
 
@@ -911,6 +940,74 @@ h1 {
         <div class="chart-wrap"><canvas id="visitorChart" role="img" aria-label="Grafik jumlah kunjungan website"></canvas></div>
         <div class="chart-status" id="chartStatus" aria-live="polite">Memuat data kunjungan...</div>
         <div class="stats-note">Catatan: data harian mulai terkumpul setelah endpoint kunjungan diperbarui. Total kunjungan lama tetap dipertahankan, tetapi riwayat harian sebelum perubahan tidak bisa dibuat ulang jika sebelumnya belum disimpan.</div>
+      </div>
+    </section>
+
+
+    <section class="history-section" id="riwayat-surat">
+      <div class="section-heading">
+        <div>
+          <h2>Riwayat Pembuatan Surat</h2>
+          <p>Data aktivitas pembuatan surat yang tercatat melalui API surat.</p>
+        </div>
+        <button class="btn" id="refreshHistory" type="button">↻ Muat ulang</button>
+      </div>
+
+      <div class="history-stats">
+        <article class="card">
+          <div class="card-top">
+            <div class="card-label">Total Surat Dibuat</div>
+            <div class="card-icon">▤</div>
+          </div>
+          <div class="stats-total" id="letterTotal">—</div>
+          <div class="card-note">Jumlah total dari Upstash Redis.</div>
+        </article>
+        <article class="card">
+          <div class="card-top">
+            <div class="card-label">IP Tercatat</div>
+            <div class="card-icon">⌘</div>
+          </div>
+          <div class="stats-total" id="letterUniqueIps">—</div>
+          <div class="card-note">Jumlah IP unik pada riwayat yang tersedia.</div>
+        </article>
+      </div>
+
+      <div class="chart-panel">
+        <div class="chart-toolbar">
+          <div>
+            <h3>Daftar Aktivitas</h3>
+            <p>IP Address, lokasi perkiraan, waktu, dan jumlah surat.</p>
+          </div>
+        </div>
+        <div class="history-toolbar">
+          <input class="history-search" id="historySearch" type="search"
+            placeholder="Cari IP, kota, provinsi, atau negara..." autocomplete="off"
+            aria-label="Cari riwayat surat">
+          <button class="btn" id="clearHistorySearch" type="button">Hapus pencarian</button>
+        </div>
+        <div class="history-table-wrap">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>IP Address</th>
+                <th>Lokasi Perkiraan</th>
+                <th>Waktu (WIB)</th>
+                <th>Jumlah Surat</th>
+              </tr>
+            </thead>
+            <tbody id="letterHistoryBody">
+              <tr><td colspan="4" class="history-empty">Memuat riwayat surat...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="history-status" id="letterHistoryStatus" aria-live="polite">
+          Memeriksa data riwayat surat...
+        </div>
+        <div class="history-note">
+          Lokasi berdasarkan IP hanya perkiraan dan tidak menunjukkan alamat rumah atau GPS yang pasti.
+          Data IP hanya ditampilkan di area admin. Pastikan pengumpulan data ini diberitahukan kepada pengguna
+          dan simpan hanya selama diperlukan.
+        </div>
       </div>
     </section>
 
@@ -1235,7 +1332,153 @@ document.querySelectorAll(".chart-range").forEach(button => {
 });
 window.addEventListener("resize", () => { if (visitorStats) drawVisitorChart(currentRange); });
 
-checkSession().then(() => { if (!dashboard.hidden) loadVisitorStats(); });
+
+// Riwayat surat: memerlukan endpoint admin terproteksi /api/admin/surat-history.
+const letterTotalEl = document.getElementById("letterTotal");
+const letterUniqueIpsEl = document.getElementById("letterUniqueIps");
+const letterHistoryBody = document.getElementById("letterHistoryBody");
+const letterHistoryStatus = document.getElementById("letterHistoryStatus");
+const historySearchEl = document.getElementById("historySearch");
+let letterHistoryRows = [];
+
+function safeCell(value, fallback = "—") {
+  return typeof value === "string" && value.trim() ? value : fallback;
+}
+
+function renderLetterHistory() {
+  const query = (historySearchEl.value || "").trim().toLowerCase();
+  const filtered = letterHistoryRows.filter(item => {
+    const searchable = [
+      item.ip, item.city, item.region, item.country, item.location,
+      item.timestamp, item.time, item.date
+    ].filter(Boolean).join(" ").toLowerCase();
+    return searchable.includes(query);
+  });
+
+  letterHistoryBody.replaceChildren();
+
+  if (!filtered.length) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 4;
+    cell.className = "history-empty";
+    cell.textContent = letterHistoryRows.length
+      ? "Tidak ada riwayat yang cocok dengan pencarian."
+      : "Belum ada data riwayat surat.";
+    row.appendChild(cell);
+    letterHistoryBody.appendChild(row);
+    return;
+  }
+
+  filtered.forEach(item => {
+    const row = document.createElement("tr");
+    const ipCell = document.createElement("td");
+    const ip = document.createElement("div");
+    ip.className = "history-ip";
+    ip.textContent = safeCell(item.ip);
+    ipCell.appendChild(ip);
+
+    const locationCell = document.createElement("td");
+    const location = document.createElement("div");
+    location.textContent = safeCell(
+      item.location ||
+      [item.city, item.region, item.country].filter(Boolean).join(", ")
+    , "Lokasi tidak tersedia");
+    locationCell.appendChild(location);
+
+    const timeCell = document.createElement("td");
+    timeCell.textContent = safeCell(item.time || item.timestamp || item.date);
+
+    const countCell = document.createElement("td");
+    const badge = document.createElement("span");
+    badge.className = "history-badge";
+    const count = Number(item.count ?? item.total ?? 1);
+    badge.textContent = Number.isSafeInteger(count) && count >= 0
+      ? count.toLocaleString("id-ID") + " surat"
+      : "—";
+    countCell.appendChild(badge);
+
+    row.append(ipCell, locationCell, timeCell, countCell);
+    letterHistoryBody.appendChild(row);
+  });
+}
+
+async function loadLetterHistory() {
+  letterHistoryStatus.textContent = "Memuat riwayat surat...";
+  const refreshButton = document.getElementById("refreshHistory");
+  refreshButton.disabled = true;
+
+  try {
+    const response = await fetch("/api/admin/surat-history", {
+      method: "GET",
+      credentials: "same-origin",
+      cache: "no-store",
+      headers: { "Accept": "application/json" }
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (response.status === 401 || response.status === 403) {
+      showLogin();
+      return;
+    }
+    if (!response.ok || data.success !== true) {
+      throw new Error(data.error || "API riwayat surat belum tersedia.");
+    }
+
+    letterHistoryRows = Array.isArray(data.records) ? data.records : [];
+    letterTotalEl.textContent = formatNumber(data.total);
+    const uniqueIps = new Set(
+      letterHistoryRows.map(item => item.ip).filter(ip => typeof ip === "string" && ip)
+    );
+    letterUniqueIpsEl.textContent = formatNumber(
+      data.uniqueIps ?? uniqueIps.size
+    );
+
+    renderLetterHistory();
+    letterHistoryStatus.textContent =
+      "Data diperbarui: " + new Date().toLocaleString("id-ID") +
+      " · " + letterHistoryRows.length.toLocaleString("id-ID") + " catatan dimuat.";
+  } catch (error) {
+    letterHistoryBody.replaceChildren();
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 4;
+    cell.className = "history-empty";
+    cell.textContent = "Riwayat belum dapat dimuat.";
+    row.appendChild(cell);
+    letterHistoryBody.appendChild(row);
+    letterTotalEl.textContent = "—";
+    letterUniqueIpsEl.textContent = "—";
+    letterHistoryStatus.textContent =
+      "Gagal memuat riwayat. Endpoint /api/admin/surat-history perlu dibuat dan dilindungi sesi admin.";
+    console.error("Riwayat surat:", error);
+  } finally {
+    refreshButton.disabled = false;
+  }
+}
+
+document.getElementById("refreshHistory")
+  .addEventListener("click", loadLetterHistory);
+historySearchEl.addEventListener("input", renderLetterHistory);
+document.getElementById("clearHistorySearch").addEventListener("click", () => {
+  historySearchEl.value = "";
+  renderLetterHistory();
+});
+
+document.getElementById("historyNavLink").addEventListener("click", () => {
+  document.querySelectorAll(".nav-link").forEach(link => link.classList.remove("active"));
+  document.getElementById("historyNavLink").classList.add("active");
+});
+document.querySelectorAll('.nav-link[href="dashboard.html"]').forEach(link => {
+  link.addEventListener("click", () => {
+    document.querySelectorAll(".nav-link").forEach(item => item.classList.remove("active"));
+    link.classList.add("active");
+  });
+});
+
+
+checkSession().then(() => { if (!dashboard.hidden) loadVisitorStats(); loadLetterHistory(); });
 </script>
 
 </body>
