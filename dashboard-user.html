@@ -89,25 +89,12 @@
       border-radius: 50%;
     }
 
-    .logout {
-      border: 1px solid #f0caca;
-      border-radius: 9px;
-      background: #fff;
-      color: var(--red);
-      font-size: 12px;
-      font-weight: 650;
-      padding: 9px 12px;
-      cursor: pointer;
-      transition: background .15s ease;
-    }
-
-    .logout:hover { background: var(--red-light); }
 
     /* ======================================================
        3. KONTEN DASHBOARD
        ====================================================== */
     .container {
-      width: min(100% - 40px, 1000px);
+      width: min(100% - 32px, 860px);
       margin: 34px auto 70px;
     }
 
@@ -156,16 +143,16 @@
        ====================================================== */
     .feature-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
     }
 
     .feature {
       background: var(--surface);
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      padding: 20px;
-      min-height: 218px;
+      padding: 17px;
+      min-height: 185px;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -186,7 +173,7 @@
       background: var(--red-light);
       color: var(--red);
       border-radius: 12px;
-      margin-bottom: 17px;
+      margin-bottom: 12px;
     }
 
     .feature-icon svg {
@@ -199,8 +186,8 @@
       stroke-linejoin: round;
     }
 
-    .feature h3 { margin: 0 0 8px; font-size: 15px; line-height: 1.4; }
-    .feature p { margin: 0 0 20px; color: var(--muted); font-size: 12px; line-height: 1.65; flex: 1; }
+    .feature h3 { margin: 0 0 8px; font-size: 14px; line-height: 1.4; }
+    .feature p { margin: 0 0 20px; color: var(--muted); font-size: 12px; line-height: 1.55; flex: 1; }
 
     .feature-link {
       display: inline-flex;
@@ -215,33 +202,32 @@
     .feature-link:hover span { transform: translateX(3px); }
 
     /* ======================================================
-       5. BARIS AKUN
+       5. PROFIL PENGGUNA DI HEADER
        ====================================================== */
-    .account {
+    .profile {
       display: flex;
       align-items: center;
-      gap: 12px;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 15px 17px;
-      margin-top: 22px;
+      gap: 9px;
+      min-width: 0;
     }
 
-    .avatar {
-      width: 40px;
-      height: 40px;
+    .profile-photo {
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
+      object-fit: cover;
       display: grid;
       place-items: center;
+      flex-shrink: 0;
+      overflow: hidden;
       background: var(--red-light);
       color: var(--red);
-      flex-shrink: 0;
+      border: 1px solid #f1dada;
     }
 
-    .avatar svg {
-      width: 20px;
-      height: 20px;
+    .profile-photo svg {
+      width: 21px;
+      height: 21px;
       fill: none;
       stroke: currentColor;
       stroke-width: 1.8;
@@ -249,24 +235,13 @@
       stroke-linejoin: round;
     }
 
-    .account-copy { min-width: 0; flex: 1; }
-    .account-copy strong { display: block; font-size: 13px; }
-    .account-copy small {
-      display: block;
-      color: var(--muted);
+    .profile-name {
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       font-size: 12px;
-      margin-top: 4px;
-      overflow-wrap: anywhere;
-    }
-
-    .role {
-      color: #62646b;
-      background: #f4f4f5;
-      border-radius: 7px;
-      padding: 6px 8px;
-      font-size: 10px;
-      font-weight: 750;
-      letter-spacing: .5px;
+      font-weight: 700;
     }
 
     .footer {
@@ -285,29 +260,28 @@
       .brand-title { font-size: 12px; }
       .brand-subtitle { font-size: 10px; }
       .online { display: none; }
+      .profile { gap: 7px; }
+      .profile-photo { width: 34px; height: 34px; }
+      .profile-name { max-width: 90px; font-size: 11px; }
       .container { width: calc(100% - 30px); margin-top: 26px; }
       .welcome { padding-bottom: 22px; margin-bottom: 23px; }
-      .feature-grid { grid-template-columns: 1fr; gap: 11px; }
+      .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
       .feature {
-        min-height: 0;
-        padding: 16px;
-        display: grid;
-        grid-template-columns: 43px minmax(0, 1fr);
-        column-gap: 13px;
-        align-items: start;
+        min-height: 175px;
+        padding: 13px;
       }
-      .feature-icon { grid-column: 1; grid-row: 1 / span 3; margin: 0; }
-      .feature h3 { grid-column: 2; margin: 1px 0 5px; }
-      .feature p { grid-column: 2; margin: 0 0 10px; }
-      .feature-link { grid-column: 2; }
-      .account { margin-top: 17px; }
+      .feature-icon { width: 37px; height: 37px; margin-bottom: 11px; border-radius: 10px; }
+      .feature-icon svg { width: 20px; height: 20px; }
+      .feature h3 { font-size: 13px; margin-bottom: 6px; }
+      .feature p { font-size: 11px; margin-bottom: 13px; }
+      .feature-link { font-size: 11px; }
       .footer { margin-top: 20px; }
     }
 
-    @media (min-width: 480px) and (max-width: 720px) {
-      .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .feature { display: flex; }
-      .feature-icon { margin-bottom: 14px; }
+    @media (max-width: 360px) {
+      .container { width: calc(100% - 22px); }
+      .feature-grid { grid-template-columns: 1fr; }
+      .feature { min-height: 0; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -319,7 +293,7 @@
 <body>
   <!-- Header dan identitas website -->
   <header class="header">
-    <a class="brand" href="user-dashboard.html" aria-label="Dashboard pengguna">
+    <a class="brand" href="dashboard-user.html" aria-label="Dashboard pengguna">
       <div class="brand-icon">K</div>
       <div>
         <div class="brand-title">Kalkulator Harga Tayang</div>
@@ -328,8 +302,13 @@
     </a>
 
     <div class="header-right">
-      <div class="online"><span class="online-dot"></span> Akun aktif</div>
-      <button class="logout" id="logoutButton" type="button">Keluar</button>
+      <div class="online"><span class="online-dot"></span> Siap digunakan</div>
+      <div class="profile" aria-label="Profil pengguna">
+        <div class="profile-photo" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+        </div>
+        <span class="profile-name">Nama Pengguna</span>
+      </div>
     </div>
   </header>
 
@@ -337,7 +316,7 @@
   <main class="container">
     <section class="welcome">
       <p class="eyebrow">DASHBOARD</p>
-      <h1 id="welcomeTitle">Selamat datang!</h1>
+      <h1>Selamat datang!</h1>
       <p>Pilih fitur yang kamu perlukan untuk mulai bekerja.</p>
     </section>
 
@@ -382,89 +361,12 @@
       </div>
     </section>
 
-    <!-- Informasi singkat akun yang sedang masuk -->
-    <section class="account" aria-label="Informasi akun pengguna">
-      <div class="avatar" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
-      </div>
-      <div class="account-copy">
-        <strong id="accountName">Akun pengguna</strong>
-        <small id="accountEmail">Memuat informasi akun...</small>
-      </div>
-      <span class="role">USER</span>
-    </section>
-
     <footer class="footer">© <span id="year"></span> Kalkulator Harga Tayang</footer>
   </main>
 
   <script>
-    /* ======================================================
-       7. CEK SESI USER
-       Pastikan endpoint /api/user/check mengembalikan status
-       autentikasi dan data user sesuai backend kamu.
-       ====================================================== */
-    async function checkUserSession() {
-      try {
-        const response = await fetch("/api/user/check", {
-          method: "GET",
-          credentials: "include",
-          headers: { "Accept": "application/json" }
-        });
-
-        if (!response.ok) {
-          window.location.replace("login-user.html");
-          return;
-        }
-
-        const result = await response.json();
-
-        // Backend harus melakukan validasi role user di server.
-        if (result.authenticated === false || result.role === "admin") {
-          window.location.replace("login-user.html");
-          return;
-        }
-
-        const user = result.user || result.data || result;
-        const name = user.name || user.nama || user.fullName || "Pengguna";
-        const email = user.email || user.userEmail || "";
-
-        document.getElementById("welcomeTitle").textContent = `Selamat datang, ${name}!`;
-        document.getElementById("accountName").textContent = name;
-        document.getElementById("accountEmail").textContent =
-          email || "Informasi email tidak tersedia";
-      } catch (error) {
-        // Jika API gagal diakses, jangan menganggap sesi telah terverifikasi.
-        window.location.replace("login-user.html");
-      }
-    }
-
-    /* ======================================================
-       8. KELUAR DARI AKUN
-       Endpoint logout perlu menghapus sesi di sisi server.
-       ====================================================== */
-    document.getElementById("logoutButton").addEventListener("click", async () => {
-      const button = document.getElementById("logoutButton");
-      button.disabled = true;
-      button.textContent = "Memproses...";
-
-      try {
-        await fetch("/api/user/logout", {
-          method: "POST",
-          credentials: "include",
-          headers: { "Accept": "application/json" }
-        });
-      } catch (error) {
-        // Navigasi tetap diarahkan ke login jika permintaan gagal.
-      }
-
-      window.location.replace("login-user.html");
-    });
-
-    // Tahun pada footer.
+    // Tahun pada footer. Dashboard ini hanya tampilan, tanpa login/API.
     document.getElementById("year").textContent = new Date().getFullYear();
-
-    // Periksa sesi ketika dashboard dibuka.
-    checkUserSession();
   </script>
 </body>
 </html>
