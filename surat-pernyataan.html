@@ -1242,7 +1242,8 @@ function clearSignature() {
 $('clearTtdBtn').addEventListener('click', clearSignature);
 
 // =======================================
-// DOWNLOAD PDF
+
+ // DOWNLOAD PDF + TOTAL SURAT
 // =======================================
 
 $('downloadBtn').addEventListener('click', async () => {
@@ -1321,10 +1322,41 @@ $('downloadBtn').addEventListener('click', async () => {
       }
     };
 
+    // Buat dan unduh PDF terlebih dahulu.
     await html2pdf()
       .set(opsi)
       .from($('paper'))
       .save();
+
+    // Setelah proses PDF selesai, tambah total surat di server.
+    try {
+      const response = await fetch('/api/surat', {
+        method: 'POST',
+        cache: 'no-store'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Gagal menambah total surat.');
+      }
+
+      // Perbarui angka di pojok kanan atas.
+      const elemenTotal = $('totalsurat');
+
+      if (elemenTotal) {
+        elemenTotal.textContent =
+          Number(data.total).toLocaleString('id-ID');
+      }
+
+    } catch (error) {
+      console.error('Gagal memperbarui total surat:', error);
+
+      alert(
+        'PDF sudah diproses, tetapi total surat gagal diperbarui. ' +
+        'Periksa koneksi atau API surat.'
+      );
+    }
 
   } catch (error) {
     console.error('Gagal membuat PDF:', error);
@@ -1334,6 +1366,7 @@ $('downloadBtn').addEventListener('click', async () => {
     tombol.innerHTML = teksAwal;
   }
 });
+  
 
 // =======================================
 // RESET FORMULIR
