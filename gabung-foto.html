@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gabungkan Foto Jadi PDF</title>
 
+
+
     <style>
         * {
             box-sizing: border-box;
@@ -1338,7 +1340,137 @@
             });
         }
 
-       
+        /* BUAT PDF */
+        createPdfButton.addEventListener("click", async function () {
+            if (photos.length === 0 || isGenerating) return;
+
+            if (!window.jspdf || !window.jspdf.jsPDF) {
+                showStatus(
+                    "Library PDF gagal dimuat. Periksa koneksi internet, lalu muat ulang halaman.",
+                    "error"
+                );
+                return;
+            }
+
+            isGenerating = true;
+            createPdfButton.disabled = true;
+            clearButton.disabled = true;
+            createPdfButton.textContent = "Memproses Foto...";
+            hideStatus();
+
+            try {
+                const { jsPDF } = window.jspdf;
+
+                const orientation = document.querySelector(
+                    'input[name="orientation"]:checked'
+                ).value;
+
+                const quality =
+                    Number(qualityInput.value) / 100;
+
+                const margin = PDF_MARGIN;
+                const selectedPaper = PDF_PAPER_SIZE;
+
+                const pdf = new jsPDF({
+                    orientation: orientation,
+                    unit: "mm",
+                    format: selectedPaper,
+                    compress: true
+                });
+
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+
+                const availableWidth = pageWidth - margin * 2;
+                const availableHeight = pageHeight - margin * 2;
+
+                if (
+                    availableWidth <= 0 ||
+                    availableHeight <= 0
+                ) {
+                    throw new Error(
+                        "Pengaturan halaman PDF tidak valid."
+                    );
+                }
+
+                for (let i = 0; i < photos.length; i++) {
+                    createPdfButton.textContent =
+                        "Memproses foto " +
+                        (i + 1) +
+                        " dari " +
+                        photos.length +
+                        "...";
+
+                    const image = await readImageAsJpeg(
+                        photos[i].file,
+                        quality
+                    );
+
+                    if (i > 0) {
+                        pdf.addPage(
+                            selectedPaper,
+                            orientation
+                        );
+                    }
+
+                    /* Foto disesuaikan agar muat di A4, margin 10 mm */
+                    const ratio = Math.min(
+                        availableWidth / image.width,
+                        availableHeight / image.height
+                    );
+
+                    const drawWidth = image.width * ratio;
+                    const drawHeight = image.height * ratio;
+
+                    const x = (pageWidth - drawWidth) / 2;
+                    const y = (pageHeight - drawHeight) / 2;
+
+                    pdf.addImage(
+                        image.data,
+                        "JPEG",
+                        x,
+                        y,
+                        drawWidth,
+                        drawHeight,
+                        undefined,
+                        "FAST"
+                    );
+                }
+
+                const now = new Date();
+
+                const date =
+                    now.getFullYear() +
+                    "-" +
+                    String(now.getMonth() + 1).padStart(2, "0") +
+                    "-" +
+                    String(now.getDate()).padStart(2, "0");
+
+                pdf.save("gabungan-foto-" + date + ".pdf");
+
+                showStatus(
+                    "PDF berhasil dibuat! Total " +
+                    photos.length +
+                    " foto telah digabungkan. File akan diunduh ke perangkat kamu.",
+                    "success"
+                );
+            } catch (error) {
+                console.error(error);
+
+                showStatus(
+                    error.message ||
+                    "Terjadi kesalahan saat membuat PDF. Coba gunakan foto yang lebih kecil.",
+                    "error"
+                );
+            } finally {
+                isGenerating = false;
+                createPdfButton.textContent =
+                    "📄 Gabungkan dan Unduh PDF";
+
+                renderPhotos();
+            }
+        });
+
         /* BERSIHKAN URL SEMENTARA */
         window.addEventListener("beforeunload", function () {
             photos.forEach(function (photo) {
