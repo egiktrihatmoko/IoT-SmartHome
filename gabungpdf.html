@@ -153,6 +153,7 @@ h1 {
   place-items: center;
   width: 30px;
   height: 30px;
+  flex-shrink: 0;
   border-radius: 50%;
   background: var(--red);
   color: white;
@@ -293,10 +294,91 @@ input:focus, textarea:focus {
 .signature {
   margin: 25px 0 0 auto;
   width: 210px;
+  max-width: 100%;
   text-align: center;
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
-.signature-space { height: 65px; }
+.signature-space { height: 45px; }
+
+.signature-image {
+  display: block;
+  width: 180px;
+  max-width: 100%;
+  height: 85px;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
+.signature-name {
+  min-height: 22px;
+  overflow-wrap: anywhere;
+}
+
+.signature-fallback {
+  display: block;
+  min-height: 22px;
+}
+
+.signature-drawing {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 15px;
+  background: #fffafa;
+  margin-top: 5px;
+}
+
+.signature-drawing p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+
+.canvas-wrap {
+  width: 100%;
+  border: 1px dashed #d5a4a8;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+}
+
+#signatureCanvas {
+  display: block;
+  width: 100%;
+  height: 180px;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.canvas-hint {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 8px;
+}
+
+.signature-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.signature-actions .btn {
+  flex: 1;
+  padding: 11px 9px;
+  font-size: 12px;
+}
+
+.signature-status {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 10px;
+  line-height: 1.5;
+}
 
 .note {
   padding: 14px 19px;
@@ -332,6 +414,8 @@ input:focus, textarea:focus {
   .paper { padding: 23px 15px; font-size: 12px; }
   .identity, .bank-identity { grid-template-columns: 125px 1fr; }
   .actions .btn { width: 100%; }
+  .signature-actions { flex-direction: column; }
+  #signatureCanvas { height: 160px; }
 }
 </style>
 </head>
@@ -382,7 +466,8 @@ input:focus, textarea:focus {
         <div class="two-col">
           <div class="field">
             <label for="tempat">Tempat lahir *</label>
-            <input id="tempat" maxlength="100" placeholder="Contoh: Sragen" required>
+            <input id="tempat" maxlength="100"
+              placeholder="Contoh: Sragen" required>
           </div>
           <div class="field">
             <label for="tanggalLahir">Tanggal lahir *</label>
@@ -439,6 +524,43 @@ input:focus, textarea:focus {
           </div>
         </div>
 
+        <div class="divider"></div>
+
+        <!-- FITUR GAMBAR TTD -->
+        <h3 class="section-title">
+          <span class="step">4</span> Gambar tanda tangan
+        </h3>
+
+        <div class="signature-drawing">
+          <p>
+            Gambar tanda tangan kamu pada area putih di bawah ini
+            menggunakan jari atau mouse. TTD ini opsional.
+          </p>
+
+          <div class="canvas-wrap">
+            <canvas id="signatureCanvas"
+              aria-label="Area untuk menggambar tanda tangan"></canvas>
+          </div>
+
+          <div class="canvas-hint">
+            <span>✍️ Gambar di sini</span>
+            <span>Gunakan jari atau mouse</span>
+          </div>
+
+          <div class="signature-actions">
+            <button class="btn secondary" type="button" id="clearTtdBtn">
+              Hapus TTD
+            </button>
+            <button class="btn primary" type="button" id="useTtdBtn">
+              Gunakan TTD
+            </button>
+          </div>
+
+          <div class="signature-status" id="ttdStatus" aria-live="polite">
+            Belum ada tanda tangan yang digunakan.
+          </div>
+        </div>
+
         <div class="actions">
           <button class="btn primary" id="downloadBtn" type="button">
             ↓ Download PDF
@@ -480,7 +602,9 @@ input:focus, textarea:focus {
           <p>Dengan ini menyatakan bahwa:</p>
 
           <p class="statement">
-            Nomor rekening dan nama rekening di bawah ini benar merupakan milik pribadi saya/badan usaha dan digunakan atas nama saya/badan usaha:
+            Nomor rekening dan nama rekening di bawah ini benar merupakan
+            milik pribadi saya/badan usaha dan digunakan atas nama
+            saya/badan usaha:
           </p>
 
           <div class="bank-identity">
@@ -505,18 +629,28 @@ input:focus, textarea:focus {
           <div class="signature">
             <div id="outTanggal">............................, .... ......... 20....</div>
             <div>Yang membuat pernyataan,</div>
+
             <div class="signature-space"></div>
-            <div>Tanda tangan,</div>
-            <div style="height:35px"></div>
-            <div id="outTtd">........................................................</div>
+
+            <!-- GAMBAR TTD AKAN MUNCUL DI SINI -->
+            <img id="outTtdImage" class="signature-image"
+              alt="Tanda tangan" hidden>
+
+            <!-- Ditampilkan jika TTD belum digunakan -->
+            <div id="outTtd" class="signature-fallback">
+              ........................................................
+            </div>
+
+            <div class="signature-name" id="outNamaTtd"></div>
           </div>
 
         </article>
       </div>
 
       <div class="note">
-        Pastikan semua data rekening benar sebelum mengunduh. Dokumen
-        diproses di browser dan tidak dikirim ke database.
+        Pastikan semua data rekening benar sebelum mengunduh. Data dan
+        tanda tangan diproses di browser dan tidak dikirim ke database
+        oleh kode ini.
       </div>
     </section>
 
@@ -590,10 +724,7 @@ function updatePreview() {
     ? `${kota}, ${tanggal}`
     : `${kota}, .... ......... 20....`;
 
-  $('outTtd').textContent = safeText(
-    $('nama').value,
-    '........................................................'
-  );
+  $('outNamaTtd').textContent = $('nama').value.trim();
 }
 
 fieldIds.forEach(id => {
@@ -601,7 +732,187 @@ fieldIds.forEach(id => {
   $(id).addEventListener('change', updatePreview);
 });
 
-// Unduh PDF langsung tanpa membuka dialog cetak
+// =======================================
+// FITUR GAMBAR TANDA TANGAN
+// =======================================
+
+const canvas = $('signatureCanvas');
+const ctx = canvas.getContext('2d');
+
+let isDrawing = false;
+let hasDrawing = false;
+let ttdUsed = false;
+let lastX = 0;
+let lastY = 0;
+let lastPointTime = 0;
+
+// Mengatur resolusi canvas agar tetap tajam di HP
+function setupCanvas() {
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+
+  const oldData = hasDrawing ? canvas.toDataURL('image/png') : null;
+  const oldWidth = canvas.width;
+  const oldHeight = canvas.height;
+
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#111111';
+  ctx.lineWidth = 2.5;
+
+  if (oldData && oldWidth && oldHeight) {
+    const img = new Image();
+
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, rect.width, rect.height);
+    };
+
+    img.src = oldData;
+  }
+}
+
+setupCanvas();
+
+let resizeTimeout;
+
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(setupCanvas, 150);
+});
+
+function getCanvasPoint(event) {
+  const rect = canvas.getBoundingClientRect();
+
+  return {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top
+  };
+}
+
+function startDrawing(event) {
+  if (event.button !== undefined && event.button !== 0) return;
+
+  event.preventDefault();
+
+  const point = getCanvasPoint(event);
+
+  isDrawing = true;
+  hasDrawing = true;
+
+  lastX = point.x;
+  lastY = point.y;
+  lastPointTime = performance.now();
+
+  try {
+    canvas.setPointerCapture(event.pointerId);
+  } catch (error) {}
+
+  // Titik kecil agar ketukan saja tetap menghasilkan goresan
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, ctx.lineWidth / 2, 0, Math.PI * 2);
+  ctx.fillStyle = '#111111';
+  ctx.fill();
+
+  $('ttdStatus').textContent =
+    'Tanda tangan sedang digambar. Tekan Gunakan TTD jika sudah selesai.';
+}
+
+function drawSignature(event) {
+  if (!isDrawing) return;
+
+  event.preventDefault();
+
+  const point = getCanvasPoint(event);
+
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(point.x, point.y);
+  ctx.stroke();
+
+  lastX = point.x;
+  lastY = point.y;
+  lastPointTime = performance.now();
+}
+
+function stopDrawing(event) {
+  if (!isDrawing) return;
+
+  isDrawing = false;
+
+  if (event && event.pointerId !== undefined) {
+    try {
+      if (canvas.hasPointerCapture(event.pointerId)) {
+        canvas.releasePointerCapture(event.pointerId);
+      }
+    } catch (error) {}
+  }
+}
+
+canvas.addEventListener('pointerdown', startDrawing);
+canvas.addEventListener('pointermove', drawSignature);
+canvas.addEventListener('pointerup', stopDrawing);
+canvas.addEventListener('pointercancel', stopDrawing);
+canvas.addEventListener('lostpointercapture', () => {
+  isDrawing = false;
+});
+
+function useSignature() {
+  if (isDrawing) {
+    alert('Selesaikan gambar tanda tangan terlebih dahulu.');
+    return;
+  }
+
+  if (!hasDrawing) {
+    alert('Silakan gambar tanda tangan terlebih dahulu.');
+    return;
+  }
+
+  try {
+    const imageData = canvas.toDataURL('image/png');
+
+    $('outTtdImage').src = imageData;
+    $('outTtdImage').hidden = false;
+    $('outTtd').hidden = true;
+
+    ttdUsed = true;
+
+    $('ttdStatus').textContent =
+      '✓ Tanda tangan berhasil digunakan dan ditampilkan pada pratinjau surat.';
+  } catch (error) {
+    console.error('Gagal menggunakan tanda tangan:', error);
+    alert('Tanda tangan gagal digunakan. Silakan coba lagi.');
+  }
+}
+
+$('useTtdBtn').addEventListener('click', useSignature);
+
+function clearSignature() {
+  isDrawing = false;
+  hasDrawing = false;
+  ttdUsed = false;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  $('outTtdImage').removeAttribute('src');
+  $('outTtdImage').hidden = true;
+  $('outTtd').hidden = false;
+
+  $('ttdStatus').textContent =
+    'Belum ada tanda tangan yang digunakan.';
+}
+
+$('clearTtdBtn').addEventListener('click', clearSignature);
+
+// =======================================
+// DOWNLOAD PDF
+// =======================================
+
 $('downloadBtn').addEventListener('click', async () => {
   const required = [
     ['nama', 'Nama lengkap'],
@@ -625,6 +936,11 @@ $('downloadBtn').addEventListener('click', async () => {
 
   if (typeof html2pdf === 'undefined') {
     alert('Library PDF gagal dimuat. Periksa koneksi internet lalu coba lagi.');
+    return;
+  }
+
+  if (isDrawing) {
+    alert('Selesaikan gambar tanda tangan terlebih dahulu.');
     return;
   }
 
@@ -666,7 +982,8 @@ $('downloadBtn').addEventListener('click', async () => {
       },
 
       pagebreak: {
-        mode: ['css', 'legacy']
+        mode: ['css', 'legacy'],
+        avoid: ['.signature']
       }
     };
 
@@ -684,15 +1001,22 @@ $('downloadBtn').addEventListener('click', async () => {
   }
 });
 
-// Reset semua isian
+// =======================================
+// RESET FORMULIR DAN TTD
+// =======================================
+
 $('resetBtn').addEventListener('click', () => {
-  if (!confirm('Yakin ingin mengosongkan semua data?')) return;
+  if (!confirm('Yakin ingin mengosongkan semua data dan tanda tangan?')) {
+    return;
+  }
 
   fieldIds.forEach(id => {
     $(id).value = '';
   });
 
   $('tanggalSurat').value = today;
+
+  clearSignature();
   updatePreview();
 });
 
