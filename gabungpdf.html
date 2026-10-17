@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#b90012">
-<title>Generator Surat Pernyataan</title>
+<title>Surat Pernyataan Kepemilikan Rekening</title>
 
 <style>
 :root {
@@ -17,21 +17,16 @@
   --border: #eadede;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
+  font-family: system-ui, sans-serif;
   background: linear-gradient(#fff4f4, #fff);
   color: var(--text);
 }
 
-button, input, select, textarea {
-  font: inherit;
-}
+button, input, textarea { font: inherit; }
 
 .topbar {
   height: 6px;
@@ -66,19 +61,10 @@ button, input, select, textarea {
   display: grid;
   place-items: center;
   font-size: 24px;
-  box-shadow: 0 6px 16px #b9001225;
 }
 
-.brand-name {
-  font-size: 17px;
-  font-weight: 800;
-}
-
-.brand-sub {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 3px;
-}
+.brand-name { font-size: 17px; font-weight: 800; }
+.brand-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
 
 .back {
   color: var(--red);
@@ -109,7 +95,7 @@ button, input, select, textarea {
 
 h1 {
   color: var(--red);
-  font-size: clamp(28px, 5vw, 40px);
+  font-size: clamp(26px, 5vw, 38px);
   letter-spacing: -1px;
   margin: 14px 0 8px;
 }
@@ -123,7 +109,7 @@ h1 {
 
 .layout {
   display: grid;
-  grid-template-columns: 1fr 0.92fr;
+  grid-template-columns: 1fr .95fr;
   gap: 20px;
   align-items: start;
 }
@@ -141,10 +127,7 @@ h1 {
   border-bottom: 1px solid #f3e8e8;
 }
 
-.card-head h2 {
-  font-size: 19px;
-  margin: 0;
-}
+.card-head h2 { font-size: 19px; margin: 0; }
 
 .card-head p {
   color: var(--muted);
@@ -153,9 +136,7 @@ h1 {
   margin: 6px 0 0;
 }
 
-.card-body {
-  padding: 21px;
-}
+.card-body { padding: 21px; }
 
 .section-title {
   display: flex;
@@ -178,9 +159,7 @@ h1 {
   font-size: 13px;
 }
 
-.field {
-  margin-bottom: 16px;
-}
+.field { margin-bottom: 16px; }
 
 label {
   display: block;
@@ -189,13 +168,7 @@ label {
   margin-bottom: 7px;
 }
 
-.optional {
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 400;
-}
-
-input, select, textarea {
+input, textarea {
   display: block;
   width: 100%;
   border: 1px solid #dedada;
@@ -206,17 +179,15 @@ input, select, textarea {
   outline: none;
 }
 
-input, select {
-  min-height: 46px;
-}
+input { min-height: 46px; }
 
 textarea {
-  min-height: 95px;
+  min-height: 85px;
   resize: vertical;
   line-height: 1.6;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus, textarea:focus {
   border-color: var(--red);
   box-shadow: 0 0 0 3px #b9001215;
 }
@@ -247,13 +218,9 @@ input:focus, select:focus, textarea:focus {
   font-weight: 750;
   cursor: pointer;
   min-height: 46px;
-  transition: .2s;
 }
 
-.btn:disabled {
-  opacity: .65;
-  cursor: wait;
-}
+.btn:disabled { opacity: .65; cursor: wait; }
 
 .primary {
   background: var(--red);
@@ -261,9 +228,7 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 6px 16px #b9001225;
 }
 
-.primary:hover {
-  background: var(--dark-red);
-}
+.primary:hover { background: var(--dark-red); }
 
 .secondary {
   color: var(--red);
@@ -271,10 +236,7 @@ input:focus, select:focus, textarea:focus {
   border: 1px solid #efcdd0;
 }
 
-.preview {
-  position: sticky;
-  top: 15px;
-}
+.preview { position: sticky; top: 15px; }
 
 .preview-tag {
   float: right;
@@ -295,7 +257,7 @@ input:focus, select:focus, textarea:focus {
   background: white;
   border: 1px solid #e9e1e1;
   padding: 32px 25px;
-  min-height: 530px;
+  min-height: 650px;
   color: #111;
   font-family: "Times New Roman", serif;
   font-size: 13px;
@@ -307,36 +269,34 @@ input:focus, select:focus, textarea:focus {
   text-align: center;
   font-size: 16px;
   text-decoration: underline;
-  margin: 0;
+  margin: 0 0 25px;
 }
 
-.number {
-  text-align: center;
-  margin: 3px 0 27px;
-  font-size: 12px;
-}
+.paper p { margin: 10px 0; }
 
 .identity {
   display: grid;
-  grid-template-columns: 110px 1fr;
-  gap: 4px;
-  margin: 10px 0 15px;
+  grid-template-columns: 145px 1fr;
+  gap: 5px 4px;
+  margin: 12px 0 18px;
 }
 
-.statement {
-  white-space: pre-wrap;
-  margin: 9px 0 16px;
+.bank-identity {
+  display: grid;
+  grid-template-columns: 145px 1fr;
+  gap: 5px 4px;
+  margin: 12px 0 20px;
 }
+
+.statement { margin: 10px 0; }
 
 .signature {
-  width: 160px;
   margin: 25px 0 0 auto;
+  width: 210px;
   text-align: center;
 }
 
-.signature-space {
-  height: 65px;
-}
+.signature-space { height: 65px; }
 
 .note {
   padding: 14px 19px;
@@ -352,71 +312,26 @@ input:focus, select:focus, textarea:focus {
   padding-top: 25px;
 }
 
-.footer strong {
-  color: var(--red);
-}
+.footer strong { color: var(--red); }
 
 @media(max-width: 800px) {
-  .container {
-    padding: 18px 13px 32px;
-  }
-
-  .layout {
-    grid-template-columns: 1fr;
-  }
-
-  .preview {
-    position: static;
-  }
-
-  .hero {
-    margin: 28px auto 23px;
-  }
-
-  .card-head, .card-body {
-    padding: 18px;
-  }
-
-  .paper-wrap {
-    padding: 12px;
-  }
-
-  .paper {
-    padding: 27px 20px;
-    min-height: 460px;
-  }
+  .container { padding: 18px 13px 32px; }
+  .layout { grid-template-columns: 1fr; }
+  .preview { position: static; }
+  .hero { margin: 28px auto 23px; }
+  .card-head, .card-body { padding: 18px; }
+  .paper-wrap { padding: 12px; }
+  .paper { padding: 27px 20px; min-height: 0; }
 }
 
 @media(max-width: 420px) {
-  .brand-sub {
-    display: none;
-  }
-
-  .brand-name {
-    font-size: 14px;
-  }
-
-  .back {
-    padding: 9px 10px;
-  }
-
-  .two-col {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .paper {
-    padding: 23px 15px;
-    font-size: 12px;
-  }
-
-  .identity {
-    grid-template-columns: 96px 1fr;
-  }
-
-  .actions .btn {
-    width: 100%;
-  }
+  .brand-sub { display: none; }
+  .brand-name { font-size: 14px; }
+  .back { padding: 9px 10px; }
+  .two-col { grid-template-columns: 1fr; gap: 0; }
+  .paper { padding: 23px 15px; font-size: 12px; }
+  .identity, .bank-identity { grid-template-columns: 125px 1fr; }
+  .actions .btn { width: 100%; }
 }
 </style>
 </head>
@@ -434,102 +349,93 @@ input:focus, select:focus, textarea:focus {
         <div class="brand-sub">Praktis, rapi, dan mudah digunakan</div>
       </div>
     </div>
-
     <a class="back" href="./index.html">← Kembali</a>
   </header>
 
   <section class="hero">
     <span class="badge">✦ GENERATOR DOKUMEN</span>
     <h1>Surat Pernyataan</h1>
-    <p>Isi data, periksa surat, lalu unduh PDF secara langsung.</p>
+    <p>Buat surat pernyataan kepemilikan rekening dengan mudah.</p>
   </section>
 
   <div class="layout">
 
-    <!-- FORMULIR -->
+    <!-- FORM DATA -->
     <section class="card form-card">
-
       <div class="card-head">
-        <h2>Buat surat kamu</h2>
-        <p>Pratinjau surat akan diperbarui otomatis saat data diisi.</p>
+        <h2>Lengkapi data surat</h2>
+        <p>Isi data diri dan informasi rekening yang akan dicantumkan.</p>
       </div>
 
       <div class="card-body">
 
         <h3 class="section-title">
-          <span class="step">1</span> Pilih jenis surat
-        </h3>
-
-        <div class="field">
-          <label for="jenis">Jenis surat</label>
-          <select id="jenis">
-            <option value="SURAT PERNYATAAN">Surat Pernyataan Umum</option>
-            <option value="SURAT PERNYATAAN TANGGUNG JAWAB">Pernyataan Tanggung Jawab</option>
-            <option value="SURAT PERNYATAAN KEASLIAN DATA">Pernyataan Keaslian Data</option>
-            <option value="SURAT PERNYATAAN BELUM MENIKAH">Pernyataan Belum Menikah</option>
-          </select>
-        </div>
-
-        <div class="divider"></div>
-
-        <h3 class="section-title">
-          <span class="step">2</span> Data diri
+          <span class="step">1</span> Data diri
         </h3>
 
         <div class="field">
           <label for="nama">Nama lengkap *</label>
-          <input id="nama" autocomplete="name" placeholder="Contoh: Budi Santoso" maxlength="150">
+          <input id="nama" autocomplete="name" maxlength="150"
+            placeholder="Masukkan nama lengkap" required>
         </div>
 
         <div class="two-col">
           <div class="field">
-            <label for="tempat">Tempat lahir</label>
-            <input id="tempat" placeholder="Contoh: Sragen" maxlength="100">
+            <label for="tempat">Tempat lahir *</label>
+            <input id="tempat" maxlength="100" placeholder="Contoh: Sragen" required>
           </div>
-
           <div class="field">
-            <label for="tanggalLahir">Tanggal lahir</label>
-            <input id="tanggalLahir" type="date">
+            <label for="tanggalLahir">Tanggal lahir *</label>
+            <input id="tanggalLahir" type="date" required>
           </div>
         </div>
 
         <div class="field">
-          <label for="alamat">Alamat lengkap</label>
-          <textarea id="alamat" placeholder="Jalan, RT/RW, desa, kecamatan, kabupaten" maxlength="1000"></textarea>
-        </div>
-
-        <div class="two-col">
-          <div class="field">
-            <label for="pekerjaan">Pekerjaan <span class="optional">opsional</span></label>
-            <input id="pekerjaan" placeholder="Contoh: Karyawan" maxlength="100">
-          </div>
-
-          <div class="field">
-            <label for="nik">NIK <span class="optional">opsional</span></label>
-            <input id="nik" inputmode="numeric" maxlength="16" placeholder="16 digit NIK">
-          </div>
+          <label for="alamat">Alamat lengkap *</label>
+          <textarea id="alamat" maxlength="1000"
+            placeholder="Masukkan alamat lengkap" required></textarea>
         </div>
 
         <div class="divider"></div>
 
         <h3 class="section-title">
-          <span class="step">3</span> Isi pernyataan
+          <span class="step">2</span> Data rekening
         </h3>
 
         <div class="field">
-          <label for="isi">Isi pernyataan</label>
-          <textarea id="isi" style="min-height:135px" maxlength="5000">Dengan ini menyatakan bahwa data dan keterangan yang saya sampaikan adalah benar. Apabila di kemudian hari terdapat ketidaksesuaian, saya bersedia bertanggung jawab sesuai ketentuan yang berlaku.</textarea>
+          <label for="pemilik">Nama pemilik rekening *</label>
+          <input id="pemilik" maxlength="150"
+            placeholder="Sesuai nama di rekening" required>
         </div>
+
+        <div class="field">
+          <label for="bank">Nama bank *</label>
+          <input id="bank" maxlength="100"
+            placeholder="Contoh: BCA, BRI, BNI, Mandiri" required>
+        </div>
+
+        <div class="field">
+          <label for="rekening">Nomor rekening *</label>
+          <input id="rekening" inputmode="numeric" maxlength="50"
+            placeholder="Masukkan nomor rekening" required>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3 class="section-title">
+          <span class="step">3</span> Tanggal surat
+        </h3>
 
         <div class="two-col">
           <div class="field">
-            <label for="kota">Kota/kabupaten</label>
-            <input id="kota" placeholder="Contoh: Sragen" maxlength="100">
+            <label for="kota">Kota/kabupaten *</label>
+            <input id="kota" maxlength="100"
+              placeholder="Contoh: Sragen" required>
           </div>
 
           <div class="field">
-            <label for="tanggalSurat">Tanggal surat</label>
-            <input id="tanggalSurat" type="date">
+            <label for="tanggalSurat">Tanggal surat *</label>
+            <input id="tanggalSurat" type="date" required>
           </div>
         </div>
 
@@ -537,7 +443,6 @@ input:focus, select:focus, textarea:focus {
           <button class="btn primary" id="downloadBtn" type="button">
             ↓ Download PDF
           </button>
-
           <button class="btn secondary" id="resetBtn" type="button">
             Reset formulir
           </button>
@@ -548,65 +453,73 @@ input:focus, select:focus, textarea:focus {
 
     <!-- PRATINJAU SURAT -->
     <section class="card preview">
-
       <div class="card-head">
         <span class="preview-tag">PRATINJAU</span>
         <h2>Pratinjau surat</h2>
-        <p>Periksa kembali informasi sebelum mengunduh.</p>
+        <p>Surat akan diperbarui otomatis mengikuti data yang kamu isi.</p>
       </div>
 
       <div class="paper-wrap">
         <article class="paper" id="paper">
 
-          <h3 id="outJenis">SURAT PERNYATAAN</h3>
-          <p class="number">Nomor: ....................................</p>
+          <h3>SURAT PERNYATAAN</h3>
 
-          <p>Yang bertanda tangan di bawah ini:</p>
+          <p>Saya yang bertanda tangan di bawah ini:</p>
 
           <div class="identity">
             <span>Nama</span>
-            <span>: <strong id="outNama">....................................</strong></span>
+            <span>: <span id="outNama">........................................................</span></span>
 
-            <span>Tempat, tanggal lahir</span>
-            <span>: <span id="outTTL">....................................</span></span>
+            <span>Tempat, Tanggal Lahir</span>
+            <span>: <span id="outTTL">........................................................</span></span>
 
             <span>Alamat</span>
-            <span>: <span id="outAlamat">....................................</span></span>
-
-            <span id="labelPekerjaan" style="display:none">Pekerjaan</span>
-            <span id="rowPekerjaan" style="display:none">: <span id="outPekerjaan"></span></span>
-
-            <span id="labelNIK" style="display:none">NIK</span>
-            <span id="rowNIK" style="display:none">: <span id="outNIK"></span></span>
+            <span>: <span id="outAlamat">................................................................................</span></span>
           </div>
 
           <p>Dengan ini menyatakan bahwa:</p>
 
-          <p class="statement" id="outIsi"></p>
+          <p class="statement">
+            Nomor rekening dan nama rekening di bawah ini benar merupakan milik pribadi saya/badan usaha dan digunakan atas nama saya/badan usaha:
+          </p>
+
+          <div class="bank-identity">
+            <span>Nama Pemilik Rekening</span>
+            <span>: <span id="outPemilik">........................................................</span></span>
+
+            <span>Nama Bank</span>
+            <span>: <span id="outBank">........................................................</span></span>
+
+            <span>Nomor Rekening</span>
+            <span>: <span id="outRekening">........................................................</span></span>
+          </div>
 
           <p>
             Demikian surat pernyataan ini saya buat dengan sebenar-benarnya,
-            dalam keadaan sadar dan tanpa paksaan dari pihak mana pun,
-            untuk dipergunakan sebagaimana mestinya.
+            tanpa ada paksaan dari pihak manapun. Apabila di kemudian hari
+            terdapat hal-hal yang tidak sesuai dengan pernyataan ini, saya
+            bersedia bertanggung jawab sepenuhnya sesuai dengan ketentuan
+            hukum yang berlaku.
           </p>
 
           <div class="signature">
-            <div id="outTanggal">................, ....................</div>
+            <div id="outTanggal">............................, .... ......... 20....</div>
             <div>Yang membuat pernyataan,</div>
             <div class="signature-space"></div>
-            <strong id="outTtd">(....................................)</strong>
+            <div>Tanda tangan,</div>
+            <div style="height:35px"></div>
+            <div id="outTtd">........................................................</div>
           </div>
 
         </article>
       </div>
 
       <div class="note">
-        Template ini bersifat umum. Sesuaikan isi surat dengan kebutuhan
-        dan ketentuan instansi terkait. Tanda tangan dilakukan setelah
-        dokumen dicetak.
+        Pastikan semua data rekening benar sebelum mengunduh. Dokumen
+        diproses di browser dan tidak dikirim ke database.
       </div>
-
     </section>
+
   </div>
 
   <footer class="footer">
@@ -615,29 +528,25 @@ input:focus, select:focus, textarea:focus {
 
 </main>
 
-<!-- Library untuk menghasilkan PDF tanpa dialog cetak -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
 const $ = id => document.getElementById(id);
 
 const fieldIds = [
-  'jenis', 'nama', 'tempat', 'tanggalLahir',
-  'alamat', 'pekerjaan', 'nik', 'isi',
-  'kota', 'tanggalSurat'
+  'nama', 'tempat', 'tanggalLahir', 'alamat',
+  'pemilik', 'bank', 'rekening', 'kota', 'tanggalSurat'
 ];
 
 const now = new Date();
-
 const today = new Date(
   now.getTime() - now.getTimezoneOffset() * 60000
 ).toISOString().slice(0, 10);
 
 $('tanggalSurat').value = today;
 
-function safeText(value, fallback = '....................................') {
-  const text = (value || '').trim();
-  return text || fallback;
+function safeText(value, fallback = '........................................................') {
+  return (value || '').trim() || fallback;
 }
 
 function formatDate(value) {
@@ -655,12 +564,7 @@ function formatDate(value) {
 }
 
 function updatePreview() {
-  $('outJenis').textContent = $('jenis').value;
   $('outNama').textContent = safeText($('nama').value);
-  $('outAlamat').textContent = safeText($('alamat').value);
-  $('outPekerjaan').textContent = safeText($('pekerjaan').value);
-  $('outNIK').textContent = safeText($('nik').value);
-  $('outIsi').textContent = safeText($('isi').value, '');
 
   const tempat = $('tempat').value.trim();
   const tanggalLahir = formatDate($('tanggalLahir').value);
@@ -668,25 +572,28 @@ function updatePreview() {
   $('outTTL').textContent =
     tempat || tanggalLahir
       ? `${tempat || '................'}${tanggalLahir ? ', ' + tanggalLahir : ''}`
-      : '....................................';
+      : '........................................................';
 
-  $('labelPekerjaan').style.display =
-    $('pekerjaan').value.trim() ? '' : 'none';
+  $('outAlamat').textContent = safeText(
+    $('alamat').value,
+    '................................................................................'
+  );
 
-  $('rowPekerjaan').style.display =
-    $('pekerjaan').value.trim() ? '' : 'none';
+  $('outPemilik').textContent = safeText($('pemilik').value);
+  $('outBank').textContent = safeText($('bank').value);
+  $('outRekening').textContent = safeText($('rekening').value);
 
-  $('labelNIK').style.display =
-    $('nik').value.trim() ? '' : 'none';
+  const kota = $('kota').value.trim() || '............................';
+  const tanggal = formatDate($('tanggalSurat').value);
 
-  $('rowNIK').style.display =
-    $('nik').value.trim() ? '' : 'none';
+  $('outTanggal').textContent = tanggal
+    ? `${kota}, ${tanggal}`
+    : `${kota}, .... ......... 20....`;
 
-  const kota = $('kota').value.trim() || '................';
-  const tanggal = formatDate($('tanggalSurat').value) || '....................';
-
-  $('outTanggal').textContent = `${kota}, ${tanggal}`;
-  $('outTtd').textContent = `(${safeText($('nama').value)})`;
+  $('outTtd').textContent = safeText(
+    $('nama').value,
+    '........................................................'
+  );
 }
 
 fieldIds.forEach(id => {
@@ -694,18 +601,30 @@ fieldIds.forEach(id => {
   $(id).addEventListener('change', updatePreview);
 });
 
-// Download PDF langsung tanpa membuka dialog cetak
+// Unduh PDF langsung tanpa membuka dialog cetak
 $('downloadBtn').addEventListener('click', async () => {
-  const nama = $('nama').value.trim();
+  const required = [
+    ['nama', 'Nama lengkap'],
+    ['tempat', 'Tempat lahir'],
+    ['tanggalLahir', 'Tanggal lahir'],
+    ['alamat', 'Alamat lengkap'],
+    ['pemilik', 'Nama pemilik rekening'],
+    ['bank', 'Nama bank'],
+    ['rekening', 'Nomor rekening'],
+    ['kota', 'Kota/kabupaten'],
+    ['tanggalSurat', 'Tanggal surat']
+  ];
 
-  if (!nama) {
-    alert('Silakan isi nama lengkap terlebih dahulu.');
-    $('nama').focus();
-    return;
+  for (const [id, label] of required) {
+    if (!$(id).value.trim()) {
+      alert(`Silakan isi ${label} terlebih dahulu.`);
+      $(id).focus();
+      return;
+    }
   }
 
   if (typeof html2pdf === 'undefined') {
-    alert('Fitur PDF gagal dimuat. Periksa koneksi internet lalu coba lagi.');
+    alert('Library PDF gagal dimuat. Periksa koneksi internet lalu coba lagi.');
     return;
   }
 
@@ -718,16 +637,15 @@ $('downloadBtn').addEventListener('click', async () => {
     tombol.disabled = true;
     tombol.textContent = 'Menyiapkan PDF...';
 
-    const namaFile = nama
-      .replace(/[<>:"/\\|?*\x00-\x1F]/g, '')
+    const namaFile = $('nama').value
       .trim()
+      .replace(/[<>:"/\\|?*\x00-\x1F]/g, '')
       .replace(/\s+/g, '-')
       .slice(0, 70) || 'Pengguna';
 
     const opsi = {
-      margin: [10, 12, 10, 12],
-
-      filename: `Surat-Pernyataan-${namaFile}.pdf`,
+      margin: [12, 12, 12, 12],
+      filename: `Surat-Pernyataan-Rekening-${namaFile}.pdf`,
 
       image: {
         type: 'jpeg',
@@ -736,9 +654,9 @@ $('downloadBtn').addEventListener('click', async () => {
 
       html2canvas: {
         scale: 2,
-        useCORS: true,
         backgroundColor: '#ffffff',
-        scrollY: 0
+        scrollY: 0,
+        useCORS: true
       },
 
       jsPDF: {
@@ -766,21 +684,15 @@ $('downloadBtn').addEventListener('click', async () => {
   }
 });
 
-// Reset formulir
+// Reset semua isian
 $('resetBtn').addEventListener('click', () => {
-  if (!confirm('Yakin ingin mengosongkan formulir?')) return;
+  if (!confirm('Yakin ingin mengosongkan semua data?')) return;
 
-  $('nama').value = '';
-  $('tempat').value = '';
-  $('tanggalLahir').value = '';
-  $('alamat').value = '';
-  $('pekerjaan').value = '';
-  $('nik').value = '';
-  $('isi').value = '';
-  $('kota').value = '';
+  fieldIds.forEach(id => {
+    $(id).value = '';
+  });
+
   $('tanggalSurat').value = today;
-  $('jenis').selectedIndex = 0;
-
   updatePreview();
 });
 
