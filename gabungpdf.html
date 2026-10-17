@@ -408,8 +408,7 @@ input:focus, textarea:focus {
   .back { padding: 9px 10px; }
   .two-col { grid-template-columns: 1fr; gap: 0; }
   .paper { padding: 23px 15px; font-size: 12px; }
-  .identity,
-  .bank-identity {
+  .identity, .bank-identity {
     grid-template-columns: 125px 1fr;
   }
   .actions .btn { width: 100%; }
@@ -443,7 +442,6 @@ input:focus, textarea:focus {
 
   <div class="layout">
 
-    <!-- FORM DATA -->
     <section class="card form-card">
       <div class="card-head">
         <h2>Lengkapi data surat</h2>
@@ -466,7 +464,7 @@ input:focus, textarea:focus {
           <div class="field">
             <label for="tempat">Tempat lahir *</label>
             <input id="tempat" maxlength="100"
-              placeholder="Contoh: Sragen" required>
+              placeholder="Contoh: Klaten" required>
           </div>
 
           <div class="field">
@@ -524,9 +522,12 @@ input:focus, textarea:focus {
           </div>
         </div>
 
+        <p style="font-size:12px;color:#777;margin-top:-5px">
+          Tanggal surat otomatis mengikuti tanggal hari ini.
+        </p>
+
         <div class="divider"></div>
 
-        <!-- GAMBAR TTD -->
         <h3 class="section-title">
           <span class="step">4</span> Gambar tanda tangan
         </h3>
@@ -575,7 +576,6 @@ input:focus, textarea:focus {
       </div>
     </section>
 
-    <!-- PRATINJAU SURAT -->
     <section class="card preview">
       <div class="card-head">
         <span class="preview-tag">PRATINJAU</span>
@@ -629,22 +629,16 @@ input:focus, textarea:focus {
           </p>
 
           <div class="signature">
-            <div id="outTanggal">
-              ............................, .... ......... 20....
-            </div>
-
+            <div id="outTanggal"></div>
             <div>Yang membuat pernyataan,</div>
 
             <div class="signature-space"></div>
 
-            <!-- GAMBAR TTD -->
             <img id="outTtdImage" class="signature-image"
               alt="Tanda tangan" hidden>
 
-            <!-- TITIK-TITIK DI BAWAH TTD SUDAH DIHAPUS -->
             <div id="outTtd" class="signature-fallback" hidden></div>
 
-            <!-- NAMA PEMBUAT SURAT -->
             <div class="signature-name" id="outNamaTtd"></div>
           </div>
 
@@ -672,17 +666,33 @@ input:focus, textarea:focus {
 const $ = id => document.getElementById(id);
 
 const fieldIds = [
-  'nama', 'tempat', 'tanggalLahir', 'alamat',
-  'pemilik', 'bank', 'rekening', 'kota', 'tanggalSurat'
+  'nama',
+  'tempat',
+  'tanggalLahir',
+  'alamat',
+  'pemilik',
+  'bank',
+  'rekening',
+  'kota',
+  'tanggalSurat'
 ];
 
-const now = new Date();
+// =======================================
+// TANGGAL HARI INI BERDASARKAN WAKTU LOKAL
+// =======================================
 
-const today = new Date(
-  now.getTime() - now.getTimezoneOffset() * 60000
-).toISOString().slice(0, 10);
+function getTodayLocal() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
 
-$('tanggalSurat').value = today;
+  return `${year}-${month}-${day}`;
+}
+
+// Isi tanggal surat dengan tanggal hari ini
+// ketika halaman pertama kali dibuka.
+$('tanggalSurat').value = getTodayLocal();
 
 function safeText(
   value,
@@ -715,12 +725,15 @@ function updatePreview() {
   const tempat = $('tempat').value.trim();
   const tanggalLahir = formatDate($('tanggalLahir').value);
 
+  // Contoh hasil: Klaten, 17 Desember 1990
   $('outTTL').textContent =
-    tempat || tanggalLahir
-      ? `${tempat || '................'}${
-          tanggalLahir ? ', ' + tanggalLahir : ''
-        }`
-      : '........................................................';
+    tempat && tanggalLahir
+      ? `${tempat}, ${tanggalLahir}`
+      : tempat
+        ? tempat
+        : tanggalLahir
+          ? tanggalLahir
+          : '........................................................';
 
   $('outAlamat').textContent = safeText(
     $('alamat').value,
@@ -747,7 +760,7 @@ fieldIds.forEach(id => {
 });
 
 // =======================================
-// FITUR GAMBAR TANDA TANGAN
+// GAMBAR TANDA TANGAN
 // =======================================
 
 const canvas = $('signatureCanvas');
@@ -755,20 +768,15 @@ const ctx = canvas.getContext('2d');
 
 let isDrawing = false;
 let hasDrawing = false;
-let ttdUsed = false;
-let lastX = 0;
-let lastY = 0;
 
 function setupCanvas() {
   const rect = canvas.getBoundingClientRect();
 
   if (!rect.width || !rect.height) return;
 
-  let oldData = null;
-
-  if (hasDrawing && canvas.width && canvas.height) {
-    oldData = canvas.toDataURL('image/png');
-  }
+  const oldData = hasDrawing
+    ? canvas.toDataURL('image/png')
+    : null;
 
   const dpr = Math.max(1, window.devicePixelRatio || 1);
 
@@ -776,7 +784,6 @@ function setupCanvas() {
   canvas.height = Math.round(rect.height * dpr);
 
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
   ctx.strokeStyle = '#111111';
@@ -822,19 +829,19 @@ function startDrawing(event) {
   isDrawing = true;
   hasDrawing = true;
 
-  lastX = point.x;
-  lastY = point.y;
-
   try {
     canvas.setPointerCapture(event.pointerId);
   } catch (error) {}
 
   ctx.beginPath();
-  ctx.arc(lastX, lastY, ctx.lineWidth / 2, 0, Math.PI * 2);
+  ctx.arc(point.x, point.y, ctx.lineWidth / 2, 0, Math.PI * 2);
   ctx.fill();
 
+  ctx.beginPath();
+  ctx.moveTo(point.x, point.y);
+
   $('ttdStatus').textContent =
-    'Sedang menggambar. Selesaikan tanda tangan lalu tekan Gunakan TTD.';
+    'Sedang menggambar. Setelah selesai, tekan Gunakan TTD.';
 }
 
 function drawSignature(event) {
@@ -844,13 +851,11 @@ function drawSignature(event) {
 
   const point = getCanvasPoint(event);
 
-  ctx.beginPath();
-  ctx.moveTo(lastX, lastY);
   ctx.lineTo(point.x, point.y);
   ctx.stroke();
 
-  lastX = point.x;
-  lastY = point.y;
+  ctx.beginPath();
+  ctx.moveTo(point.x, point.y);
 }
 
 function stopDrawing(event) {
@@ -865,6 +870,8 @@ function stopDrawing(event) {
       }
     } catch (error) {}
   }
+
+  ctx.beginPath();
 }
 
 canvas.addEventListener('pointerdown', startDrawing);
@@ -874,9 +881,9 @@ canvas.addEventListener('pointercancel', stopDrawing);
 
 canvas.addEventListener('lostpointercapture', () => {
   isDrawing = false;
+  ctx.beginPath();
 });
 
-// Tombol gunakan TTD
 function useSignature() {
   if (isDrawing) {
     alert('Selesaikan gambar tanda tangan terlebih dahulu.');
@@ -889,38 +896,31 @@ function useSignature() {
   }
 
   try {
-    const imageData = canvas.toDataURL('image/png');
-
-    $('outTtdImage').src = imageData;
+    $('outTtdImage').src = canvas.toDataURL('image/png');
     $('outTtdImage').hidden = false;
 
-    // Titik-titik tidak ditampilkan
+    // Sembunyikan area cadangan agar tidak ada titik-titik.
     $('outTtd').hidden = true;
 
-    ttdUsed = true;
-
     $('ttdStatus').textContent =
-      '✓ Tanda tangan berhasil digunakan dan ditampilkan pada surat.';
+      '✓ Tanda tangan berhasil digunakan pada pratinjau surat.';
   } catch (error) {
-    console.error('Gagal menggunakan tanda tangan:', error);
+    console.error(error);
     alert('Tanda tangan gagal digunakan. Silakan coba lagi.');
   }
 }
 
 $('useTtdBtn').addEventListener('click', useSignature);
 
-// Hapus TTD
 function clearSignature() {
   isDrawing = false;
   hasDrawing = false;
-  ttdUsed = false;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.beginPath();
 
   $('outTtdImage').removeAttribute('src');
   $('outTtdImage').hidden = true;
-
-  // Tetap kosong, tanpa titik-titik
   $('outTtd').hidden = true;
 
   $('ttdStatus').textContent =
@@ -1025,7 +1025,7 @@ $('downloadBtn').addEventListener('click', async () => {
 });
 
 // =======================================
-// RESET FORMULIR DAN TTD
+// RESET FORMULIR
 // =======================================
 
 $('resetBtn').addEventListener('click', () => {
@@ -1037,12 +1037,14 @@ $('resetBtn').addEventListener('click', () => {
     $(id).value = '';
   });
 
-  $('tanggalSurat').value = today;
+  // Setelah reset, tanggal surat kembali ke tanggal hari ini.
+  $('tanggalSurat').value = getTodayLocal();
 
   clearSignature();
   updatePreview();
 });
 
+// Perbarui tampilan awal.
 updatePreview();
 </script>
 
