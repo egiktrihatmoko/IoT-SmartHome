@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gabungkan Foto Jadi PDF</title>
 
-    <!-- Library untuk membuat PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
@@ -398,22 +397,6 @@
             color: #333;
         }
 
-        .form-group select,
-        .form-group input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-size: 14px;
-            background: #fff;
-            color: #222;
-            outline: none;
-        }
-
-        .form-group select:focus {
-            border-color: #a80000;
-        }
-
         .radio-group {
             display: flex;
             flex-wrap: wrap;
@@ -525,32 +508,30 @@
         }
 
         /* FOOTER */
-        footer {
+        .footer {
             text-align: center;
-            margin-top: 35px;
-            padding: 25px 10px;
-            color: #666;
-            font-size: 13px;
-            line-height: 1.8;
-        }
-
-        footer p {
-            margin-bottom: 5px;
-        }
-
-        footer a {
-            color: #a80000;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .credit {
-            margin-top: 15px;
-            font-size: 12px;
+            margin-top: 20px;
             color: #999;
+            font-size: 12px;
         }
 
-        /* DARK MODE - SAMA DENGAN INDEX */
+        .footer .contact-question {
+            font-size: 17px;
+            line-height: 1.5;
+        }
+
+        .footer .contact-instruction {
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .footer .contact-link {
+            display: inline-block;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        /* DARK MODE */
         body.dark-mode {
             background: #121212;
             color: #eee;
@@ -564,32 +545,9 @@
             color: #bbb;
         }
 
-        body.dark-mode .card,
-        body.dark-mode .drawer {
+        body.dark-mode .card {
             background: #1e1e1e;
             border-color: #333;
-        }
-
-        body.dark-mode .drawer-header {
-            border-color: #333;
-        }
-
-        body.dark-mode .drawer a {
-            color: #eee;
-        }
-
-        body.dark-mode .drawer a:hover,
-        body.dark-mode .drawer a.active {
-            background: #3a2020;
-            color: #ff7777;
-        }
-
-        body.dark-mode .drawer-divider {
-            background: #333;
-        }
-
-        body.dark-mode .close-menu {
-            color: #eee;
         }
 
         body.dark-mode .dark-mode-button,
@@ -598,6 +556,33 @@
             background: #292020;
             color: #ff7777;
             border-color: #583333;
+        }
+
+        body.dark-mode .nav-link {
+            color: #eee;
+        }
+
+        body.dark-mode .nav-link:hover,
+        body.dark-mode .nav-link.admin-link {
+            background: #382020;
+            color: #ff7777;
+            border-color: #493030;
+        }
+
+        body.dark-mode .nav-heading {
+            color: #ff7777;
+        }
+
+        body.dark-mode .nav-divider {
+            background: #383838;
+        }
+
+        body.dark-mode .nav-overlay {
+            background: rgba(0, 0, 0, 0.65);
+        }
+
+        body.dark-mode .nav-drawer {
+            background: #1e1e1e;
         }
 
         body.dark-mode .upload-area {
@@ -627,17 +612,6 @@
         body.dark-mode .empty-photos {
             border-color: #444;
             color: #aaa;
-        }
-
-        body.dark-mode .form-group select,
-        body.dark-mode .form-group input[type="text"] {
-            background: #292929;
-            color: #eee;
-            border-color: #444;
-        }
-
-        body.dark-mode .radio-option {
-            color: #eee;
         }
 
         body.dark-mode .photo-count {
@@ -707,58 +681,54 @@
 
 <body>
 
-    
-<!-- TOMBOL MENU GARIS TIGA -->
-<button
-    class="menu-toggle"
-    id="menuToggle"
-    type="button"
-    aria-label="Buka menu navigasi"
-    aria-expanded="false"
-    aria-controls="navDrawer"
->
-    <span></span>
-    <span></span>
-    <span></span>
-</button>
-
-<!-- LAPISAN GELAP DI BELAKANG MENU -->
-<div class="nav-overlay" id="navOverlay"></div>
-
-<!-- MENU NAVIGASI -->
-<nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
-    <div class="nav-heading">MENU NAVIGASI</div>
-
-    <a class="nav-link admin-link" href="/dashboard.html">
-        <span class="nav-icon">🔐</span>
-        <span>Dashboard Admin</span>
-    </a> 
-    
-    <a class="nav-link" href="/foto-ke-pdf.html">
-        <span class="nav-icon">📄</span>
-        <span>Ubah Foto ke PDF</span>
-    </a>
-    
-    <a class="nav-link" href="/">
-        <span class="nav-icon">🧮</span>
-        <span>Kalkulator Harga Tayang</span>
-    </a>
-
-    <div class="nav-divider"></div>
-
-    <!-- DARK MODE PALING BAWAH -->
+    <!-- TOMBOL MENU GARIS TIGA -->
     <button
-        class="nav-link dark-mode-button"
-        id="darkModeToggle"
+        class="menu-toggle"
+        id="menuToggle"
         type="button"
-        aria-label="Ganti tema tampilan"
+        aria-label="Buka menu navigasi"
+        aria-expanded="false"
+        aria-controls="navDrawer"
     >
-        <span class="nav-icon" id="darkModeIcon">🌙</span>
-        <span id="darkModeText">Dark Mode</span>
+        <span></span>
+        <span></span>
+        <span></span>
     </button>
-</nav>
 
+    <!-- LAPISAN GELAP -->
+    <div class="nav-overlay" id="navOverlay"></div>
 
+    <!-- MENU NAVIGASI -->
+    <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
+        <div class="nav-heading">MENU NAVIGASI</div>
+
+        <a class="nav-link admin-link" href="/dashboard.html">
+            <span class="nav-icon">🔐</span>
+            <span>Dashboard Admin</span>
+        </a>
+
+        <a class="nav-link" href="/foto-ke-pdf.html">
+            <span class="nav-icon">📄</span>
+            <span>Ubah Foto ke PDF</span>
+        </a>
+
+        <a class="nav-link" href="/">
+            <span class="nav-icon">🧮</span>
+            <span>Kalkulator Harga Tayang</span>
+        </a>
+
+        <div class="nav-divider"></div>
+
+        <button
+            class="nav-link dark-mode-button"
+            id="darkModeToggle"
+            type="button"
+            aria-label="Ganti tema tampilan"
+        >
+            <span class="nav-icon" id="darkModeIcon">🌙</span>
+            <span id="darkModeText">Dark Mode</span>
+        </button>
+    </nav>
 
     <main class="container">
 
@@ -834,43 +804,35 @@
             </h2>
 
             <div class="form-group">
-                <label for="paperSize">Ukuran Kertas</label>
-                <select id="paperSize">
-                    <option value="a4">A4</option>
-                    <option value="letter">Letter</option>
-                    <option value="legal">Legal</option>
-                </select>
-            </div>
-
-            <div class="form-group">
                 <label>Orientasi Kertas</label>
+
                 <div class="radio-group">
                     <label class="radio-option">
-                        <input type="radio" name="orientation" value="portrait" checked>
+                        <input
+                            type="radio"
+                            name="orientation"
+                            value="portrait"
+                            checked
+                        >
                         <span>📄 Potret (Portrait)</span>
                     </label>
 
                     <label class="radio-option">
-                        <input type="radio" name="orientation" value="landscape">
+                        <input
+                            type="radio"
+                            name="orientation"
+                            value="landscape"
+                        >
                         <span>🖼️ Lanskap (Landscape)</span>
                     </label>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="margin">Margin Kertas</label>
-                <select id="margin">
-                    <option value="0">Tanpa Margin</option>
-                    <option value="5">Kecil (5 mm)</option>
-                    <option value="10" selected>Normal (10 mm)</option>
-                    <option value="20">Lebar (20 mm)</option>
-                </select>
-            </div>
-
-            <div class="form-group">
                 <label for="quality">
                     Kualitas PDF: <span id="qualityValue">85%</span>
                 </label>
+
                 <input
                     type="range"
                     id="quality"
@@ -879,10 +841,12 @@
                     value="85"
                     step="5"
                 >
+
                 <div class="range-labels">
                     <span>Ukuran lebih kecil</span>
                     <span>Kualitas lebih tinggi</span>
                 </div>
+
                 <p class="margin-note">
                     Kualitas lebih tinggi dapat menghasilkan file PDF yang lebih besar.
                 </p>
@@ -897,8 +861,8 @@
             </h2>
 
             <p class="description">
-                Setiap foto akan ditempatkan pada satu halaman PDF dan
-                disesuaikan agar muat di dalam ukuran kertas yang dipilih.
+                Setiap foto akan ditempatkan pada satu halaman PDF ukuran A4
+                dengan margin 10 mm dan disesuaikan agar muat di halaman.
             </p>
 
             <button
@@ -910,38 +874,133 @@
                 📄 Gabungkan dan Unduh PDF
             </button>
 
-            <div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
+            <div
+                class="status-message"
+                id="statusMessage"
+                role="status"
+                aria-live="polite"
+            ></div>
         </section>
 
-        <!-- FOOTER MENYESUAIKAN INDEX.HTML -->
-        <footer>
-            <p>Ada saran atau pertanyaan?</p>
-            <p>Silakan hubungi nomor di bawah ini:</p>
-            <p>
-                <a href="https://wa.me/6281125213879" target="_blank" rel="noopener noreferrer">
-                    ☎ 081125213879 (Egik)
-                </a>
-            </p>
-            <p class="credit">Credit by eth production</p>
-        </footer>
+            <!-- FOOTER -->
+    <div class="footer">
+        <p
+            class="contact-question"
+            style="font-weight: bold; color: #a80000; margin-bottom: 8px;"
+        >
+            Ada saran atau pertanyaan?
+        </p>
+
+        <p class="contact-instruction" style="margin-bottom: 8px;">
+            Silakan hubungi nomor di bawah ini:
+        </p>
+
+        <p>
+            <a
+                class="contact-link"
+                href="https://wa.me/6281125213879"
+                target="_blank"
+                rel="noopener noreferrer"
+                style="color: #25D366; text-decoration: none; font-weight: bold;"
+            >
+                ☎ 081125213879 (Egik)
+            </a>
+        </p>
+
+        <p style="margin-top: 10px;">
+            Credit by <strong>eth production</strong>
+        </p>
+    </div>
 
     </main>
 
     <script>
-        const menuButton = document.getElementById("menuButton");
-        const closeMenu = document.getElementById("closeMenu");
-        const drawer = document.getElementById("drawer");
-        const overlay = document.getElementById("overlay");
-        const darkModeButton = document.getElementById("darkModeButton");
+        /* MENU NAVIGASI */
+        const menuToggle = document.getElementById("menuToggle");
+        const navDrawer = document.getElementById("navDrawer");
+        const navOverlay = document.getElementById("navOverlay");
 
+        function bukaMenu() {
+            menuToggle.classList.add("active");
+            navDrawer.classList.add("show");
+            navOverlay.classList.add("show");
+            menuToggle.setAttribute("aria-expanded", "true");
+            document.body.style.overflow = "hidden";
+        }
+
+        function tutupMenu() {
+            menuToggle.classList.remove("active");
+            navDrawer.classList.remove("show");
+            navOverlay.classList.remove("show");
+            menuToggle.setAttribute("aria-expanded", "false");
+            document.body.style.overflow = "";
+        }
+
+        menuToggle.addEventListener("click", function () {
+            if (navDrawer.classList.contains("show")) {
+                tutupMenu();
+            } else {
+                bukaMenu();
+            }
+        });
+
+        navOverlay.addEventListener("click", tutupMenu);
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                tutupMenu();
+            }
+        });
+
+        document.querySelectorAll("#navDrawer .nav-link").forEach(function (link) {
+            link.addEventListener("click", tutupMenu);
+        });
+
+        /* DARK MODE */
+        const darkModeToggle = document.getElementById("darkModeToggle");
+        const darkModeIcon = document.getElementById("darkModeIcon");
+        const darkModeText = document.getElementById("darkModeText");
+
+        function aturDarkMode(aktif) {
+            document.body.classList.toggle("dark-mode", aktif);
+
+            darkModeIcon.textContent = aktif ? "☀️" : "🌙";
+            darkModeText.textContent = aktif ? "Light Mode" : "Dark Mode";
+
+            try {
+                localStorage.setItem(
+                    "kalkulatorDarkMode",
+                    aktif ? "aktif" : "nonaktif"
+                );
+            } catch (error) {
+                console.warn("Pilihan tema tidak dapat disimpan.", error);
+            }
+        }
+
+        let darkModeTersimpan = false;
+
+        try {
+            darkModeTersimpan =
+                localStorage.getItem("kalkulatorDarkMode") === "aktif";
+        } catch (error) {
+            console.warn("Pilihan tema tidak dapat dibaca.", error);
+        }
+
+        aturDarkMode(darkModeTersimpan);
+
+        darkModeToggle.addEventListener("click", function () {
+            const aktif = !document.body.classList.contains("dark-mode");
+            aturDarkMode(aktif);
+            tutupMenu();
+        });
+
+        /* ELEMEN FOTO DAN PDF */
         const uploadArea = document.getElementById("uploadArea");
         const photoInput = document.getElementById("photoInput");
         const photoList = document.getElementById("photoList");
         const photoCount = document.getElementById("photoCount");
         const clearButton = document.getElementById("clearButton");
 
-        const paperSize = document.getElementById("paperSize");
-        const marginSelect = document.getElementById("margin");
         const qualityInput = document.getElementById("quality");
         const qualityValue = document.getElementById("qualityValue");
 
@@ -950,95 +1009,21 @@
 
         const MAX_PHOTOS = 20;
         const MAX_FILE_SIZE = 15 * 1024 * 1024;
+
         const ALLOWED_TYPES = [
             "image/jpeg",
             "image/png",
             "image/webp"
         ];
 
+        /* PENGATURAN PDF TETAP */
+        const PDF_PAPER_SIZE = "a4";
+        const PDF_MARGIN = 10;
+
         let photos = [];
         let nextPhotoId = 1;
         let isGenerating = false;
 
-       /* MENU NAVIGASI */
-const menuToggle = document.getElementById("menuToggle");
-const navDrawer = document.getElementById("navDrawer");
-const navOverlay = document.getElementById("navOverlay");
-
-function bukaMenu() {
-    menuToggle.classList.add("active");
-    navDrawer.classList.add("show");
-    navOverlay.classList.add("show");
-    menuToggle.setAttribute("aria-expanded", "true");
-    document.body.style.overflow = "hidden";
-}
-
-function tutupMenu() {
-    menuToggle.classList.remove("active");
-    navDrawer.classList.remove("show");
-    navOverlay.classList.remove("show");
-    menuToggle.setAttribute("aria-expanded", "false");
-    document.body.style.overflow = "";
-}
-
-menuToggle.addEventListener("click", function () {
-    if (navDrawer.classList.contains("show")) {
-        tutupMenu();
-    } else {
-        bukaMenu();
-    }
-});
-
-navOverlay.addEventListener("click", tutupMenu);
-
-document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-        tutupMenu();
-    }
-});
-
-/* Tutup menu ketika tautan navigasi diklik */
-document.querySelectorAll(".nav-link").forEach(function (link) {
-    link.addEventListener("click", tutupMenu);
-});
-
-/* DARK MODE */
-const darkModeToggle = document.getElementById("darkModeToggle");
-const darkModeIcon = document.getElementById("darkModeIcon");
-const darkModeText = document.getElementById("darkModeText");
-
-function aturDarkMode(aktif) {
-    document.body.classList.toggle("dark-mode", aktif);
-
-    darkModeIcon.textContent = aktif ? "☀️" : "🌙";
-    darkModeText.textContent = aktif ? "Light Mode" : "Dark Mode";
-
-    try {
-        localStorage.setItem(
-            "kalkulatorDarkMode",
-            aktif ? "aktif" : "nonaktif"
-        );
-    } catch (error) {
-        console.warn("Pilihan tema tidak dapat disimpan.", error);
-    }
-}
-
-let darkModeTersimpan = false;
-
-try {
-    darkModeTersimpan =
-        localStorage.getItem("kalkulatorDarkMode") === "aktif";
-} catch (error) {
-    console.warn("Pilihan tema tidak dapat dibaca.", error);
-}
-
-aturDarkMode(darkModeTersimpan);
-
-darkModeToggle.addEventListener("click", function () {
-    const aktif = !document.body.classList.contains("dark-mode");
-    aturDarkMode(aktif);
-    tutupMenu();
-});
         /* PESAN STATUS */
         function showStatus(message, type) {
             statusMessage.textContent = message;
@@ -1051,13 +1036,13 @@ darkModeToggle.addEventListener("click", function () {
         }
 
         /* MEMILIH FOTO */
-        uploadArea.addEventListener("click", function() {
+        uploadArea.addEventListener("click", function () {
             if (!isGenerating) {
                 photoInput.click();
             }
         });
 
-        uploadArea.addEventListener("keydown", function(event) {
+        uploadArea.addEventListener("keydown", function (event) {
             if (
                 (event.key === "Enter" || event.key === " ") &&
                 !isGenerating
@@ -1067,29 +1052,30 @@ darkModeToggle.addEventListener("click", function () {
             }
         });
 
-        photoInput.addEventListener("change", function() {
+        photoInput.addEventListener("change", function () {
             addPhotos(Array.from(photoInput.files || []));
             photoInput.value = "";
         });
 
         /* DRAG AND DROP */
-        ["dragenter", "dragover"].forEach(function(eventName) {
-            uploadArea.addEventListener(eventName, function(event) {
+        ["dragenter", "dragover"].forEach(function (eventName) {
+            uploadArea.addEventListener(eventName, function (event) {
                 event.preventDefault();
+
                 if (!isGenerating) {
                     uploadArea.classList.add("dragover");
                 }
             });
         });
 
-        ["dragleave", "drop"].forEach(function(eventName) {
-            uploadArea.addEventListener(eventName, function(event) {
+        ["dragleave", "drop"].forEach(function (eventName) {
+            uploadArea.addEventListener(eventName, function (event) {
                 event.preventDefault();
                 uploadArea.classList.remove("dragover");
             });
         });
 
-        uploadArea.addEventListener("drop", function(event) {
+        uploadArea.addEventListener("drop", function (event) {
             if (isGenerating) return;
 
             const droppedFiles = Array.from(
@@ -1125,7 +1111,7 @@ darkModeToggle.addEventListener("click", function () {
                     continue;
                 }
 
-                const isDuplicate = photos.some(function(photo) {
+                const isDuplicate = photos.some(function (photo) {
                     return (
                         photo.file.name === file.name &&
                         photo.file.size === file.size &&
@@ -1158,7 +1144,8 @@ darkModeToggle.addEventListener("click", function () {
 
                 if (rejected > 0) {
                     messages.push(
-                        rejected + " file dilewati karena format, ukuran, atau batas 20 foto."
+                        rejected +
+                        " file dilewati karena format, ukuran, atau batas 20 foto."
                     );
                 }
 
@@ -1166,9 +1153,15 @@ darkModeToggle.addEventListener("click", function () {
                     messages.push(duplicate + " foto duplikat dilewati.");
                 }
 
-                showStatus(messages.join(" "), added > 0 ? "info" : "error");
+                showStatus(
+                    messages.join(" "),
+                    added > 0 ? "info" : "error"
+                );
             } else if (added > 0) {
-                showStatus(added + " foto berhasil ditambahkan.", "success");
+                showStatus(
+                    added + " foto berhasil ditambahkan.",
+                    "success"
+                );
             } else if (files.length === 0) {
                 hideStatus();
             }
@@ -1180,8 +1173,11 @@ darkModeToggle.addEventListener("click", function () {
 
             photoCount.textContent = photos.length + " foto";
 
-            clearButton.disabled = photos.length === 0 || isGenerating;
-            createPdfButton.disabled = photos.length === 0 || isGenerating;
+            clearButton.disabled =
+                photos.length === 0 || isGenerating;
+
+            createPdfButton.disabled =
+                photos.length === 0 || isGenerating;
 
             if (photos.length === 0) {
                 const empty = document.createElement("div");
@@ -1191,7 +1187,7 @@ darkModeToggle.addEventListener("click", function () {
                 return;
             }
 
-            photos.forEach(function(photo, index) {
+            photos.forEach(function (photo, index) {
                 const item = document.createElement("div");
                 item.className = "photo-item";
 
@@ -1208,12 +1204,13 @@ darkModeToggle.addEventListener("click", function () {
                 removeButton.className = "remove-photo";
                 removeButton.type = "button";
                 removeButton.textContent = "×";
+
                 removeButton.setAttribute(
                     "aria-label",
                     "Hapus foto " + (index + 1)
                 );
 
-                removeButton.addEventListener("click", function() {
+                removeButton.addEventListener("click", function () {
                     removePhoto(photo.id);
                 });
 
@@ -1234,7 +1231,7 @@ darkModeToggle.addEventListener("click", function () {
         function removePhoto(id) {
             if (isGenerating) return;
 
-            const index = photos.findIndex(function(photo) {
+            const index = photos.findIndex(function (photo) {
                 return photo.id === id;
             });
 
@@ -1248,55 +1245,70 @@ darkModeToggle.addEventListener("click", function () {
         }
 
         /* HAPUS SEMUA FOTO */
-        clearButton.addEventListener("click", function() {
+        clearButton.addEventListener("click", function () {
             if (isGenerating) return;
 
-            photos.forEach(function(photo) {
+            photos.forEach(function (photo) {
                 URL.revokeObjectURL(photo.url);
             });
 
             photos = [];
+
             renderPhotos();
             hideStatus();
         });
 
         /* PENGATURAN KUALITAS */
-        qualityInput.addEventListener("input", function() {
+        qualityInput.addEventListener("input", function () {
             qualityValue.textContent = qualityInput.value + "%";
         });
 
-        /* BACA FOTO DAN KONVERSI KE JPEG UNTUK PDF */
+        /* BACA FOTO DAN KONVERSI KE JPEG */
         function readImageAsJpeg(file, quality) {
-            return new Promise(function(resolve, reject) {
+            return new Promise(function (resolve, reject) {
                 const reader = new FileReader();
 
-                reader.onerror = function() {
-                    reject(new Error("Tidak dapat membaca file " + file.name));
+                reader.onerror = function () {
+                    reject(
+                        new Error("Tidak dapat membaca file " + file.name)
+                    );
                 };
 
-                reader.onload = function() {
+                reader.onload = function () {
                     const image = new Image();
 
-                    image.onerror = function() {
-                        reject(new Error("Foto tidak dapat dibuka: " + file.name));
+                    image.onerror = function () {
+                        reject(
+                            new Error("Foto tidak dapat dibuka: " + file.name)
+                        );
                     };
 
-                    image.onload = function() {
+                    image.onload = function () {
                         try {
                             const canvas = document.createElement("canvas");
                             const context = canvas.getContext("2d");
 
                             if (!context) {
-                                reject(new Error("Browser tidak mendukung pemrosesan gambar."));
+                                reject(
+                                    new Error(
+                                        "Browser tidak mendukung pemrosesan gambar."
+                                    )
+                                );
                                 return;
                             }
 
                             canvas.width = image.naturalWidth;
                             canvas.height = image.naturalHeight;
 
-                            /* Latar putih agar transparansi PNG tidak menjadi hitam */
+                            /* Latar putih untuk transparansi PNG */
                             context.fillStyle = "#ffffff";
-                            context.fillRect(0, 0, canvas.width, canvas.height);
+                            context.fillRect(
+                                0,
+                                0,
+                                canvas.width,
+                                canvas.height
+                            );
+
                             context.drawImage(image, 0, 0);
 
                             const jpegData = canvas.toDataURL(
@@ -1313,7 +1325,11 @@ darkModeToggle.addEventListener("click", function () {
                             canvas.width = 1;
                             canvas.height = 1;
                         } catch (error) {
-                            reject(new Error("Gagal memproses foto: " + file.name));
+                            reject(
+                                new Error(
+                                    "Gagal memproses foto: " + file.name
+                                )
+                            );
                         }
                     };
 
@@ -1325,7 +1341,7 @@ darkModeToggle.addEventListener("click", function () {
         }
 
         /* BUAT PDF */
-        createPdfButton.addEventListener("click", async function() {
+        createPdfButton.addEventListener("click", async function () {
             if (photos.length === 0 || isGenerating) return;
 
             if (!window.jspdf || !window.jspdf.jsPDF) {
@@ -1349,9 +1365,11 @@ darkModeToggle.addEventListener("click", function () {
                     'input[name="orientation"]:checked'
                 ).value;
 
-                const selectedPaper = paperSize.value;
-                const margin = Number(marginSelect.value);
-                const quality = Number(qualityInput.value) / 100;
+                const quality =
+                    Number(qualityInput.value) / 100;
+
+                const margin = PDF_MARGIN;
+                const selectedPaper = PDF_PAPER_SIZE;
 
                 const pdf = new jsPDF({
                     orientation: orientation,
@@ -1366,13 +1384,22 @@ darkModeToggle.addEventListener("click", function () {
                 const availableWidth = pageWidth - margin * 2;
                 const availableHeight = pageHeight - margin * 2;
 
-                if (availableWidth <= 0 || availableHeight <= 0) {
-                    throw new Error("Margin terlalu besar untuk ukuran kertas ini.");
+                if (
+                    availableWidth <= 0 ||
+                    availableHeight <= 0
+                ) {
+                    throw new Error(
+                        "Pengaturan halaman PDF tidak valid."
+                    );
                 }
 
                 for (let i = 0; i < photos.length; i++) {
                     createPdfButton.textContent =
-                        "Memproses foto " + (i + 1) + " dari " + photos.length + "...";
+                        "Memproses foto " +
+                        (i + 1) +
+                        " dari " +
+                        photos.length +
+                        "...";
 
                     const image = await readImageAsJpeg(
                         photos[i].file,
@@ -1380,10 +1407,13 @@ darkModeToggle.addEventListener("click", function () {
                     );
 
                     if (i > 0) {
-                        pdf.addPage(selectedPaper, orientation);
+                        pdf.addPage(
+                            selectedPaper,
+                            orientation
+                        );
                     }
 
-                    /* Menyesuaikan foto agar muat tanpa mengubah proporsi */
+                    /* Foto disesuaikan agar muat di A4, margin 10 mm */
                     const ratio = Math.min(
                         availableWidth / image.width,
                         availableHeight / image.height
@@ -1408,6 +1438,7 @@ darkModeToggle.addEventListener("click", function () {
                 }
 
                 const now = new Date();
+
                 const date =
                     now.getFullYear() +
                     "-" +
@@ -1418,7 +1449,8 @@ darkModeToggle.addEventListener("click", function () {
                 pdf.save("gabungan-foto-" + date + ".pdf");
 
                 showStatus(
-                    "PDF berhasil dibuat! Total " + photos.length +
+                    "PDF berhasil dibuat! Total " +
+                    photos.length +
                     " foto telah digabungkan. File akan diunduh ke perangkat kamu.",
                     "success"
                 );
@@ -1426,22 +1458,28 @@ darkModeToggle.addEventListener("click", function () {
                 console.error(error);
 
                 showStatus(
-                    error.message || "Terjadi kesalahan saat membuat PDF. Coba gunakan foto yang lebih kecil.",
+                    error.message ||
+                    "Terjadi kesalahan saat membuat PDF. Coba gunakan foto yang lebih kecil.",
                     "error"
                 );
             } finally {
                 isGenerating = false;
-                createPdfButton.textContent = "📄 Gabungkan dan Unduh PDF";
+                createPdfButton.textContent =
+                    "📄 Gabungkan dan Unduh PDF";
+
                 renderPhotos();
             }
         });
 
         /* BERSIHKAN URL SEMENTARA */
-        window.addEventListener("beforeunload", function() {
-            photos.forEach(function(photo) {
+        window.addEventListener("beforeunload", function () {
+            photos.forEach(function (photo) {
                 URL.revokeObjectURL(photo.url);
             });
         });
+
+        /* TAMPILKAN FOTO AWAL */
+        renderPhotos();
     </script>
 
 </body>
