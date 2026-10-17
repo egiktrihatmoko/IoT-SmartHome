@@ -752,10 +752,46 @@ h1 {
 .history-badge { display:inline-flex; padding:5px 8px; border-radius:20px; background:#fff1f2; color:#991b1b; font-size:10px; font-weight:750; white-space:nowrap; }
 .history-note { background:#fffafa; border:1px solid #ffe0e3; border-radius:10px; padding:12px 14px; color:#77717a; font-size:11px; line-height:1.7; margin-top:13px; }
 @media (max-width:760px) {
-  .sidebar nav { grid-template-columns:repeat(4,minmax(0,1fr)); }
-  .nav-link { font-size:9px; }
+  .sidebar nav { grid-template-columns:repeat(5,minmax(0,1fr)); }
+  .nav-link { font-size:8px; }
   .history-toolbar .btn { flex:1; }
 }
+
+
+/* Navigasi halaman dashboard dan Pusat Kesehatan Website */
+.page-view { display:none; animation: pageIn .18s ease; }
+.page-view.active { display:block; }
+@keyframes pageIn { from { opacity:.65; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+.health-hero { background:linear-gradient(120deg,#fff,#fff5f5); border:1px solid #ffe0e3; border-radius:16px; padding:22px; margin-bottom:18px; }
+.health-hero-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.health-eyebrow { color:var(--red); font-size:10px; font-weight:800; letter-spacing:1px; margin-bottom:8px; }
+.health-hero h2 { margin:0; font-size:21px; letter-spacing:-.5px; }
+.health-hero p { color:var(--muted); font-size:12px; line-height:1.7; margin:8px 0 0; max-width:620px; }
+.health-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.health-feature { display:flex; align-items:flex-start; gap:14px; text-align:left; width:100%; padding:19px; background:#fff; border:1px solid var(--border); border-radius:14px; cursor:pointer; transition:.18s; color:var(--text); }
+.health-feature:hover { border-color:#f1b7bd; transform:translateY(-2px); box-shadow:0 7px 20px #c91f2c0a; }
+.health-feature-icon { display:grid; place-items:center; width:44px; height:44px; flex-shrink:0; border-radius:12px; background:var(--red-light); font-size:21px; }
+.health-feature-copy { flex:1; min-width:0; }
+.health-feature-title { font-size:13px; font-weight:800; }
+.health-feature-desc { color:var(--muted); font-size:11px; line-height:1.65; margin-top:5px; }
+.health-feature-arrow { color:#a3a3ad; font-size:20px; padding-top:4px; }
+.health-detail-head { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+.health-back { border:1px solid var(--border); background:#fff; border-radius:10px; padding:10px 12px; cursor:pointer; font-size:12px; font-weight:750; }
+.health-detail-head h2 { margin:0; font-size:21px; }
+.health-detail-head p { color:var(--muted); font-size:11px; margin:5px 0 0; }
+.health-check-list { display:grid; gap:10px; }
+.health-check-row { display:flex; align-items:center; gap:12px; background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; }
+.health-check-symbol { display:grid; place-items:center; width:34px; height:34px; border-radius:10px; background:#f5f5f7; font-size:16px; flex-shrink:0; }
+.health-check-copy { flex:1; min-width:0; }
+.health-check-name { font-size:12px; font-weight:800; }
+.health-check-desc { color:var(--muted); font-size:10px; line-height:1.6; margin-top:4px; overflow-wrap:anywhere; }
+.health-pill { display:inline-flex; align-items:center; padding:6px 9px; border-radius:20px; background:#f4f4f5; color:#666; font-size:10px; font-weight:800; white-space:nowrap; }
+.health-pill.ok { background:#ecfdf3; color:#16834a; }
+.health-pill.bad { background:#fff1f2; color:#b91c1c; }
+.health-pill.wait { background:#fff7ed; color:#9a3412; }
+.health-detail-note { padding:13px 15px; background:#fafafa; border:1px solid var(--border); border-radius:11px; color:var(--muted); font-size:11px; line-height:1.7; margin-top:14px; }
+.health-actions { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 16px; }
+@media(max-width:760px) { .health-grid { grid-template-columns:1fr; } .health-hero { padding:18px; } .health-hero-top { flex-direction:column; } .health-detail-head h2 { font-size:18px; } .health-check-row { padding:12px; } }
 
 </style>
 </head>
@@ -804,6 +840,10 @@ h1 {
         <span class="nav-icon">▤</span>
         <span>Riwayat Surat</span>
       </a>
+      <a class="nav-link" href="#pusat-kesehatan" id="healthNavLink">
+        <span class="nav-icon">♥</span>
+        <span>Pusat Kesehatan</span>
+      </a>
     </nav>
 
     <div class="sidebar-bottom">
@@ -841,6 +881,7 @@ h1 {
       </div>
     </header>
 
+    <div class="page-view active" id="page-dashboard">
     <section class="hero">
       <div class="hero-content">
         <div class="hero-tag">✦ PANEL ADMINISTRATOR</div>
@@ -1084,6 +1125,57 @@ h1 {
         </div>
       </div>
     </section>
+    </div>
+
+    <div class="page-view" id="page-health">
+      <div class="topbar" style="margin-bottom:22px">
+        <div>
+          <div class="breadcrumb">Menu / <span>Pusat Kesehatan Website</span></div>
+          <h1>Pusat Kesehatan Website</h1>
+          <p class="subtitle">Pilih pemeriksaan yang ingin dibuka. Detail hanya ditampilkan setelah fitur dipilih.</p>
+        </div>
+        <div class="top-actions">
+          <div class="status"><span class="status-dot"></span> Panel admin aktif</div>
+        </div>
+      </div>
+      <div class="health-hero">
+        <div class="health-hero-top">
+          <div>
+            <div class="health-eyebrow">WEBSITE MONITORING</div>
+            <h2>Pantau kondisi website dari satu tempat.</h2>
+            <p>Pilih salah satu subfitur untuk melihat hasil pemeriksaan. Status diambil saat pemeriksaan dijalankan dan bukan pemantauan otomatis terus-menerus.</p>
+          </div>
+          <button class="btn btn-primary" type="button" id="runHealthChecks">↻ Cek Status Website</button>
+        </div>
+      </div>
+      <div class="health-grid" id="healthFeatureGrid">
+        <button class="health-feature" type="button" data-health-page="health-overview">
+          <span class="health-feature-icon">◉</span><span class="health-feature-copy"><span class="health-feature-title">Status Website</span><div class="health-feature-desc">Periksa respons website dan status akses dashboard.</div></span><span class="health-feature-arrow">›</span>
+        </button>
+        <button class="health-feature" type="button" data-health-page="health-api">
+          <span class="health-feature-icon">⌘</span><span class="health-feature-copy"><span class="health-feature-title">API & Server</span><div class="health-feature-desc">Tes endpoint admin dan waktu respons API.</div></span><span class="health-feature-arrow">›</span>
+        </button>
+        <button class="health-feature" type="button" data-health-page="health-database">
+          <span class="health-feature-icon">▤</span><span class="health-feature-copy"><span class="health-feature-title">Database Redis</span><div class="health-feature-desc">Periksa layanan yang membaca data dari Upstash Redis.</div></span><span class="health-feature-arrow">›</span>
+        </button>
+        <button class="health-feature" type="button" data-health-page="health-security">
+          <span class="health-feature-icon">♢</span><span class="health-feature-copy"><span class="health-feature-title">Keamanan Admin</span><div class="health-feature-desc">Periksa apakah sesi admin dikenali server dan endpoint terlindungi.</div></span><span class="health-feature-arrow">›</span>
+        </button>
+      </div>
+      <div class="health-detail-note">Catatan: pemeriksaan database dilakukan melalui endpoint admin yang sudah ada. Ini tidak menguji koneksi Redis secara langsung dan tidak menggantikan pemantauan dari Vercel atau Upstash.</div>
+    </div>
+
+    <div class="page-view" id="page-health-detail">
+      <div class="health-detail-head">
+        <button class="health-back" id="healthBack" type="button">← Kembali</button>
+        <div><h2 id="healthDetailTitle">Detail Pemeriksaan</h2><p id="healthDetailSubtitle">Hasil pemeriksaan terakhir.</p></div>
+      </div>
+      <div class="health-actions"><button class="btn btn-primary" id="refreshHealthDetail" type="button">↻ Periksa Ulang</button></div>
+      <div class="health-check-list" id="healthDetailRows">
+        <div class="health-check-row"><div class="health-check-symbol">◌</div><div class="health-check-copy"><div class="health-check-name">Menunggu pemeriksaan</div><div class="health-check-desc">Pilih Periksa Ulang untuk memulai pemeriksaan.</div></div><span class="health-pill wait">Menunggu</span></div>
+      </div>
+      <div class="health-detail-note" id="healthDetailNote">Hasil pemeriksaan ditampilkan di sini.</div>
+    </div>
 
     <footer class="footer">
       © <span id="year"></span> Kalkulator Harga Tayang · Admin Panel
@@ -1466,19 +1558,151 @@ document.getElementById("clearHistorySearch").addEventListener("click", () => {
   renderLetterHistory();
 });
 
-document.getElementById("historyNavLink").addEventListener("click", () => {
-  document.querySelectorAll(".nav-link").forEach(link => link.classList.remove("active"));
-  document.getElementById("historyNavLink").classList.add("active");
+
+
+
+// Navigasi tampilan: setiap menu membuka halaman tersendiri, bukan menumpuk panjang ke bawah.
+const navLinks = Array.from(document.querySelectorAll(".nav-link"));
+const dashboardPage = document.getElementById("page-dashboard");
+const healthPage = document.getElementById("page-health");
+const healthDetailPage = document.getElementById("page-health-detail");
+let currentHealthPage = "health-overview";
+
+function activateNav(link) {
+  navLinks.forEach(item => item.classList.toggle("active", item === link));
+}
+function showPage(page) {
+  [dashboardPage, healthPage, healthDetailPage].forEach(view => view.classList.remove("active"));
+  if (page === "dashboard") dashboardPage.classList.add("active");
+  else if (page === "health") healthPage.classList.add("active");
+  else if (page === "health-detail") healthDetailPage.classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+document.getElementById("healthNavLink").addEventListener("click", event => {
+  event.preventDefault();
+  activateNav(event.currentTarget);
+  showPage("health");
 });
 document.querySelectorAll('.nav-link[href="dashboard.html"]').forEach(link => {
-  link.addEventListener("click", () => {
-    document.querySelectorAll(".nav-link").forEach(item => item.classList.remove("active"));
-    link.classList.add("active");
+  link.addEventListener("click", event => {
+    event.preventDefault();
+    activateNav(link);
+    showPage("dashboard");
   });
 });
+document.getElementById("historyNavLink").addEventListener("click", event => {
+  event.preventDefault();
+  // Riwayat tetap berada di dashboard, lalu digulirkan ke bagiannya.
+  activateNav(event.currentTarget);
+  showPage("dashboard");
+  setTimeout(() => document.getElementById("riwayat-surat").scrollIntoView({behavior:"smooth", block:"start"}), 80);
+});
+document.querySelectorAll('.nav-link[href="index.html"]').forEach(link => {
+  link.addEventListener("click", event => { event.preventDefault(); window.location.href = "/index.html"; });
+});
 
+const healthPages = {
+  "health-overview": {
+    title: "Status Website",
+    subtitle: "Respons halaman dan validasi sesi admin.",
+    note: "Status website diperiksa dari browser admin. Respons berhasil berarti endpoint menjawab, bukan jaminan semua fungsi website sempurna.",
+    checks: [
+      {name:"Halaman dashboard", url:()=>location.href, kind:"page"},
+      {name:"Validasi sesi admin", url:()=>"/api/admin/check", kind:"api"}
+    ]
+  },
+  "health-api": {
+    title: "API & Server",
+    subtitle: "Pemeriksaan endpoint admin yang digunakan dashboard.",
+    note: "Waktu respons dihitung dari browser sampai endpoint menjawab. Status API dapat bergantung pada sesi login yang aktif.",
+    checks: [
+      {name:"API pemeriksaan admin", url:()=>"/api/admin/check", kind:"api"},
+      {name:"API statistik pengunjung", url:()=>"/api/admin/stats", kind:"api"},
+      {name:"API riwayat surat", url:()=>"/api/admin/surat-history", kind:"api"}
+    ]
+  },
+  "health-database": {
+    title: "Database Redis",
+    subtitle: "Pemeriksaan tidak langsung melalui API yang membaca data.",
+    note: "Jika API statistik atau riwayat berhasil mengembalikan data, layanan penyimpanan yang digunakan endpoint tersebut kemungkinan berfungsi. Hasil ini bukan ping Redis langsung.",
+    checks: [
+      {name:"Pembacaan data statistik", url:()=>"/api/admin/stats", kind:"data"},
+      {name:"Pembacaan data riwayat surat", url:()=>"/api/admin/surat-history", kind:"data"}
+    ]
+  },
+  "health-security": {
+    title: "Keamanan Admin",
+    subtitle: "Validasi sesi dan akses endpoint terproteksi.",
+    note: "Pemeriksaan ini terbatas pada respons endpoint yang diuji. Ini bukan audit keamanan menyeluruh atau uji penetrasi.",
+    checks: [
+      {name:"Validasi sesi login", url:()=>"/api/admin/check", kind:"api"},
+      {name:"Akses API statistik", url:()=>"/api/admin/stats", kind:"api"},
+      {name:"Akses API riwayat surat", url:()=>"/api/admin/surat-history", kind:"api"}
+    ]
+  }
+};
 
-checkSession().then(() => { if (!dashboard.hidden) loadVisitorStats(); loadLetterHistory(); });
+function openHealthDetail(pageKey) {
+  currentHealthPage = pageKey;
+  const page = healthPages[pageKey];
+  document.getElementById("healthDetailTitle").textContent = page.title;
+  document.getElementById("healthDetailSubtitle").textContent = page.subtitle;
+  document.getElementById("healthDetailNote").textContent = page.note;
+  showPage("health-detail");
+  runHealthDetailChecks();
+}
+document.querySelectorAll("[data-health-page]").forEach(button => {
+  button.addEventListener("click", () => openHealthDetail(button.dataset.healthPage));
+});
+document.getElementById("healthBack").addEventListener("click", () => showPage("health"));
+document.getElementById("refreshHealthDetail").addEventListener("click", runHealthDetailChecks);
+document.getElementById("runHealthChecks").addEventListener("click", async () => {
+  // Ringkas: buka status website dan lakukan pemeriksaan awal.
+  openHealthDetail("health-overview");
+});
+
+async function runHealthDetailChecks() {
+  const page = healthPages[currentHealthPage];
+  const container = document.getElementById("healthDetailRows");
+  container.replaceChildren();
+  const tasks = page.checks.map(async check => {
+    const row = document.createElement("div");
+    row.className = "health-check-row";
+    row.innerHTML = '<div class="health-check-symbol">◌</div><div class="health-check-copy"><div class="health-check-name"></div><div class="health-check-desc">Sedang memeriksa...</div></div><span class="health-pill wait">Memeriksa</span>';
+    row.querySelector(".health-check-name").textContent = check.name;
+    container.appendChild(row);
+    const started = performance.now();
+    try {
+      const response = await fetch(check.url(), {
+        method: "GET", credentials: "same-origin", cache: "no-store",
+        headers: {"Accept":"application/json"}
+      });
+      const elapsed = Math.round(performance.now() - started);
+      const data = check.kind === "page" ? {} : await response.json().catch(() => ({}));
+      const unauthorized = response.status === 401 || response.status === 403;
+      const ok = response.ok && (check.kind === "page" || data.success === true);
+      const status = ok ? "Normal" : (unauthorized ? "Sesi ditolak" : "Perlu dicek");
+      row.querySelector(".health-check-symbol").textContent = ok ? "✓" : "!";
+      row.querySelector(".health-check-desc").textContent =
+        "HTTP " + response.status + " · " + elapsed + " ms" +
+        (data.error ? " · " + String(data.error).slice(0,140) : "");
+      const pill = row.querySelector(".health-pill");
+      pill.textContent = status;
+      pill.className = "health-pill " + (ok ? "ok" : "bad");
+    } catch (error) {
+      row.querySelector(".health-check-symbol").textContent = "!";
+      row.querySelector(".health-check-desc").textContent = "Tidak mendapat respons. Periksa koneksi atau konfigurasi endpoint.";
+      const pill = row.querySelector(".health-pill");
+      pill.textContent = "Gagal";
+      pill.className = "health-pill bad";
+    }
+  });
+  await Promise.all(tasks);
+  document.getElementById("healthDetailSubtitle").textContent =
+    page.subtitle + " Diperiksa " + new Date().toLocaleString("id-ID") + ".";
+}
+
+checkSession().then(() => { if (!dashboard.hidden) { loadVisitorStats(); loadLetterHistory(); } });
 </script>
 
 </body>
