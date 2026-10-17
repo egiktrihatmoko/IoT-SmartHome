@@ -1,0 +1,1311 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#b90012">
+<title>Surat Pernyataan Kepemilikan Rekening</title>
+
+<style>
+:root {
+  --red: #b90012;
+  --dark-red: #97000e;
+  --soft-red: #fff0f1;
+  --text: #262626;
+  --muted: #777;
+  --border: #eadede;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: linear-gradient(#fff4f4, #fff);
+  color: var(--text);
+}
+
+button, input, textarea { font: inherit; }
+
+.topbar {
+  height: 6px;
+  background: var(--red);
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 24px 16px 40px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 46px;
+  height: 46px;
+  background: var(--red);
+  color: white;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+}
+
+.brand-name { font-size: 17px; font-weight: 800; }
+.brand-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+.back {
+  color: var(--red);
+  background: white;
+  border: 1px solid #efcdd0;
+  border-radius: 30px;
+  padding: 10px 14px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.hero {
+  text-align: center;
+  margin: 34px auto 28px;
+}
+
+.badge {
+  display: inline-block;
+  color: var(--red);
+  background: var(--soft-red);
+  border: 1px solid #f5d5d8;
+  padding: 7px 12px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+h1 {
+  color: var(--red);
+  font-size: clamp(26px, 5vw, 38px);
+  letter-spacing: -1px;
+  margin: 14px 0 8px;
+}
+
+.hero p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr .95fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px #80000e09;
+}
+
+.card-head {
+  padding: 21px;
+  border-bottom: 1px solid #f3e8e8;
+}
+
+.card-head h2 { font-size: 19px; margin: 0; }
+
+.card-head p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 6px 0 0;
+}
+
+.card-body { padding: 21px; }
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--red);
+  font-size: 15px;
+  font-weight: 800;
+  margin: 0 0 17px;
+}
+
+.step {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--red);
+  color: white;
+  font-size: 13px;
+}
+
+.field { margin-bottom: 16px; }
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 7px;
+}
+
+input, textarea {
+  display: block;
+  width: 100%;
+  border: 1px solid #dedada;
+  border-radius: 12px;
+  padding: 12px;
+  background: white;
+  color: var(--text);
+  outline: none;
+}
+
+input { min-height: 46px; }
+
+textarea {
+  min-height: 85px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px #b9001215;
+}
+
+.divider {
+  height: 1px;
+  background: #f0e6e6;
+  margin: 23px 0;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.btn {
+  border: 0;
+  border-radius: 12px;
+  padding: 13px 16px;
+  font-weight: 750;
+  cursor: pointer;
+  min-height: 46px;
+}
+
+.btn:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+
+.primary {
+  background: var(--red);
+  color: white;
+  box-shadow: 0 6px 16px #b9001225;
+}
+
+.primary:hover { background: var(--dark-red); }
+
+.secondary {
+  color: var(--red);
+  background: white;
+  border: 1px solid #efcdd0;
+}
+
+.preview { position: sticky; top: 15px; }
+
+.preview-tag {
+  float: right;
+  background: var(--soft-red);
+  color: var(--red);
+  border-radius: 30px;
+  padding: 6px 9px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.paper-wrap {
+  background: #f7f2f2;
+  padding: 16px;
+}
+
+.paper {
+  background: white;
+  border: 1px solid #e9e1e1;
+  padding: 32px 25px;
+  min-height: 650px;
+  color: #111;
+  font-family: "Times New Roman", serif;
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.paper h3 {
+  text-align: center;
+  font-size: 16px;
+  text-decoration: underline;
+  margin: 0 0 25px;
+}
+
+.paper p { margin: 10px 0; }
+
+.identity,
+.bank-identity {
+  display: grid;
+  grid-template-columns: 145px 1fr;
+  gap: 5px 4px;
+  margin: 12px 0 18px;
+}
+
+.bank-identity { margin-bottom: 20px; }
+
+.statement { margin: 10px 0; }
+
+.signature {
+  margin: 25px 0 0 auto;
+  width: 210px;
+  max-width: 100%;
+  text-align: center;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.signature-space { height: 15px; }
+
+.signature-image {
+  display: block;
+  width: 180px;
+  max-width: 100%;
+  height: 85px;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
+.signature-name {
+  min-height: 22px;
+  overflow-wrap: anywhere;
+}
+
+.signature-fallback { display: none; }
+
+.signature-drawing {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 15px;
+  background: #fffafa;
+  margin-top: 5px;
+}
+
+.signature-drawing p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+
+.canvas-wrap {
+  width: 100%;
+  border: 1px dashed #d5a4a8;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+}
+
+#signatureCanvas {
+  display: block;
+  width: 100%;
+  height: 180px;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.canvas-hint {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 8px;
+}
+
+.signature-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.signature-actions .btn {
+  flex: 1;
+  padding: 11px 9px;
+  font-size: 12px;
+}
+
+.signature-status {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+.note {
+  padding: 14px 19px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+/* MENU NAVIGASI */
+        .menu-toggle {
+            position: fixed;
+            top: 18px;
+            left: 18px;
+            z-index: 1002;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            background: #a80000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(150, 0, 0, 0.18);
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 22px;
+            height: 2.5px;
+            border-radius: 3px;
+            background: #fff;
+            transition: 0.25s;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: translateY(7.5px) rotate(45deg);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: translateY(-7.5px) rotate(-45deg);
+        }
+
+        .nav-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.25s;
+        }
+
+        .nav-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .nav-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 290px;
+            max-width: 85%;
+            height: 100vh;
+            height: 100dvh;
+            background: #fff;
+            z-index: 1001;
+            padding: 85px 18px 25px;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.12);
+            transform: translateX(-105%);
+            transition: transform 0.25s ease;
+            overflow-y: auto;
+        }
+
+        .nav-drawer.show {
+            transform: translateX(0);
+        }
+
+        .nav-heading {
+            color: #a80000;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin: 0 12px 15px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 13px;
+            margin-bottom: 7px;
+            border-radius: 10px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #fff0f0;
+            color: #a80000;
+        }
+
+        .nav-link .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+
+        .nav-link.admin-link {
+            color: #a80000;
+            background: #fff0f0;
+            border: 1px solid #f2dede;
+        }
+
+        .nav-link.admin-link:hover {
+            background: #ffe0e0;
+        }
+
+        .nav-divider {
+            height: 1px;
+            background: #eee;
+            margin: 15px 0;
+        }
+
+        /* TOMBOL DARK MODE */
+        .dark-mode-button {
+            width: 100%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            text-align: left;
+            font-family: inherit;
+        }
+
+  
+.footer {
+  text-align: center;
+  color: #8c7b7d;
+  font-size: 11px;
+  padding-top: 25px;
+}
+
+.footer strong { color: var(--red); }
+
+@media(max-width: 800px) {
+  .container { padding: 18px 13px 32px; }
+  .layout { grid-template-columns: 1fr; }
+  .preview { position: static; }
+  .hero { margin: 28px auto 23px; }
+  .card-head, .card-body { padding: 18px; }
+  .paper-wrap { padding: 12px; }
+  .paper { padding: 27px 20px; min-height: 0; }
+}
+
+@media(max-width: 420px) {
+  .brand-sub { display: none; }
+  .brand-name { font-size: 14px; }
+  .back { padding: 9px 10px; }
+  .paper { padding: 23px 15px; font-size: 12px; }
+  .identity, .bank-identity {
+    grid-template-columns: 125px 1fr;
+  }
+  .actions .btn { width: 100%; }
+  .signature-actions { flex-direction: column; }
+  #signatureCanvas { height: 160px; }
+}
+
+</style>
+</head>
+
+<body>
+<div class="topbar"></div>
+
+<main class="container">
+
+  <header class="header">
+      <!-- TOMBOL MENU GARIS TIGA -->
+    <button
+        class="menu-toggle"
+        id="menuToggle"
+        type="button"
+        aria-label="Buka menu navigasi"
+        aria-expanded="false"
+        aria-controls="navDrawer"
+    >
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- LAPISAN GELAP -->
+    <div class="nav-overlay" id="navOverlay"></div>
+
+    <!-- MENU NAVIGASI -->
+    <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
+        <div class="nav-heading">MENU NAVIGASI</div>
+
+        <a class="nav-link admin-link" href="/dashboard.html">
+            <span class="nav-icon">🔐</span>
+            <span>Dashboard Admin</span>
+        </a>
+
+        <a class="nav-link" href="/gabung-foto.html">
+            <span class="nav-icon">📄</span>
+            <span>Ubah Foto ke PDF</span>
+        </a>
+
+        <a class="nav-link" href="/">
+            <span class="nav-icon">🧮</span>
+            <span>Kalkulator Harga Tayang</span>
+        </a>
+
+        <div class="nav-divider"></div>
+
+        <button
+            class="nav-link dark-mode-button"
+            id="darkModeToggle"
+            type="button"
+            aria-label="Ganti tema tampilan"
+        >
+            <span class="nav-icon" id="darkModeIcon">🌙</span>
+            <span id="darkModeText">Dark Mode</span>
+        </button>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Surat Pernyataan</h1>
+    <p>Buat surat pernyataan kepemilikan rekening dengan mudah.</p>
+  </section>
+
+  <div class="layout">
+
+    <!-- FORM DATA -->
+    <section class="card form-card">
+      <div class="card-head">
+        <h2>Lengkapi data surat</h2>
+        <p>Isi data diri dan informasi rekening yang akan dicantumkan.</p>
+      </div>
+
+      <div class="card-body">
+
+        <h3 class="section-title">
+          <span class="step">1</span> Data diri
+        </h3>
+
+        <div class="field">
+          <label for="nama">Nama lengkap *</label>
+          <input id="nama" autocomplete="name" maxlength="150"
+            placeholder="Masukkan nama lengkap" required>
+        </div>
+
+        <div class="field">
+          <label for="ttl">Tempat, Tanggal Lahir *</label>
+          <input
+            id="ttl"
+            type="text"
+            maxlength="150"
+            placeholder="Contoh: Klaten, 18 Desember 1999"
+            required
+          >
+        </div>
+
+        <div class="field">
+          <label for="alamat">Alamat lengkap *</label>
+          <textarea id="alamat" maxlength="1000"
+            placeholder="Masukkan alamat lengkap" required></textarea>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3 class="section-title">
+          <span class="step">2</span> Data rekening
+        </h3>
+
+        <div class="field">
+          <label for="pemilik">Nama pemilik rekening *</label>
+          <input id="pemilik" maxlength="150"
+            placeholder="Sesuai nama di rekening" required>
+        </div>
+
+        <div class="field">
+          <label for="bank">Nama bank *</label>
+          <input id="bank" maxlength="100"
+            placeholder="Contoh: BCA, BRI, BNI, Mandiri" required>
+        </div>
+
+        <div class="field">
+          <label for="rekening">Nomor rekening *</label>
+          <input id="rekening" inputmode="numeric" maxlength="50"
+            placeholder="Masukkan nomor rekening" required>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3 class="section-title">
+          <span class="step">3</span> Tanggal surat
+        </h3>
+
+        <div class="field">
+          <label for="kota">Kota/kabupaten *</label>
+          <input id="kota" maxlength="100"
+            placeholder="Contoh: Sragen" required>
+        </div>
+
+        <div class="field">
+          <label for="tanggalSurat">Tanggal surat *</label>
+          <input id="tanggalSurat" type="date" required>
+        </div>
+
+        <p style="font-size:12px;color:#777;margin-top:-5px">
+          Tanggal surat otomatis mengikuti tanggal hari ini dan dapat diubah.
+        </p>
+
+        <div class="divider"></div>
+
+        <h3 class="section-title">
+          <span class="step">4</span> Gambar tanda tangan
+        </h3>
+
+        <div class="signature-drawing">
+          <p>
+            Gambar tanda tangan menggunakan jari di HP atau mouse
+            di laptop. Setelah selesai, tekan Gunakan TTD.
+          </p>
+
+          <div class="canvas-wrap">
+            <canvas id="signatureCanvas"
+              aria-label="Area untuk menggambar tanda tangan"></canvas>
+          </div>
+
+          <div class="canvas-hint">
+            <span>✍️ Gambar di sini</span>
+            <span>Jari atau mouse</span>
+          </div>
+
+          <div class="signature-actions">
+            <button class="btn secondary" type="button" id="clearTtdBtn">
+              Hapus TTD
+            </button>
+
+            <button class="btn primary" type="button" id="useTtdBtn">
+              Gunakan TTD
+            </button>
+          </div>
+
+          <div class="signature-status" id="ttdStatus" aria-live="polite">
+            Belum ada tanda tangan yang digunakan.
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" id="downloadBtn" type="button">
+            ↓ Download PDF
+          </button>
+
+          <button class="btn secondary" id="resetBtn" type="button">
+            Reset formulir
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PRATINJAU SURAT -->
+    <section class="card preview">
+      <div class="card-head">
+        <span class="preview-tag">PRATINJAU</span>
+        <h2>Pratinjau surat</h2>
+        <p>Surat diperbarui otomatis mengikuti data yang kamu isi.</p>
+      </div>
+
+      <div class="paper-wrap">
+        <article class="paper" id="paper">
+
+          <h3>SURAT PERNYATAAN</h3>
+
+          <p>Saya yang bertanda tangan di bawah ini:</p>
+
+          <div class="identity">
+            <span>Nama</span>
+            <span>: <span id="outNama">........................................................</span></span>
+
+            <span>Tempat, Tanggal Lahir</span>
+            <span>: <span id="outTTL">........................................................</span></span>
+
+            <span>Alamat</span>
+            <span>: <span id="outAlamat">................................................................................</span></span>
+          </div>
+
+          <p>Dengan ini menyatakan bahwa:</p>
+
+          <p class="statement">
+            Nomor rekening dan nama rekening di bawah ini benar
+            merupakan milik pribadi saya/badan usaha dan digunakan
+            atas nama saya/badan usaha:
+          </p>
+
+          <div class="bank-identity">
+            <span>Nama Pemilik Rekening</span>
+            <span>: <span id="outPemilik">........................................................</span></span>
+
+            <span>Nama Bank</span>
+            <span>: <span id="outBank">........................................................</span></span>
+
+            <span>Nomor Rekening</span>
+            <span>: <span id="outRekening">........................................................</span></span>
+          </div>
+
+          <p>
+            Demikian surat pernyataan ini saya buat dengan
+            sebenar-benarnya, tanpa ada paksaan dari pihak manapun.
+            Apabila di kemudian hari terdapat hal-hal yang tidak
+            sesuai dengan pernyataan ini, saya bersedia bertanggung
+            jawab sepenuhnya sesuai dengan ketentuan hukum yang berlaku.
+          </p>
+
+          <div class="signature">
+            <div id="outTanggal"></div>
+            <div>Yang membuat pernyataan,</div>
+
+            <div class="signature-space"></div>
+
+            <img id="outTtdImage" class="signature-image"
+              alt="Tanda tangan" hidden>
+
+            <div id="outTtd" class="signature-fallback" hidden></div>
+
+            <div class="signature-name" id="outNamaTtd"></div>
+          </div>
+
+        </article>
+      </div>
+
+    </section>
+
+  </div>
+
+<!-- FOOTER -->
+    <div class="footer">
+        <p
+            class="contact-question"
+            style="font-weight: bold; color: #a80000; margin-bottom: 8px;"
+        >
+            Ada saran atau pertanyaan?
+        </p>
+
+        <p class="contact-instruction" style="margin-bottom: 8px;">
+            Silakan hubungi nomor di bawah ini:
+        </p>
+
+        <p>
+            <a
+                class="contact-link"
+                href="https://wa.me/6281125213879"
+                target="_blank"
+                rel="noopener noreferrer"
+                style="color: #25D366; text-decoration: none; font-weight: bold;"
+            >
+                ☎ 081125213879 (Egik)
+            </a>
+        </p>
+
+        <p style="margin-top: 10px;">
+            Credit by <strong>eth production</strong>
+        </p>
+    </div>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+  /* MENU NAVIGASI */
+        const menuToggle = document.getElementById("menuToggle");
+        const navDrawer = document.getElementById("navDrawer");
+        const navOverlay = document.getElementById("navOverlay");
+
+        function bukaMenu() {
+            menuToggle.classList.add("active");
+            navDrawer.classList.add("show");
+            navOverlay.classList.add("show");
+            menuToggle.setAttribute("aria-expanded", "true");
+            document.body.style.overflow = "hidden";
+        }
+
+        function tutupMenu() {
+            menuToggle.classList.remove("active");
+            navDrawer.classList.remove("show");
+            navOverlay.classList.remove("show");
+            menuToggle.setAttribute("aria-expanded", "false");
+            document.body.style.overflow = "";
+        }
+
+        menuToggle.addEventListener("click", function () {
+            if (navDrawer.classList.contains("show")) {
+                tutupMenu();
+            } else {
+                bukaMenu();
+            }
+        });
+
+        navOverlay.addEventListener("click", tutupMenu);
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                tutupMenu();
+            }
+        });
+
+        document.querySelectorAll("#navDrawer .nav-link").forEach(function (link) {
+            link.addEventListener("click", tutupMenu);
+        });
+
+        /* DARK MODE */
+        const darkModeToggle = document.getElementById("darkModeToggle");
+        const darkModeIcon = document.getElementById("darkModeIcon");
+        const darkModeText = document.getElementById("darkModeText");
+
+        function aturDarkMode(aktif) {
+            document.body.classList.toggle("dark-mode", aktif);
+
+            darkModeIcon.textContent = aktif ? "☀️" : "🌙";
+            darkModeText.textContent = aktif ? "Light Mode" : "Dark Mode";
+
+            try {
+                localStorage.setItem(
+                    "kalkulatorDarkMode",
+                    aktif ? "aktif" : "nonaktif"
+                );
+            } catch (error) {
+                console.warn("Pilihan tema tidak dapat disimpan.", error);
+            }
+        }
+
+        let darkModeTersimpan = false;
+
+        try {
+            darkModeTersimpan =
+                localStorage.getItem("kalkulatorDarkMode") === "aktif";
+        } catch (error) {
+            console.warn("Pilihan tema tidak dapat dibaca.", error);
+        }
+
+        aturDarkMode(darkModeTersimpan);
+
+        darkModeToggle.addEventListener("click", function () {
+            const aktif = !document.body.classList.contains("dark-mode");
+            aturDarkMode(aktif);
+            tutupMenu();
+        });
+const $ = id => document.getElementById(id);
+
+const fieldIds = [
+  'nama',
+  'ttl',
+  'alamat',
+  'pemilik',
+  'bank',
+  'rekening',
+  'kota',
+  'tanggalSurat'
+];
+
+// =======================================
+// TANGGAL SURAT OTOMATIS HARI INI
+// Menggunakan tanggal lokal perangkat.
+// =======================================
+
+function getTodayLocal() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+// Isi tanggal surat ketika halaman dibuka.
+$('tanggalSurat').value = getTodayLocal();
+
+function safeText(
+  value,
+  fallback = '........................................................'
+) {
+  return (value || '').trim() || fallback;
+}
+
+function formatDate(value) {
+  if (!value) return '';
+
+  const [year, month, day] = value.split('-').map(Number);
+
+  const months = [
+    'Januari', 'Februari', 'Maret', 'April',
+    'Mei', 'Juni', 'Juli', 'Agustus',
+    'September', 'Oktober', 'November', 'Desember'
+  ];
+
+  return `${day} ${months[month - 1]} ${year}`;
+}
+
+// =======================================
+// UPDATE PRATINJAU SURAT
+// =======================================
+
+function updatePreview() {
+  $('outNama').textContent = safeText($('nama').value);
+
+  // TTL diketik manual dalam satu kolom.
+  // Contoh: Klaten, 18 Desember 1999.
+  $('outTTL').textContent = safeText(
+    $('ttl').value,
+    '........................................................'
+  );
+
+  $('outAlamat').textContent = safeText(
+    $('alamat').value,
+    '................................................................................'
+  );
+
+  $('outPemilik').textContent = safeText($('pemilik').value);
+  $('outBank').textContent = safeText($('bank').value);
+  $('outRekening').textContent = safeText($('rekening').value);
+
+  const kota = $('kota').value.trim() || '............................';
+  const tanggal = formatDate($('tanggalSurat').value);
+
+  $('outTanggal').textContent = tanggal
+    ? `${kota}, ${tanggal}`
+    : `${kota}, .... ......... 20....`;
+
+  $('outNamaTtd').textContent = $('nama').value.trim();
+}
+
+fieldIds.forEach(id => {
+  $(id).addEventListener('input', updatePreview);
+  $(id).addEventListener('change', updatePreview);
+});
+
+// =======================================
+// GAMBAR TANDA TANGAN
+// =======================================
+
+const canvas = $('signatureCanvas');
+const ctx = canvas.getContext('2d');
+
+let isDrawing = false;
+let hasDrawing = false;
+
+function setupCanvas() {
+  const rect = canvas.getBoundingClientRect();
+
+  if (!rect.width || !rect.height) return;
+
+  const oldData = hasDrawing
+    ? canvas.toDataURL('image/png')
+    : null;
+
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#111111';
+  ctx.fillStyle = '#111111';
+  ctx.lineWidth = 2.5;
+
+  if (oldData) {
+    const img = new Image();
+
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, rect.width, rect.height);
+    };
+
+    img.src = oldData;
+  }
+}
+
+setupCanvas();
+
+let resizeTimeout;
+
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(setupCanvas, 150);
+});
+
+function getCanvasPoint(event) {
+  const rect = canvas.getBoundingClientRect();
+
+  return {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top
+  };
+}
+
+function startDrawing(event) {
+  if (event.button !== undefined && event.button !== 0) return;
+
+  event.preventDefault();
+
+  const point = getCanvasPoint(event);
+
+  isDrawing = true;
+  hasDrawing = true;
+
+  try {
+    canvas.setPointerCapture(event.pointerId);
+  } catch (error) {}
+
+  ctx.beginPath();
+  ctx.arc(point.x, point.y, ctx.lineWidth / 2, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(point.x, point.y);
+
+  $('ttdStatus').textContent =
+    'Sedang menggambar. Setelah selesai, tekan Gunakan TTD.';
+}
+
+function drawSignature(event) {
+  if (!isDrawing) return;
+
+  event.preventDefault();
+
+  const point = getCanvasPoint(event);
+
+  ctx.lineTo(point.x, point.y);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(point.x, point.y);
+}
+
+function stopDrawing(event) {
+  if (!isDrawing) return;
+
+  isDrawing = false;
+
+  if (event && event.pointerId !== undefined) {
+    try {
+      if (canvas.hasPointerCapture(event.pointerId)) {
+        canvas.releasePointerCapture(event.pointerId);
+      }
+    } catch (error) {}
+  }
+
+  ctx.beginPath();
+}
+
+canvas.addEventListener('pointerdown', startDrawing);
+canvas.addEventListener('pointermove', drawSignature);
+canvas.addEventListener('pointerup', stopDrawing);
+canvas.addEventListener('pointercancel', stopDrawing);
+
+canvas.addEventListener('lostpointercapture', () => {
+  isDrawing = false;
+  ctx.beginPath();
+});
+
+function useSignature() {
+  if (isDrawing) {
+    alert('Selesaikan gambar tanda tangan terlebih dahulu.');
+    return;
+  }
+
+  if (!hasDrawing) {
+    alert('Silakan gambar tanda tangan terlebih dahulu.');
+    return;
+  }
+
+  try {
+    $('outTtdImage').src = canvas.toDataURL('image/png');
+    $('outTtdImage').hidden = false;
+
+    // Pastikan tidak ada titik-titik di bawah tanda tangan.
+    $('outTtd').hidden = true;
+
+    $('ttdStatus').textContent =
+      '✓ Tanda tangan berhasil digunakan pada pratinjau surat.';
+  } catch (error) {
+    console.error(error);
+    alert('Tanda tangan gagal digunakan. Silakan coba lagi.');
+  }
+}
+
+$('useTtdBtn').addEventListener('click', useSignature);
+
+function clearSignature() {
+  isDrawing = false;
+  hasDrawing = false;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.beginPath();
+
+  $('outTtdImage').removeAttribute('src');
+  $('outTtdImage').hidden = true;
+  $('outTtd').hidden = true;
+
+  $('ttdStatus').textContent =
+    'Belum ada tanda tangan yang digunakan.';
+}
+
+$('clearTtdBtn').addEventListener('click', clearSignature);
+
+// =======================================
+// DOWNLOAD PDF
+// =======================================
+
+$('downloadBtn').addEventListener('click', async () => {
+  const required = [
+    ['nama', 'Nama lengkap'],
+    ['ttl', 'Tempat dan tanggal lahir'],
+    ['alamat', 'Alamat lengkap'],
+    ['pemilik', 'Nama pemilik rekening'],
+    ['bank', 'Nama bank'],
+    ['rekening', 'Nomor rekening'],
+    ['kota', 'Kota/kabupaten'],
+    ['tanggalSurat', 'Tanggal surat']
+  ];
+
+  for (const [id, label] of required) {
+    if (!$(id).value.trim()) {
+      alert(`Silakan isi ${label} terlebih dahulu.`);
+      $(id).focus();
+      return;
+    }
+  }
+
+  if (typeof html2pdf === 'undefined') {
+    alert(
+      'Library PDF gagal dimuat. Periksa koneksi internet lalu coba lagi.'
+    );
+    return;
+  }
+
+  if (isDrawing) {
+    alert('Selesaikan gambar tanda tangan terlebih dahulu.');
+    return;
+  }
+
+  const tombol = $('downloadBtn');
+  const teksAwal = tombol.innerHTML;
+
+  try {
+    updatePreview();
+
+    tombol.disabled = true;
+    tombol.textContent = 'Menyiapkan PDF...';
+
+    const namaFile = $('nama').value
+      .trim()
+      .replace(/[<>:"/\\|?*\x00-\x1F]/g, '')
+      .replace(/\s+/g, '-')
+      .slice(0, 70) || 'Pengguna';
+
+    const opsi = {
+      margin: [12, 12, 12, 12],
+
+      filename: `Surat-Pernyataan-Rekening-${namaFile}.pdf`,
+
+      image: {
+        type: 'jpeg',
+        quality: 0.98
+      },
+
+      html2canvas: {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        scrollY: 0,
+        useCORS: true
+      },
+
+      jsPDF: {
+        unit: 'mm',
+        format: 'a4',
+        orientation: 'portrait'
+      },
+
+      pagebreak: {
+        mode: ['css', 'legacy'],
+        avoid: ['.signature']
+      }
+    };
+
+    await html2pdf()
+      .set(opsi)
+      .from($('paper'))
+      .save();
+
+  } catch (error) {
+    console.error('Gagal membuat PDF:', error);
+    alert('PDF gagal dibuat. Silakan coba lagi.');
+  } finally {
+    tombol.disabled = false;
+    tombol.innerHTML = teksAwal;
+  }
+});
+
+// =======================================
+// RESET FORMULIR
+// =======================================
+
+$('resetBtn').addEventListener('click', () => {
+  if (!confirm('Yakin ingin mengosongkan semua data dan tanda tangan?')) {
+    return;
+  }
+
+  fieldIds.forEach(id => {
+    $(id).value = '';
+  });
+
+  // Tanggal surat otomatis kembali ke tanggal hari ini.
+  $('tanggalSurat').value = getTodayLocal();
+
+  clearSignature();
+  updatePreview();
+});
+
+// Tampilkan pratinjau saat halaman pertama dibuka.
+updatePreview();
+</script>
+
+</body>
+</html>
