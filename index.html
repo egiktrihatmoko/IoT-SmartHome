@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#a80000">
     <title>Kalkulator Harga Tayang</title>
 
     <style>
@@ -26,7 +27,7 @@
             margin: auto;
         }
 
-        /* MENU NAVIGASI BARU */
+        /* MENU NAVIGASI */
         .menu-toggle {
             position: fixed;
             top: 18px;
@@ -134,6 +135,7 @@
             width: 22px;
             text-align: center;
             font-size: 19px;
+            flex-shrink: 0;
         }
 
         .nav-link.admin-link {
@@ -150,6 +152,16 @@
             height: 1px;
             background: #eee;
             margin: 15px 0;
+        }
+
+        /* TOMBOL DARK MODE */
+        .dark-mode-button {
+            width: 100%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            text-align: left;
+            font-family: inherit;
         }
 
         /* HEADER */
@@ -264,6 +276,7 @@
             outline: none;
             transition: 0.2s;
             background: #fff;
+            color: #222;
         }
 
         input[type="number"]:focus {
@@ -460,6 +473,150 @@
             line-height: 1.5;
         }
 
+        /* =================================
+           DARK MODE
+        ================================= */
+
+        body.dark-mode {
+            background: #121212;
+            color: #f1f1f1;
+        }
+
+        body.dark-mode .card,
+        body.dark-mode .nav-drawer {
+            background: #1e1e1e;
+            border-color: #383838;
+        }
+
+        body.dark-mode .header h1,
+        body.dark-mode .section-title,
+        body.dark-mode .nav-heading {
+            color: #ff6666;
+        }
+
+        body.dark-mode .header p,
+        body.dark-mode .footer {
+            color: #aaa;
+        }
+
+        body.dark-mode .visit-counter {
+            background: #252525;
+            border-color: #444;
+            color: #ff7777;
+        }
+
+        body.dark-mode input[type="number"] {
+            background: #292929;
+            border-color: #444;
+            color: #fff;
+        }
+
+        body.dark-mode input[type="number"]::placeholder {
+            color: #888;
+        }
+
+        body.dark-mode .option {
+            background: #292929;
+            border-color: #444;
+            color: #eee;
+        }
+
+        body.dark-mode .option:hover {
+            background: #382020;
+            border-color: #ff5555;
+        }
+
+        body.dark-mode .option:has(input:checked) {
+            background: #451b1b;
+            border-color: #ff5555;
+            color: #ff7777;
+        }
+
+        body.dark-mode .result {
+            background: #242020;
+            border-color: #493030;
+        }
+
+        body.dark-mode .result-title {
+            color: #ff7777;
+            border-color: #493838;
+        }
+
+        body.dark-mode .row {
+            border-color: #493838;
+        }
+
+        body.dark-mode .row-title,
+        body.dark-mode .amount {
+            color: #eee;
+        }
+
+        body.dark-mode .calculation {
+            color: #aaa;
+        }
+
+        body.dark-mode .disabled-row {
+            background: #292929;
+            color: #999;
+        }
+
+        body.dark-mode .disabled-row .row-title,
+        body.dark-mode .disabled-row .amount {
+            color: #999;
+        }
+
+        body.dark-mode .disabled-row .calculation {
+            color: #888;
+        }
+
+        body.dark-mode .subtotal {
+            background: #382020;
+        }
+
+        body.dark-mode .subtotal .row-title {
+            color: #ff7777;
+        }
+
+        body.dark-mode .final {
+            background: linear-gradient(135deg, #850000, #c90000);
+            color: #fff;
+        }
+
+        body.dark-mode .reset {
+            background: #292929;
+            border-color: #444;
+            color: #eee;
+        }
+
+        body.dark-mode .reset:hover {
+            background: #3a2020;
+            border-color: #ff5555;
+            color: #ff7777;
+        }
+
+        body.dark-mode .nav-link {
+            color: #eee;
+        }
+
+        body.dark-mode .nav-link:hover,
+        body.dark-mode .nav-link.admin-link {
+            background: #382020;
+            color: #ff7777;
+            border-color: #493030;
+        }
+
+        body.dark-mode .nav-divider {
+            background: #383838;
+        }
+
+        body.dark-mode .nav-overlay {
+            background: rgba(0, 0, 0, 0.65);
+        }
+
+        body.dark-mode .footer a {
+            color: #4ade80 !important;
+        }
+
         /* MOBILE */
         @media (max-width: 600px) {
             body {
@@ -564,6 +721,19 @@
         <span class="nav-icon">💬</span>
         <span>Hubungi WhatsApp</span>
     </a>
+
+    <!-- MENU DARK MODE DI BAGIAN PALING BAWAH -->
+    <div class="nav-divider"></div>
+
+    <button
+        class="nav-link dark-mode-button"
+        id="darkModeToggle"
+        type="button"
+        aria-label="Ganti tema tampilan"
+    >
+        <span class="nav-icon" id="darkModeIcon">🌙</span>
+        <span id="darkModeText">Dark Mode</span>
+    </button>
 </nav>
 
 <div class="container">
@@ -917,6 +1087,44 @@ document.querySelectorAll(".nav-link").forEach(function (link) {
     link.addEventListener("click", tutupMenu);
 });
 
+/* DARK MODE */
+const darkModeToggle = document.getElementById("darkModeToggle");
+const darkModeIcon = document.getElementById("darkModeIcon");
+const darkModeText = document.getElementById("darkModeText");
+
+function aturDarkMode(aktif) {
+    document.body.classList.toggle("dark-mode", aktif);
+
+    darkModeIcon.textContent = aktif ? "☀️" : "🌙";
+    darkModeText.textContent = aktif ? "Light Mode" : "Dark Mode";
+
+    try {
+        localStorage.setItem(
+            "kalkulatorDarkMode",
+            aktif ? "aktif" : "nonaktif"
+        );
+    } catch (error) {
+        console.warn("Pilihan tema tidak dapat disimpan.", error);
+    }
+}
+
+let darkModeTersimpan = false;
+
+try {
+    darkModeTersimpan =
+        localStorage.getItem("kalkulatorDarkMode") === "aktif";
+} catch (error) {
+    console.warn("Pilihan tema tidak dapat dibaca.", error);
+}
+
+aturDarkMode(darkModeTersimpan);
+
+darkModeToggle.addEventListener("click", function () {
+    const aktif = !document.body.classList.contains("dark-mode");
+    aturDarkMode(aktif);
+    tutupMenu();
+});
+
 /* TOTAL KUNJUNGAN GLOBAL DARI UPSTASH REDIS */
 async function muatTotalKunjungan() {
     const elemen = document.getElementById("totalKunjungan");
@@ -946,7 +1154,6 @@ async function muatTotalKunjungan() {
     } catch (error) {
         elemen.textContent = "-";
         console.error("Penghitung kunjungan:", error);
-        // Tidak menampilkan alert agar pengunjung tidak terganggu.
     }
 }
 
