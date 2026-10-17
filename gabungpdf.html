@@ -221,7 +221,10 @@ input:focus, textarea:focus {
   min-height: 46px;
 }
 
-.btn:disabled { opacity: .65; cursor: wait; }
+.btn:disabled {
+  opacity: .65;
+  cursor: wait;
+}
 
 .primary {
   background: var(--red);
@@ -275,19 +278,15 @@ input:focus, textarea:focus {
 
 .paper p { margin: 10px 0; }
 
-.identity {
+.identity,
+.bank-identity {
   display: grid;
   grid-template-columns: 145px 1fr;
   gap: 5px 4px;
   margin: 12px 0 18px;
 }
 
-.bank-identity {
-  display: grid;
-  grid-template-columns: 145px 1fr;
-  gap: 5px 4px;
-  margin: 12px 0 20px;
-}
+.bank-identity { margin-bottom: 20px; }
 
 .statement { margin: 10px 0; }
 
@@ -300,7 +299,7 @@ input:focus, textarea:focus {
   page-break-inside: avoid;
 }
 
-.signature-space { height: 45px; }
+.signature-space { height: 15px; }
 
 .signature-image {
   display: block;
@@ -316,10 +315,7 @@ input:focus, textarea:focus {
   overflow-wrap: anywhere;
 }
 
-.signature-fallback {
-  display: block;
-  min-height: 22px;
-}
+.signature-fallback { display: none; }
 
 .signature-drawing {
   border: 1px solid var(--border);
@@ -412,7 +408,10 @@ input:focus, textarea:focus {
   .back { padding: 9px 10px; }
   .two-col { grid-template-columns: 1fr; gap: 0; }
   .paper { padding: 23px 15px; font-size: 12px; }
-  .identity, .bank-identity { grid-template-columns: 125px 1fr; }
+  .identity,
+  .bank-identity {
+    grid-template-columns: 125px 1fr;
+  }
   .actions .btn { width: 100%; }
   .signature-actions { flex-direction: column; }
   #signatureCanvas { height: 160px; }
@@ -469,6 +468,7 @@ input:focus, textarea:focus {
             <input id="tempat" maxlength="100"
               placeholder="Contoh: Sragen" required>
           </div>
+
           <div class="field">
             <label for="tanggalLahir">Tanggal lahir *</label>
             <input id="tanggalLahir" type="date" required>
@@ -526,15 +526,15 @@ input:focus, textarea:focus {
 
         <div class="divider"></div>
 
-        <!-- FITUR GAMBAR TTD -->
+        <!-- GAMBAR TTD -->
         <h3 class="section-title">
           <span class="step">4</span> Gambar tanda tangan
         </h3>
 
         <div class="signature-drawing">
           <p>
-            Gambar tanda tangan kamu pada area putih di bawah ini
-            menggunakan jari atau mouse. TTD ini opsional.
+            Gambar tanda tangan menggunakan jari di HP atau mouse
+            di laptop. Setelah selesai, tekan Gunakan TTD.
           </p>
 
           <div class="canvas-wrap">
@@ -544,13 +544,14 @@ input:focus, textarea:focus {
 
           <div class="canvas-hint">
             <span>✍️ Gambar di sini</span>
-            <span>Gunakan jari atau mouse</span>
+            <span>Jari atau mouse</span>
           </div>
 
           <div class="signature-actions">
             <button class="btn secondary" type="button" id="clearTtdBtn">
               Hapus TTD
             </button>
+
             <button class="btn primary" type="button" id="useTtdBtn">
               Gunakan TTD
             </button>
@@ -565,6 +566,7 @@ input:focus, textarea:focus {
           <button class="btn primary" id="downloadBtn" type="button">
             ↓ Download PDF
           </button>
+
           <button class="btn secondary" id="resetBtn" type="button">
             Reset formulir
           </button>
@@ -578,7 +580,7 @@ input:focus, textarea:focus {
       <div class="card-head">
         <span class="preview-tag">PRATINJAU</span>
         <h2>Pratinjau surat</h2>
-        <p>Surat akan diperbarui otomatis mengikuti data yang kamu isi.</p>
+        <p>Surat diperbarui otomatis mengikuti data yang kamu isi.</p>
       </div>
 
       <div class="paper-wrap">
@@ -602,9 +604,9 @@ input:focus, textarea:focus {
           <p>Dengan ini menyatakan bahwa:</p>
 
           <p class="statement">
-            Nomor rekening dan nama rekening di bawah ini benar merupakan
-            milik pribadi saya/badan usaha dan digunakan atas nama
-            saya/badan usaha:
+            Nomor rekening dan nama rekening di bawah ini benar
+            merupakan milik pribadi saya/badan usaha dan digunakan
+            atas nama saya/badan usaha:
           </p>
 
           <div class="bank-identity">
@@ -619,28 +621,30 @@ input:focus, textarea:focus {
           </div>
 
           <p>
-            Demikian surat pernyataan ini saya buat dengan sebenar-benarnya,
-            tanpa ada paksaan dari pihak manapun. Apabila di kemudian hari
-            terdapat hal-hal yang tidak sesuai dengan pernyataan ini, saya
-            bersedia bertanggung jawab sepenuhnya sesuai dengan ketentuan
-            hukum yang berlaku.
+            Demikian surat pernyataan ini saya buat dengan
+            sebenar-benarnya, tanpa ada paksaan dari pihak manapun.
+            Apabila di kemudian hari terdapat hal-hal yang tidak
+            sesuai dengan pernyataan ini, saya bersedia bertanggung
+            jawab sepenuhnya sesuai dengan ketentuan hukum yang berlaku.
           </p>
 
           <div class="signature">
-            <div id="outTanggal">............................, .... ......... 20....</div>
+            <div id="outTanggal">
+              ............................, .... ......... 20....
+            </div>
+
             <div>Yang membuat pernyataan,</div>
 
             <div class="signature-space"></div>
 
-            <!-- GAMBAR TTD AKAN MUNCUL DI SINI -->
+            <!-- GAMBAR TTD -->
             <img id="outTtdImage" class="signature-image"
               alt="Tanda tangan" hidden>
 
-            <!-- Ditampilkan jika TTD belum digunakan -->
-            <div id="outTtd" class="signature-fallback">
-              ........................................................
-            </div>
+            <!-- TITIK-TITIK DI BAWAH TTD SUDAH DIHAPUS -->
+            <div id="outTtd" class="signature-fallback" hidden></div>
 
+            <!-- NAMA PEMBUAT SURAT -->
             <div class="signature-name" id="outNamaTtd"></div>
           </div>
 
@@ -648,9 +652,9 @@ input:focus, textarea:focus {
       </div>
 
       <div class="note">
-        Pastikan semua data rekening benar sebelum mengunduh. Data dan
-        tanda tangan diproses di browser dan tidak dikirim ke database
-        oleh kode ini.
+        Pastikan semua data rekening benar sebelum mengunduh.
+        Data dan tanda tangan diproses di browser dan tidak dikirim
+        ke database oleh kode ini.
       </div>
     </section>
 
@@ -673,13 +677,17 @@ const fieldIds = [
 ];
 
 const now = new Date();
+
 const today = new Date(
   now.getTime() - now.getTimezoneOffset() * 60000
 ).toISOString().slice(0, 10);
 
 $('tanggalSurat').value = today;
 
-function safeText(value, fallback = '........................................................') {
+function safeText(
+  value,
+  fallback = '........................................................'
+) {
   return (value || '').trim() || fallback;
 }
 
@@ -697,6 +705,10 @@ function formatDate(value) {
   return `${day} ${months[month - 1]} ${year}`;
 }
 
+// =======================================
+// UPDATE PRATINJAU SURAT
+// =======================================
+
 function updatePreview() {
   $('outNama').textContent = safeText($('nama').value);
 
@@ -705,7 +717,9 @@ function updatePreview() {
 
   $('outTTL').textContent =
     tempat || tanggalLahir
-      ? `${tempat || '................'}${tanggalLahir ? ', ' + tanggalLahir : ''}`
+      ? `${tempat || '................'}${
+          tanggalLahir ? ', ' + tanggalLahir : ''
+        }`
       : '........................................................';
 
   $('outAlamat').textContent = safeText(
@@ -744,16 +758,17 @@ let hasDrawing = false;
 let ttdUsed = false;
 let lastX = 0;
 let lastY = 0;
-let lastPointTime = 0;
 
-// Mengatur resolusi canvas agar tetap tajam di HP
 function setupCanvas() {
   const rect = canvas.getBoundingClientRect();
+
   if (!rect.width || !rect.height) return;
 
-  const oldData = hasDrawing ? canvas.toDataURL('image/png') : null;
-  const oldWidth = canvas.width;
-  const oldHeight = canvas.height;
+  let oldData = null;
+
+  if (hasDrawing && canvas.width && canvas.height) {
+    oldData = canvas.toDataURL('image/png');
+  }
 
   const dpr = Math.max(1, window.devicePixelRatio || 1);
 
@@ -761,12 +776,14 @@ function setupCanvas() {
   canvas.height = Math.round(rect.height * dpr);
 
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
   ctx.strokeStyle = '#111111';
+  ctx.fillStyle = '#111111';
   ctx.lineWidth = 2.5;
 
-  if (oldData && oldWidth && oldHeight) {
+  if (oldData) {
     const img = new Image();
 
     img.onload = () => {
@@ -807,20 +824,17 @@ function startDrawing(event) {
 
   lastX = point.x;
   lastY = point.y;
-  lastPointTime = performance.now();
 
   try {
     canvas.setPointerCapture(event.pointerId);
   } catch (error) {}
 
-  // Titik kecil agar ketukan saja tetap menghasilkan goresan
   ctx.beginPath();
   ctx.arc(lastX, lastY, ctx.lineWidth / 2, 0, Math.PI * 2);
-  ctx.fillStyle = '#111111';
   ctx.fill();
 
   $('ttdStatus').textContent =
-    'Tanda tangan sedang digambar. Tekan Gunakan TTD jika sudah selesai.';
+    'Sedang menggambar. Selesaikan tanda tangan lalu tekan Gunakan TTD.';
 }
 
 function drawSignature(event) {
@@ -837,7 +851,6 @@ function drawSignature(event) {
 
   lastX = point.x;
   lastY = point.y;
-  lastPointTime = performance.now();
 }
 
 function stopDrawing(event) {
@@ -858,10 +871,12 @@ canvas.addEventListener('pointerdown', startDrawing);
 canvas.addEventListener('pointermove', drawSignature);
 canvas.addEventListener('pointerup', stopDrawing);
 canvas.addEventListener('pointercancel', stopDrawing);
+
 canvas.addEventListener('lostpointercapture', () => {
   isDrawing = false;
 });
 
+// Tombol gunakan TTD
 function useSignature() {
   if (isDrawing) {
     alert('Selesaikan gambar tanda tangan terlebih dahulu.');
@@ -878,12 +893,14 @@ function useSignature() {
 
     $('outTtdImage').src = imageData;
     $('outTtdImage').hidden = false;
+
+    // Titik-titik tidak ditampilkan
     $('outTtd').hidden = true;
 
     ttdUsed = true;
 
     $('ttdStatus').textContent =
-      '✓ Tanda tangan berhasil digunakan dan ditampilkan pada pratinjau surat.';
+      '✓ Tanda tangan berhasil digunakan dan ditampilkan pada surat.';
   } catch (error) {
     console.error('Gagal menggunakan tanda tangan:', error);
     alert('Tanda tangan gagal digunakan. Silakan coba lagi.');
@@ -892,6 +909,7 @@ function useSignature() {
 
 $('useTtdBtn').addEventListener('click', useSignature);
 
+// Hapus TTD
 function clearSignature() {
   isDrawing = false;
   hasDrawing = false;
@@ -901,7 +919,9 @@ function clearSignature() {
 
   $('outTtdImage').removeAttribute('src');
   $('outTtdImage').hidden = true;
-  $('outTtd').hidden = false;
+
+  // Tetap kosong, tanpa titik-titik
+  $('outTtd').hidden = true;
 
   $('ttdStatus').textContent =
     'Belum ada tanda tangan yang digunakan.';
@@ -935,7 +955,9 @@ $('downloadBtn').addEventListener('click', async () => {
   }
 
   if (typeof html2pdf === 'undefined') {
-    alert('Library PDF gagal dimuat. Periksa koneksi internet lalu coba lagi.');
+    alert(
+      'Library PDF gagal dimuat. Periksa koneksi internet lalu coba lagi.'
+    );
     return;
   }
 
@@ -961,6 +983,7 @@ $('downloadBtn').addEventListener('click', async () => {
 
     const opsi = {
       margin: [12, 12, 12, 12],
+
       filename: `Surat-Pernyataan-Rekening-${namaFile}.pdf`,
 
       image: {
