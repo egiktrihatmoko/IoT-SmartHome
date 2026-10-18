@@ -909,7 +909,7 @@ async function sendRequest(endpoint, payload) {
 
       try {
         const data = await sendRequest("/api/user/login", {
-          action: register,
+          action: "register",
           name,
           email,
           password
