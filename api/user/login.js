@@ -9,16 +9,14 @@ module.exports = async function handler(req, res) {
         res.setHeader("Allow", "POST");
         return res.status(405).json({
             success: false,
-            message: "Metode tidak diizinkan."
+            message: "Method tidak diizinkan."
         });
     }
 
-    const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
-    const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+    const url = process.env.UPSTASH_REDIS_REST_URL;
+    const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-    if (!redisUrl || !redisToken) {
-        console.error("USER_LOGIN_ERROR: Konfigurasi Redis belum lengkap.");
-
+    if (!url || !token) {
         return res.status(500).json({
             success: false,
             message: "Konfigurasi database belum lengkap."
@@ -29,146 +27,127 @@ module.exports = async function handler(req, res) {
         let body = req.body || {};
 
         if (typeof body === "string") {
-            try {
-                body = JSON.parse(body);
-            } catch {
-                return res.status(400).json({
-                    success: false,
-                    message: "Format permintaan tidak valid."
-                });
-            }
+            body = JSON.parse(body);
         }
 
-        const email = typeof body.email === "string"
-            ? body.email.trim().toLowerCase()
-            : "";
+        const email =
+            typeof body.email === "string"
+                ? body.email.trim().toLowerCase()
+                : "";
 
-        const password = typeof body.password === "string"
-            ? body.password
-            : "";
+        const password =
+            typeof body.password === "string"
+                ? body.password
+                : "";
 
-        if (!email || !password) {
+        if (!email || !password || password.length > 128) {
             return res.status(400).json({
                 success: false,
                 message: "Email dan password wajib diisi."
             });
         }
 
-        const redisEndpoint = redisUrl.replace(/\/+$/, "");
+        const redisUrl = url.replace(/\/+$/, "");
 
-        async function redisCommand(command) {
-            const response = await fetch(redisEndpoint, {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${redisToken}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(command),
-                cache: "no-store"
-            });
+        // Ambil data akun dari Redis
+        const userResponse = await fetch(redisUrl, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify([
+                "GET",
+                `admin_user:${email}`
+            ]),
+            cache: "no-store"
+        });
 
-            const result = await response.json();
+        const userData = await userResponse.json();
 
-            if (!response.ok || result.error) {
-                console.error(
-                    "USER_LOGIN_REDIS_ERROR:",
-                    response.status,
-                    result.error || "Permintaan Redis gagal"
-                );
-                throw new Error("DATABASE_ERROR");
-            }
-
-            return result.result;
+        if (!userResponse.ok || userData.error) {
+            throw new Error("Redis GET gagal");
         }
 
-        const savedUser = await redisCommand([
-            "GET",
-            `user_account:${email}`
-        ]);
-
-        if (!savedUser) {
+        if (!userData.result) {
             return res.status(401).json({
                 success: false,
                 message: "Email atau password salah."
             });
         }
 
-        let user;
+        const user = JSON.parse(userData.result);
 
-        try {
-            user = JSON.parse(savedUser);
-        } catch {
-            console.error("USER_LOGIN_ERROR: Data akun tidak valid.");
-
-            return res.status(500).json({
-                success: false,
-                message: "Data akun tidak valid. Periksa data pendaftaran."
-            });
-        }
-
-        if (
-            !user ||
-            user.role !== "user" ||
-            typeof user.passwordHash !== "string"
-        ) {
-            console.error("USER_LOGIN_ERROR: Format akun tidak sesuai.");
-
-            return res.status(500).json({
-                success: false,
-                message: "Format akun tidak sesuai. Periksa API pendaftaran."
-            });
-        }
-
-        const passwordMatch = await bcrypt.compare(
+        const passwordValid = await bcrypt.compare(
             password,
             user.passwordHash
         );
 
-        if (!passwordMatch) {
+        if (!passwordValid || user.role !== "admin") {
             return res.status(401).json({
                 success: false,
                 message: "Email atau password salah."
             });
         }
 
+        // Buat token sesi acak yang sulit ditebak
         const sessionToken = crypto.randomBytes(32).toString("hex");
+        const sessionKey = `admin_session:${sessionToken}`;
 
+        // Sesi berlaku 24 jam
         const session = JSON.stringify({
-            email: user.email || email,
-            role: "user",
+            email: user.email,
+            role: "admin",
             createdAt: new Date().toISOString()
         });
 
-        await redisCommand([
-            "SET",
-            `user_session:${sessionToken}`,
-            session,
-            "EX",
-            "86400"
-        ]);
+        const sessionResponse = await fetch(redisUrl, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify([
+                "SET",
+                sessionKey,
+                session,
+                "EX",
+                "86400"
+            ]),
+            cache: "no-store"
+        });
 
+        const sessionData = await sessionResponse.json();
+
+        if (
+            !sessionResponse.ok ||
+            sessionData.error ||
+            sessionData.result !== "OK"
+        ) {
+            throw new Error("Gagal membuat sesi");
+        }
+
+        // Cookie tidak bisa dibaca JavaScript browser
         res.setHeader(
             "Set-Cookie",
-            `user_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`
+            `admin_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`
         );
 
         return res.status(200).json({
             success: true,
             message: "Login berhasil.",
             user: {
-                email: user.email || email,
-                role: "user"
+                email: user.email,
+                role: user.role
             }
         });
 
     } catch (error) {
-        console.error("USER_LOGIN_ERROR:", error.message);
+        console.error("ADMIN_LOGIN_ERROR:", error);
 
         return res.status(500).json({
             success: false,
-            message: error.message === "DATABASE_ERROR"
-                ? "Database sedang bermasalah. Silakan coba lagi."
-                : "Terjadi kesalahan server saat login."
+            message: "Terjadi kesalahan server saat login."
         });
     }
 };
