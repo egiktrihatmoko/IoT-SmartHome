@@ -970,6 +970,7 @@ async function sendRequest(endpoint, payload) {
 
       try {
         const data = await sendRequest("/api/user/login", {
+         action: "login",
           email,
           password
         });
