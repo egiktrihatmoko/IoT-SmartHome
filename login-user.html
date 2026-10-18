@@ -789,29 +789,62 @@
        jika permintaan berhasil.
     ========================================================= */
 
-    async function sendRequest(endpoint, payload) {
-      const response = await fetch(endpoint, {
-        method: "POST",
+    
+async function sendRequest(endpoint, payload) {
+  let response;
 
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
+  try {
+    response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      credentials: "same-origin",
+      cache: "no-store",
+      body: JSON.stringify(payload)
+    });
+  } catch (error) {
+    console.error("Koneksi API gagal:", error);
 
-        credentials: "same-origin",
-        cache: "no-store",
+    throw new Error(
+      "Tidak dapat terhubung ke server. Periksa koneksi internet."
+    );
+  }
 
-        body: JSON.stringify(payload)
-      });
+  const responseText = await response.text();
 
-      const data = await response.json().catch(() => ({}));
+  let data;
 
-      if (!response.ok || data.success !== true) {
-        throw new Error(data.message || "Permintaan gagal.");
-      }
+  try {
+    data = JSON.parse(responseText);
+  } catch {
+    console.error(
+      "Respons API bukan JSON:",
+      response.status,
+      responseText
+    );
 
-      return data;
-    }
+    throw new Error(
+      `Respons server tidak valid (HTTP ${response.status}).`
+    );
+  }
+
+  if (!response.ok || data.success !== true) {
+    console.error("API mengembalikan error:", {
+      status: response.status,
+      data: data
+    });
+
+    throw new Error(
+      data.message ||
+      `Permintaan gagal (HTTP ${response.status}).`
+    );
+  }
+
+  return data;
+}
+    
 
 
     /* =========================================================
