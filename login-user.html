@@ -908,7 +908,7 @@ async function sendRequest(endpoint, payload) {
       registerButton.textContent = "Mendaftarkan...";
 
       try {
-        const data = await sendRequest("/api/user/register", {
+        const data = await sendRequest("/api/user/login", {
           name,
           email,
           password
@@ -1003,7 +1003,7 @@ async function sendRequest(endpoint, payload) {
 
     async function checkExistingSession() {
       try {
-        const response = await fetch("/api/user/check", {
+        const response = await fetch("/api/user/login", {
           method: "GET",
 
           credentials: "same-origin",
