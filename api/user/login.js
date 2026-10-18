@@ -25,17 +25,20 @@ module.exports = async function handler(req, res) {
 
     try {
         let body = req.body || {};
-        if (typeof body === "string") body = JSON.parse(body);
+
+        if (typeof body === "string") {
+            body = JSON.parse(body);
+        }
 
         const email = typeof body.email === "string"
             ? body.email.trim().toLowerCase()
             : "";
+
         const password = typeof body.password === "string"
             ? body.password
             : "";
 
-        if (!email || email.length > 254 ||
-            !password || password.length > 128) {
+        if (!email || !password || password.length > 128) {
             return res.status(400).json({
                 success: false,
                 message: "Email dan password wajib diisi."
@@ -84,6 +87,8 @@ module.exports = async function handler(req, res) {
         }
 
         const sessionToken = crypto.randomBytes(32).toString("hex");
+        const sessionKey = `user_session:${sessionToken}`;
+
         const session = JSON.stringify({
             email: user.email,
             role: "user",
@@ -98,7 +103,7 @@ module.exports = async function handler(req, res) {
             },
             body: JSON.stringify([
                 "SET",
-                `user_session:${sessionToken}`,
+                sessionKey,
                 session,
                 "EX",
                 "86400"
@@ -113,7 +118,7 @@ module.exports = async function handler(req, res) {
             saveData.error ||
             saveData.result !== "OK"
         ) {
-            throw new Error("Gagal menyimpan sesi");
+            throw new Error("Gagal membuat sesi user");
         }
 
         res.setHeader(
@@ -129,12 +134,13 @@ module.exports = async function handler(req, res) {
                 role: "user"
             }
         });
+
     } catch (error) {
         console.error("USER_LOGIN_ERROR:", error);
+
         return res.status(500).json({
             success: false,
             message: "Terjadi kesalahan server saat login."
         });
     }
 };
-          
