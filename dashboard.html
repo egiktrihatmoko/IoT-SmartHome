@@ -442,7 +442,7 @@ h1 {
 
 .bottom-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
 }
 
@@ -464,51 +464,6 @@ h1 {
   font-size: 11px;
   line-height: 1.7;
   margin: 7px 0 18px;
-}
-
-.quick-link {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 13px 0;
-  border-top: 1px solid #f1f1f4;
-}
-
-.quick-link:first-of-type {
-  border-top: 0;
-}
-
-.quick-icon {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
-  border-radius: 11px;
-  background: #fff1f2;
-  font-size: 18px;
-}
-
-.quick-text {
-  min-width: 0;
-  flex: 1;
-}
-
-.quick-title {
-  font-size: 12px;
-  font-weight: 750;
-}
-
-.quick-desc {
-  color: var(--muted);
-  font-size: 10px;
-  line-height: 1.6;
-  margin-top: 4px;
-}
-
-.arrow {
-  color: #a3a3ad;
-  font-size: 18px;
 }
 
 .security-box {
@@ -1053,47 +1008,6 @@ h1 {
     </section>
 
     <section class="bottom-grid">
-      <div class="panel">
-        <h3>Akses Cepat</h3>
-        <p class="panel-desc">
-          Pilih halaman yang ingin kamu buka.
-        </p>
-
-        <a class="quick-link" href="index.html">
-          <div class="quick-icon">🧮</div>
-          <div class="quick-text">
-            <div class="quick-title">Kalkulator Harga Tayang</div>
-            <div class="quick-desc">
-              Buka kalkulator untuk melakukan perhitungan.
-            </div>
-          </div>
-          <span class="arrow">›</span>
-        </a>
-
-        <a class="quick-link" href="#akun">
-          <div class="quick-icon">👤</div>
-          <div class="quick-text">
-            <div class="quick-title">Informasi Akun</div>
-            <div class="quick-desc">
-              Lihat email akun yang sedang digunakan.
-            </div>
-          </div>
-          <span class="arrow">›</span>
-        </a>
-
-        <button class="quick-link" id="quickLogout"
-          style="width:100%;text-align:left;background:white;border:0;cursor:pointer">
-          <div class="quick-icon">↪</div>
-          <div class="quick-text">
-            <div class="quick-title">Logout</div>
-            <div class="quick-desc">
-              Akhiri sesi login admin.
-            </div>
-          </div>
-          <span class="arrow">›</span>
-        </button>
-      </div>
-
       <div class="panel" id="akun">
         <h3>Informasi Akun</h3>
         <p class="panel-desc">
@@ -1245,7 +1159,6 @@ async function logout() {
   const buttons = [
     document.getElementById("logoutButton"),
     document.getElementById("topLogoutButton"),
-    document.getElementById("quickLogout"),
     document.getElementById("accountLogout")
   ];
 
@@ -1287,9 +1200,6 @@ document.getElementById("logoutButton")
   .addEventListener("click", logout);
 
 document.getElementById("topLogoutButton")
-  .addEventListener("click", logout);
-
-document.getElementById("quickLogout")
   .addEventListener("click", logout);
 
 document.getElementById("accountLogout")
