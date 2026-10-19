@@ -349,7 +349,7 @@
     <div class="logo" aria-hidden="true">U</div>
 
     <!-- Judul utama halaman -->
-    <h1>Akun Penyedia</h1>
+    <h1>Akun Pengguna</h1>
 
     <p class="subtitle">
       Kalkulator Harga Tayang
@@ -402,7 +402,7 @@
       </h2>
 
       <p class="form-description">
-        Masuk ke akun penyedia kamu.
+        Masuk ke akun pengguna kamu.
       </p>
 
 
@@ -529,11 +529,11 @@
     <form id="registerForm" hidden>
 
       <h2 class="form-title">
-        Buat akun penyedia
+        Buat akun pengguna
       </h2>
 
       <p class="form-description">
-        Daftar untuk menggunakan fitur penyedia.
+        Daftar untuk menggunakan fitur pengguna.
       </p>
 
 
@@ -697,6 +697,7 @@
 
     <!--
       Tempat menampilkan pesan sukses atau error.
+      Contoh: password tidak sama atau login berhasil.
     -->
 
     <div
@@ -722,6 +723,8 @@
 
     /* =========================================================
        1. MENGAMBIL ELEMEN HALAMAN
+       Variabel ini dipakai untuk mengendalikan tab, formulir,
+       tombol, dan kotak pesan.
     ========================================================= */
 
     const loginTab = document.getElementById("loginTab");
@@ -738,6 +741,7 @@
 
     /* =========================================================
        2. BERPINDAH TAB
+       Fungsi ini menampilkan formulir login atau pendaftaran.
     ========================================================= */
 
     function showTab(tab) {
@@ -752,17 +756,23 @@
       loginTab.setAttribute("aria-selected", String(isLogin));
       registerTab.setAttribute("aria-selected", String(!isLogin));
 
+      // Hapus pesan lama saat pengguna berpindah tab.
       message.style.display = "none";
       message.textContent = "";
       message.classList.remove("success");
     }
 
+    // Saat tombol Masuk diklik, tampilkan formulir login.
     loginTab.addEventListener("click", () => showTab("login"));
+
+    // Saat tombol Mendaftar diklik, tampilkan formulir daftar.
     registerTab.addEventListener("click", () => showTab("register"));
 
 
     /* =========================================================
        3. MENAMPILKAN PESAN
+       success = true berarti pesan ditampilkan dengan warna hijau.
+       Jika false, pesan ditampilkan dengan warna merah.
     ========================================================= */
 
     function showMessage(text, success = false) {
@@ -774,71 +784,126 @@
 
     /* =========================================================
        4. FUNGSI REQUEST KE BACKEND
+       Mengirim data JSON ke API Vercel.
+       API harus mengembalikan JSON dengan success: true
+       jika permintaan berhasil.
     ========================================================= */
 
-    async function sendRequest(endpoint, payload) {
-      let response;
+    
+async function sendRequest(endpoint, payload) {
+  let response;
 
-      try {
-        response = await fetch(endpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          credentials: "same-origin",
-          cache: "no-store",
-          body: JSON.stringify(payload)
-        });
-      } catch (error) {
-        console.error("Koneksi API gagal:", error);
-        throw new Error("Tidak dapat terhubung ke server. Periksa koneksi internet.");
-      }
+  try {
+    response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      credentials: "same-origin",
+      cache: "no-store",
+      body: JSON.stringify(payload)
+    });
+  } catch (error) {
+    console.error("Koneksi API gagal:", error);
 
-      const responseText = await response.text();
-      let data;
+    throw new Error(
+      "Tidak dapat terhubung ke server. Periksa koneksi internet."
+    );
+  }
 
-      try {
-        data = JSON.parse(responseText);
-      } catch {
-        throw new Error(`Respons server tidak valid (HTTP ${response.status}).`);
-      }
+  const responseText = await response.text();
 
-      if (!response.ok || data.success !== true) {
-        throw new Error(data.message || `Permintaan gagal (HTTP ${response.status}).`);
-      }
+  let data;
 
-      return data;
-    }
+  try {
+    data = JSON.parse(responseText);
+  } catch {
+    console.error(
+      "Respons API bukan JSON:",
+      response.status,
+      responseText
+    );
+
+    throw new Error(
+      `Respons server tidak valid (HTTP ${response.status}).`
+    );
+  }
+
+  if (!response.ok || data.success !== true) {
+    console.error("API mengembalikan error:", {
+      status: response.status,
+      data: data
+    });
+
+    throw new Error(
+      data.message ||
+      `Permintaan gagal (HTTP ${response.status}).`
+    );
+  }
+
+  return data;
+}
+    
 
 
     /* =========================================================
        5. PENDAFTARAN USER
+       Endpoint: POST /api/user/register
+
+       Data yang dikirim:
+       - name     : nama lengkap pengguna
+       - email    : email pengguna
+       - password : password baru
+
+       PENTING:
+       Backend harus memvalidasi data, menyimpan password dalam
+       bentuk hash yang aman, dan menetapkan role "user" sendiri.
+       Jangan menerima role admin dari data pendaftaran publik.
     ========================================================= */
 
     registerForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
-      const name = document.getElementById("registerName").value.trim();
-      const email = document.getElementById("registerEmail").value.trim();
-      const password = document.getElementById("registerPassword").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
+      const name = document
+        .getElementById("registerName")
+        .value
+        .trim();
 
+      const email = document
+        .getElementById("registerEmail")
+        .value
+        .trim();
+
+      const password = document
+        .getElementById("registerPassword")
+        .value;
+
+      const confirmPassword = document
+        .getElementById("confirmPassword")
+        .value;
+
+
+      // Validasi nama sebelum mengirim data.
       if (!name) {
         showMessage("Nama lengkap wajib diisi.");
         return;
       }
 
+      // Validasi panjang password.
       if (password.length < 12 || password.length > 128) {
         showMessage("Password harus terdiri dari 12–128 karakter.");
         return;
       }
 
+      // Pastikan kedua kolom password sama.
       if (password !== confirmPassword) {
         showMessage("Konfirmasi password tidak sama.");
         return;
       }
 
+
+      // Nonaktifkan tombol agar tidak diklik berulang kali.
       registerButton.disabled = true;
       registerButton.textContent = "Mendaftarkan...";
 
@@ -850,15 +915,24 @@
           password
         });
 
+        // Kosongkan formulir pendaftaran setelah berhasil.
         registerForm.reset();
+
+        // Pindah ke tab login dan isikan email yang baru didaftarkan.
         showTab("login");
         document.getElementById("loginEmail").value = email;
 
-        showMessage(data.message || "Pendaftaran berhasil. Silakan masuk.", true);
+        showMessage(
+          data.message || "Pendaftaran berhasil. Silakan masuk.",
+          true
+        );
 
       } catch (error) {
+        // Tampilkan pesan yang dikirim backend jika tersedia.
         showMessage(error.message || "Pendaftaran gagal.");
+
       } finally {
+        // Aktifkan kembali tombol setelah proses selesai.
         registerButton.disabled = false;
         registerButton.textContent = "Daftar";
       }
@@ -866,32 +940,54 @@
 
 
     /* =========================================================
-       6. LOGIN USER (DIARAHKAN KE DASHBOARD-USER.HTML)
+       6. LOGIN USER
+       Endpoint: POST /api/user/login
+
+       Data yang dikirim:
+       - email
+       - password
+
+       Backend harus memverifikasi kredensial dan membuat cookie
+       sesi yang aman. Setelah berhasil, pengguna diarahkan ke
+       /user-dashboard.html.
     ========================================================= */
 
     loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
-      const email = document.getElementById("loginEmail").value.trim();
-      const password = document.getElementById("loginPassword").value;
+      const email = document
+        .getElementById("loginEmail")
+        .value
+        .trim();
 
+      const password = document
+        .getElementById("loginPassword")
+        .value;
+
+
+      // Ubah tombol untuk menunjukkan bahwa login sedang diperiksa.
       loginButton.disabled = true;
       loginButton.textContent = "Memeriksa...";
 
       try {
         const data = await sendRequest("/api/user/login", {
-          action: "login",
+         action: "login",
           email,
           password
         });
 
-        showMessage(data.message || "Login berhasil. Mengalihkan...", true);
+        showMessage(
+          data.message || "Login berhasil. Mengalihkan...",
+          true
+        );
 
-        // Arahkan user ke dashboard khusus penyedia
-        window.location.replace("/dashboard-user.html");
+        // Arahkan user ke dashboard setelah API login berhasil.
+        window.location.replace("/user-dashboard.html");
 
       } catch (error) {
         showMessage(error.message || "Login gagal.");
+
+        // Izinkan pengguna mencoba login kembali.
         loginButton.disabled = false;
         loginButton.textContent = "Masuk";
       }
@@ -900,30 +996,47 @@
 
     /* =========================================================
        7. MEMERIKSA SESI USER YANG SUDAH LOGIN
+       Endpoint: GET /api/user/check
+
+       Jika sesi valid dan role user adalah "user", arahkan ke
+       dashboard. Endpoint check harus memverifikasi cookie sesi
+       di server; jangan mempercayai role dari browser saja.
     ========================================================= */
 
     async function checkExistingSession() {
       try {
-        const response = await fetch("/api/user/login?action=check", {
+        const response = await fetch("/api/user/login", {
           method: "GET",
+
           credentials: "same-origin",
           cache: "no-store",
-          headers: { "Accept": "application/json" }
+
+          headers: {
+            "Accept": "application/json"
+          }
         });
 
-        if (!response.ok) return;
+        // Jika sesi tidak valid atau endpoint belum tersedia,
+        // biarkan formulir login tetap bisa digunakan.
+        if (!response.ok) {
+          return;
+        }
 
         const data = await response.json();
 
-        // Jika sesi valid dan role user adalah "user", langsung arahkan ke dashboard-user.html
-        if (data.success === true && data.authenticated === true && data.user && data.user.role === "user") {
-          window.location.replace("/dashboard-user.html");
+        if (
+          data.success === true &&
+          data.user &&
+          data.user.role === "user"
+        ) {
+          window.location.replace("/user-dashboard.html");
         }
 
       } catch (error) {
-        // Abaikan jika belum login
+        // Jika pemeriksaan gagal, jangan mengunci halaman login.
       }
     }
+
 
     /* Jalankan pemeriksaan sesi saat halaman dibuka. */
     checkExistingSession();
