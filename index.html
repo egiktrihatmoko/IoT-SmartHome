@@ -1,4 +1,3 @@
-wewe
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -98,10 +97,16 @@ wewe
             transform: translateX(-105%);
             transition: transform 0.25s ease;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .nav-drawer.show {
             transform: translateX(0);
+        }
+
+        .nav-drawer-content {
+            flex: 1;
         }
 
         .nav-heading {
@@ -138,7 +143,6 @@ wewe
             flex-shrink: 0;
         }
 
-/* 1. Tambahan untuk Login User */
         .nav-link.login-link {
             color: #a80000;
             background: #fff0f0;
@@ -149,7 +153,6 @@ wewe
             background: #ffe0e0;
         }
 
-        /* 2. Tetap dipertahankan untuk Login Admin */
         .nav-link.admin-link {
             color: #a80000;
             background: #fff0f0;
@@ -157,6 +160,18 @@ wewe
         }
 
         .nav-link.admin-link:hover {
+            background: #ffe0e0;
+        }
+
+        .nav-link.logout-link {
+            color: #d31010;
+            background: #fff0f0;
+            border: 1px solid #f2dede;
+            margin-top: auto;
+            cursor: pointer;
+        }
+
+        .nav-link.logout-link:hover {
             background: #ffe0e0;
         }
 
@@ -312,6 +327,7 @@ wewe
             font-weight: 600;
             transition: 0.2s;
             background: white;
+            flex: 1;
         }
 
         .option:hover {
@@ -608,7 +624,8 @@ wewe
         }
 
         body.dark-mode .nav-link:hover,
-        body.dark-mode .nav-link.admin-link {
+        body.dark-mode .nav-link.admin-link,
+        body.dark-mode .nav-link.login-link {
             background: #382020;
             color: #ff7777;
             border-color: #493030;
@@ -705,43 +722,50 @@ wewe
 <!-- LAPISAN GELAP DI BELAKANG MENU -->
 <div class="nav-overlay" id="navOverlay"></div>
 
-<!-- MENU NAVIGASI -->
-<!-- NAVIGASI DRAWER -->
+<!-- NAVIGASI DRAWER DINAMIS -->
 <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
-    <div class="nav-heading">MENU NAVIGASI</div>
+    <div class="nav-drawer-content">
+        <div class="nav-heading">MENU NAVIGASI</div>
 
-    <!-- 1. LOGIN USER (DITAMBAHKEUN DI LUHUR) -->
-    <a class="nav-link login-link" href="/login-user.html">
-        <span class="nav-icon">👤</span>
-        <span>Login User</span>
+        <!-- 1. LOGIN USER / DASHBOARD (BERUBAH OTOMATIS) -->
+        <a class="nav-link login-link" href="/login-user.html" id="userMenuLink">
+            <span class="nav-icon" id="userMenuIcon">👤</span>
+            <span id="userMenuText">Login User</span>
+        </a>
+
+        <!-- 2. FITUR FITUR UTAMA -->
+        <a class="nav-link" href="/gabung-foto.html">
+            <span class="nav-icon">🖼️</span>
+            <span>Ubah Foto ke PDF</span>
+        </a>
+
+        <a class="nav-link" href="/">
+            <span class="nav-icon">🧮</span>
+            <span>Kalkulator Harga Tayang</span>
+        </a>
+
+        <a class="nav-link" href="/surat-pernyataan.html">
+            <span class="nav-icon">📄</span>
+            <span>Buat Surat Pernyataan</span>
+        </a>
+
+        <div class="nav-divider" id="adminDivider"></div>
+
+        <!-- 3. LOGIN ADMIN (DISEMBUNYIKAN JIKA SUDAH LOGIN) -->
+        <a class="nav-link admin-link" href="/admin.html" id="adminMenuLink">
+            <span class="nav-icon">🔐</span>
+            <span>Login Admin</span>
+        </a>
+    </div>
+
+    <!-- 4. TOMBOL LOGOUT (HANYA MUNCUL JIKA SUDAH LOGIN) -->
+    <a class="nav-link logout-link btn-logout-action" id="drawerLogoutBtn" style="display: none;">
+        <span class="nav-icon">🚪</span>
+        <span>Keluar / Logout</span>
     </a>
 
-    <!-- 2. FITUR FITUR UTAMA -->
-    <a class="nav-link" href="/gabung-foto.html">
-        <span class="nav-icon">🖼️</span>
-        <span>Ubah Foto ke PDF</span>
-    </a>
-
-    <a class="nav-link" href="/">
-        <span class="nav-icon">🧮</span>
-        <span>Kalkulator Harga Tayang</span>
-    </a>
-
-    <a class="nav-link" href="/surat-pernyataan.html">
-        <span class="nav-icon">📄</span>
-        <span>Buat Surat Pernyataan</span>
-    </a>
-
-    <div class="nav-divider"></div>
-
-    <!-- 3. LOGIN ADMIN (DIPINDAHKEUN KA PANGHANDAPNA) -->
-    <a class="nav-link admin-link" href="/admin.html">
-        <span class="nav-icon">🔐</span>
-        <span>Login Admin</span>
-    </a>
-
-    <!-- 4. TOMBOL DARK MODE -->
-    <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" aria-label="Ganti tema tampilan">
+    <!-- 5. TOMBOL DARK MODE -->
+    <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" aria-label="Ganti tema tampilan" style="margin-top: 8px;">
         <span class="nav-icon" id="darkModeIcon">🌙</span>
         <span id="darkModeText">Dark Mode</span>
     </button>
@@ -772,7 +796,7 @@ wewe
             <span id="totalKunjungan">...</span>
         </div>
 
-        <h1>Kalkulator Harga Tayang</h1>
+        <h1 id="mainTitle">Kalkulator Harga Tayang</h1>
         <p>Perhitungan harga dasar, pajak, PPh dan fee</p>
     </div>
 
@@ -1094,9 +1118,11 @@ document.addEventListener("keydown", function (event) {
     }
 });
 
-/* Tutup menu ketika tautan navigasi diklik */
+/* Tutup menu ketika tautan navigasi diklik (kecuali tombol logout) */
 document.querySelectorAll(".nav-link").forEach(function (link) {
-    link.addEventListener("click", tutupMenu);
+    if (!link.classList.contains("btn-logout-action")) {
+        link.addEventListener("click", tutupMenu);
+    }
 });
 
 /* DARK MODE */
@@ -1169,8 +1195,73 @@ async function muatTotalKunjungan() {
     }
 }
 
+/* ------------------------------------------------------------- */
+/* CEK STATUS LOGIN OTOMATIS (MENYESUAIKAN NAVIGASI) */
+/* ------------------------------------------------------------- */
+async function cekStatusSesi() {
+    try {
+        const res = await fetch("/api/user/login?action=check", {
+            method: "GET",
+            credentials: "same-origin",
+            cache: "no-store",
+            headers: { "Accept": "application/json" }
+        });
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        
+        const userMenuLink = document.getElementById("userMenuLink");
+        const userMenuText = document.getElementById("userMenuText");
+        const userMenuIcon = document.getElementById("userMenuIcon");
+        const adminMenuLink = document.getElementById("adminMenuLink");
+        const adminDivider = document.getElementById("adminDivider");
+        const drawerLogoutBtn = document.getElementById("drawerLogoutBtn");
+
+        // JIKA PENGGUNA SUDAH LOGIN
+        if (data.authenticated && data.user) {
+            // Ubah tombol menu atas dari "Login User" menjadi "Dashboard Saya"
+            if (userMenuLink && userMenuText) {
+                userMenuText.textContent = "Dashboard Saya";
+                userMenuLink.href = "/dashboard-user.html";
+                if (userMenuIcon) userMenuIcon.textContent = "📊";
+            }
+
+            // Sembunyikan menu Login Admin agar rapi untuk member biasa
+            if (adminMenuLink) adminMenuLink.style.display = "none";
+            if (adminDivider) adminDivider.style.display = "none";
+
+            // Munculkan tombol Logout di bagian bawah drawer
+            if (drawerLogoutBtn) drawerLogoutBtn.style.display = "flex";
+        }
+    } catch (err) {
+        console.warn("Belum login atau gagal cek sesi.");
+    }
+}
+
+/* FUNGSI LOGOUT */
+async function lakukanLogout() {
+    try {
+        await fetch("/api/user/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "logout" })
+        });
+    } catch (e) {
+        console.warn("Gagal request logout.");
+    } finally {
+        localStorage.removeItem("userProfilePhoto");
+        window.location.reload(); // Muat ulang halaman jadi status tamu
+    }
+}
+
+document.querySelectorAll(".btn-logout-action").forEach(btn => {
+    btn.addEventListener("click", lakukanLogout);
+});
+
 hitung();
 muatTotalKunjungan();
+cekStatusSesi();
 </script>
 
 </body>
