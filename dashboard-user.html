@@ -891,7 +891,7 @@ async function muatDataUser() {
             greetingTitle.textContent = `Selamat datang, ${data.user.name}!`;
         }
 
-        // Ambil Foto dari Redis, atau fallback ke localStorage jika sudah pernah upload manual
+        // Ambil Foto dari Redis, atau fallback ke localStorage jika pernah upload manual
         const fotoProfil = data.user.picture || localStorage.getItem("userProfilePhoto") || "";
         pasangFotoProfil(fotoProfil);
 
