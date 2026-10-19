@@ -40,7 +40,7 @@
         }
 
         /* ------------------------------------------------------------- */
-        /* MENU NAVIGASI DRAWER */
+        /* MENU NAVIGASI DRAWER (KHUSUS MEMBER SUDAH LOGIN) */
         /* ------------------------------------------------------------- */
         .menu-toggle {
             position: fixed;
@@ -156,6 +156,12 @@
         .nav-link:hover {
             background: #fff0f0;
             color: #a80000;
+        }
+
+        .nav-link.active-link {
+            background: #fff0f0;
+            color: #a80000;
+            border-left: 4px solid #a80000;
         }
 
         .nav-link .nav-icon {
@@ -577,7 +583,8 @@
             color: #eee;
         }
 
-        body.dark-mode .nav-link:hover {
+        body.dark-mode .nav-link:hover,
+        body.dark-mode .nav-link.active-link {
             background: #382020;
             color: #ff7777;
         }
@@ -620,10 +627,16 @@
 
 <div class="nav-overlay" id="navOverlay"></div>
 
-<!-- NAVIGASI DRAWER -->
+<!-- NAVIGASI DRAWER KHUSUS MEMBER MEMBER SUDAH LOGIN -->
 <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
     <div class="nav-drawer-content">
         <div class="nav-heading">MENU PENYEDIA</div>
+
+        <!-- LINK KEMBALI KE DASHBOARD PRIBADI -->
+        <a class="nav-link active-link" href="/dashboard-user.html">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard Saya</span>
+        </a>
 
         <a class="nav-link" href="/gabung-foto.html">
             <span class="nav-icon">🖼️</span>
