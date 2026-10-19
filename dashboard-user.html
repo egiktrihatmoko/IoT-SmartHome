@@ -602,7 +602,7 @@
 <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
     <div class="nav-heading">MENU NAVIGASI</div>
 
-    <!-- FITUR UTAMA USER -->
+    <!-- MENGARAH KE LOGIN-USER.HTML -->
     <a class="nav-link" href="/login-user.html">
         <span class="nav-icon">👤</span>
         <span>Login User</span>
@@ -625,7 +625,7 @@
 
     <div class="nav-divider"></div>
 
-    <!-- LOGIN ADMIN DI DITARUH DI PALING BAWAH MENU -->
+    <!-- LOGIN ADMIN DI PALING BAWAH -->
     <a class="nav-link admin-link" href="/admin.html">
         <span class="nav-icon">🔐</span>
         <span>Login Admin</span>
@@ -644,7 +644,7 @@
     <div class="hero-banner">
         <div class="hero-content">
             <span class="hero-badge">DASHBOARD</span>
-            <h1>Selamat datang!</h1>
+            <h1 id="greetingTitle">Selamat datang!</h1>
             <p>Pilih fitur yang kamu perlukan untuk mulai bekerja secara efisien.</p>
         </div>
 
@@ -813,7 +813,7 @@ darkModeToggle.addEventListener("click", function () {
 });
 
 /* ------------------------------------------------------------- */
-/* FOTO PROFIL CONTROLLER (DENGAN LOCALSTORAGE) */
+/* FOTO PROFIL & SIKRONISASI DATA DARI BACKEND/REDIS */
 /* ------------------------------------------------------------- */
 const profileTrigger = document.getElementById("profileTrigger");
 const profileModal = document.getElementById("profileModal");
@@ -825,6 +825,7 @@ const headerProfileImg = document.getElementById("headerProfileImg");
 const headerProfileIcon = document.getElementById("headerProfileIcon");
 const modalPreviewImg = document.getElementById("modalPreviewImg");
 const modalPreviewIcon = document.getElementById("modalPreviewIcon");
+const greetingTitle = document.getElementById("greetingTitle");
 
 function bukaModal() {
     profileModal.classList.add("show");
@@ -843,15 +844,14 @@ profileModal.addEventListener("click", function(e) {
     }
 });
 
-// Tampilkan foto profil dari localStorage saat pertama kali dimuat
-function muatFotoProfil() {
-    const savedPhoto = localStorage.getItem("userProfilePhoto");
-    if (savedPhoto) {
-        headerProfileImg.src = savedPhoto;
+// Render Tampilan Foto Profil
+function pasangFotoProfil(photoUrl) {
+    if (photoUrl) {
+        headerProfileImg.src = photoUrl;
         headerProfileImg.style.display = "block";
         headerProfileIcon.style.display = "none";
 
-        modalPreviewImg.src = savedPhoto;
+        modalPreviewImg.src = photoUrl;
         modalPreviewImg.style.display = "block";
         modalPreviewIcon.style.display = "none";
     } else {
@@ -863,7 +863,45 @@ function muatFotoProfil() {
     }
 }
 
-// Proses Upload Foto Baru
+// Cek Sesi Login User ke Backend & Redis saat Dashboard Dibuka
+async function muatDataUser() {
+    try {
+        const res = await fetch("/api/user/login?action=check", {
+            method: "GET",
+            credentials: "same-origin",
+            cache: "no-store",
+            headers: { "Accept": "application/json" }
+        });
+
+        if (!res.ok) {
+            window.location.replace("/login-user.html");
+            return;
+        }
+
+        const data = await res.json();
+
+        // Jika belum login / sesi habis, tendang kembali ke halaman login-user.html
+        if (!data.authenticated || !data.user) {
+            window.location.replace("/login-user.html");
+            return;
+        }
+
+        // Tampilkan Nama Lengkap yang diambil dari Redis/Sesi
+        if (greetingTitle && data.user.name) {
+            greetingTitle.textContent = `Selamat datang, ${data.user.name}!`;
+        }
+
+        // Ambil Foto dari Redis, atau fallback ke localStorage jika sudah pernah upload manual
+        const fotoProfil = data.user.picture || localStorage.getItem("userProfilePhoto") || "";
+        pasangFotoProfil(fotoProfil);
+
+    } catch (err) {
+        console.error("Gagal memeriksa sesi user:", err);
+        window.location.replace("/login-user.html");
+    }
+}
+
+// Proses Upload Foto Baru (Lokal)
 profileInput.addEventListener("change", function() {
     const file = this.files[0];
     if (file) {
@@ -872,7 +910,7 @@ profileInput.addEventListener("change", function() {
             const base64Image = e.target.result;
             try {
                 localStorage.setItem("userProfilePhoto", base64Image);
-                muatFotoProfil();
+                pasangFotoProfil(base64Image);
                 tutupModal();
             } catch (err) {
                 alert("Ukuran gambar terlalu besar, silakan pilih gambar yang lebih kecil.");
@@ -886,11 +924,12 @@ profileInput.addEventListener("change", function() {
 btnDeletePhoto.addEventListener("click", function() {
     localStorage.removeItem("userProfilePhoto");
     profileInput.value = "";
-    muatFotoProfil();
+    pasangFotoProfil("");
     tutupModal();
 });
 
-muatFotoProfil();
+// Jalankan pemeriksaan sesi saat pertama kali halaman dimuat
+muatDataUser();
 </script>
 
 </body>
