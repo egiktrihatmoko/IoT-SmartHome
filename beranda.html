@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#a80000">
+    <title>Kalkulator Harga Tayang - Beranda</title>
+
+    <style>
+        /* Menggunakan styling dasar yang sama persis dengan dashboard-user.html */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #fff5f5;
+            color: #222;
+            min-height: 100vh;
+            padding: 40px 15px 60px;
+            transition: background 0.25s, color 0.25s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        a.feature-card {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        body.dark-mode a.feature-card {
+            color: #f1f1f1;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* MENU NAVIGASI DRAWER */
+        /* ------------------------------------------------------------- */
+        .menu-toggle {
+            position: fixed;
+            top: 18px;
+            left: 18px;
+            z-index: 1002;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            background: #a80000;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(168, 0, 0, 0.22);
+            transition: 0.2s;
+        }
+
+        .menu-toggle:hover {
+            transform: scale(1.04);
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 22px;
+            height: 2.5px;
+            border-radius: 3px;
+            background: #fff;
+            transition: 0.25s;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: translateY(7.5px) rotate(45deg);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: translateY(-7.5px) rotate(-45deg);
+        }
+
+        .nav-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(2px);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.25s;
+        }
+
+        .nav-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .nav-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 290px;
+            max-width: 85%;
+            height: 100vh;
+            height: 100dvh;
+            background: #fff;
+            z-index: 1001;
+            padding: 85px 18px 25px;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.12);
+            transform: translateX(-105%);
+            transition: transform 0.25s ease;
+            overflow-y: auto;
+        }
+
+        .nav-drawer.show {
+            transform: translateX(0);
+        }
+
+        .nav-heading {
+            color: #a80000;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin: 0 12px 15px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 13px;
+            margin-bottom: 7px;
+            border-radius: 10px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #fff0f0;
+            color: #a80000;
+        }
+
+        .nav-link .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+
+        .nav-link.login-nav-link {
+            color: #a80000;
+            background: #fff0f0;
+            border: 1px solid #f2dede;
+        }
+
+        .nav-divider {
+            height: 1px;
+            background: #eee;
+            margin: 15px 0;
+        }
+
+        .dark-mode-button {
+            width: 100%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* HERO HEADER BANNER */
+        /* ------------------------------------------------------------- */
+        .hero-banner {
+            position: relative;
+            background: linear-gradient(135deg, #8a0000 0%, #a80000 50%, #d31010 100%);
+            border-radius: 22px;
+            padding: 35px 30px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(168, 0, 0, 0.18);
+            margin-bottom: 30px;
+            margin-top: 15px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .hero-banner::after {
+            content: "";
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .hero-banner h1 {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .hero-banner p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.88);
+            line-height: 1.4;
+        }
+
+        /* TOMBOL MASUK DI KANAN ATAS (PENGGANTI FOTO PROFIL) */
+        .auth-trigger-btn {
+            position: relative;
+            z-index: 2;
+            background: #ffffff;
+            color: #a80000;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, background 0.2s;
+            white-space: nowrap;
+        }
+
+        .auth-trigger-btn:hover {
+            transform: scale(1.05);
+            background: #fff0f0;
+        }
+
+        /* SECTION & GRID FITUR UTAMA */
+        .section-header {
+            margin-bottom: 18px;
+        }
+
+        .section-title {
+            color: #a80000;
+            font-size: 18px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: #777;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: #ffffff;
+            border: 1px solid #f2dede;
+            border-radius: 18px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 20px;
+            box-shadow: 0 6px 20px rgba(150, 0, 0, 0.05);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: #e00000;
+            box-shadow: 0 12px 28px rgba(168, 0, 0, 0.12);
+        }
+
+        .card-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: #fff0f0;
+            border: 1px solid #fce8e8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #a80000;
+            margin-bottom: 14px;
+        }
+
+        .card-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 6px;
+        }
+
+        .card-content p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.45;
+        }
+
+        .card-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #a80000;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: gap 0.2s ease;
+        }
+
+        .feature-card:hover .card-action {
+            gap: 10px;
+            color: #d31010;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 45px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        /* DARK MODE STYLES */
+        body.dark-mode {
+            background: #121212;
+            color: #f1f1f1;
+        }
+
+        body.dark-mode .nav-drawer,
+        body.dark-mode .feature-card {
+            background: #1e1e1e;
+            border-color: #383838;
+        }
+
+        body.dark-mode .hero-banner {
+            background: linear-gradient(135deg, #4d0000 0%, #7a0000 60%, #9e0c0c 100%);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        body.dark-mode .section-title,
+        body.dark-mode .nav-heading,
+        body.dark-mode .card-action {
+            color: #ff6666;
+        }
+
+        body.dark-mode .card-content h3 {
+            color: #ffffff;
+        }
+
+        body.dark-mode .section-subtitle,
+        body.dark-mode .card-content p,
+        body.dark-mode .footer {
+            color: #aaa;
+        }
+
+        body.dark-mode .card-icon-wrapper {
+            background: #2d1a1a;
+            border-color: #493030;
+            color: #ff7777;
+        }
+
+        body.dark-mode .feature-card:hover {
+            border-color: #ff5555;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark-mode .nav-link {
+            color: #eee;
+        }
+
+        body.dark-mode .nav-link:hover,
+        body.dark-mode .nav-link.login-nav-link {
+            background: #382020;
+            color: #ff7777;
+            border-color: #493030;
+        }
+
+        body.dark-mode .nav-divider {
+            background: #383838;
+        }
+
+        body.dark-mode .auth-trigger-btn {
+            background: #2d1a1a;
+            color: #ff7777;
+            border: 1px solid #493030;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 20px 12px 40px; }
+            .hero-banner { padding: 25px 20px; border-radius: 18px; }
+            .hero-banner h1 { font-size: 20px; }
+            .auth-trigger-btn { padding: 8px 14px; font-size: 12px; }
+            .features-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- TOMBOL MENU DRAWER -->
+<button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="navDrawer">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- NAVIGASI DRAWER -->
+<nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
+    <div class="nav-heading">MENU UTAMA</div>
+
+    <a class="nav-link" href="/">
+        <span class="nav-icon">🧮</span>
+        <span>Kalkulator Harga Tayang</span>
+    </a>
+
+    <a class="nav-link" href="/gabung-foto.html">
+        <span class="nav-icon">🖼️</span>
+        <span>Ubah Foto ke PDF</span>
+    </a>
+
+    <a class="nav-link" href="/surat-pernyataan.html">
+        <span class="nav-icon">📄</span>
+        <span>Buat Surat Pernyataan</span>
+    </a>
+
+    <div class="nav-divider"></div>
+
+    <!-- TOMBOL LOGIN DI DRAWER -->
+    <a class="nav-link login-nav-link" href="/login-user.html" id="drawerAuthLink">
+        <span class="nav-icon">👤</span>
+        <span>Masuk / Login Akun</span>
+    </a>
+
+    <!-- TOMBOL DARK MODE -->
+    <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" aria-label="Ganti tema tampilan">
+        <span class="nav-icon" id="darkModeIcon">🌙</span>
+        <span id="darkModeText">Dark Mode</span>
+    </button>
+</nav>
+
+<div class="container">
+
+    <!-- BANNER UTAMA PUBLIK -->
+    <div class="hero-banner">
+        <div class="hero-content">
+            <span class="hero-badge">PORTAL LAYANAN</span>
+            <h1>Selamat Datang!</h1>
+            <p>Gunakan berbagai alat bantu kerja dan kalkulator profesional dengan mudah.</p>
+        </div>
+
+        <!-- TOMBOL MASUK DI KANAN ATAS -->
+        <a href="/login-user.html" class="auth-trigger-btn" id="headerAuthBtn">
+            Masuk / Login
+        </a>
+    </div>
+
+    <!-- FITUR UTAMA -->
+    <div class="section-header">
+        <div class="section-title">Fitur Utama</div>
+        <div class="section-subtitle">Pilih layanan yang ingin kamu gunakan.</div>
+    </div>
+
+    <div class="features-grid">
+
+        <!-- FITUR 1 -->
+        <a href="/" class="feature-card">
+            <div>
+                <div class="card-icon-wrapper">🧮</div>
+                <div class="card-content">
+                    <h3>Kalkulator Harga Tayang</h3>
+                    <p>Hitung estimasi dan rincian harga tayang secara otomatis dan cepat.</p>
+                </div>
+            </div>
+            <div class="card-action">
+                Buka fitur <span>&rarr;</span>
+            </div>
+        </a>
+
+        <!-- FITUR 2 -->
+        <a href="/gabung-foto.html" class="feature-card">
+            <div>
+                <div class="card-icon-wrapper">🖼️</div>
+                <div class="card-content">
+                    <h3>Foto ke PDF</h3>
+                    <p>Gabungkan foto kelengkapan dokumen menjadi file PDF siap kirim.</p>
+                </div>
+            </div>
+            <div class="card-action">
+                Buka fitur <span>&rarr;</span>
+            </div>
+        </a>
+
+        <!-- FITUR 3 -->
+        <a href="/surat-pernyataan.html" class="feature-card">
+            <div>
+                <div class="card-icon-wrapper">📄</div>
+                <div class="card-content">
+                    <h3>Surat Pernyataan</h3>
+                    <p>Buat dokumen surat pernyataan resmi lengkap dengan tanda tangan otomatis.</p>
+                </div>
+            </div>
+            <div class="card-action">
+                Buka fitur <span>&rarr;</span>
+            </div>
+        </a>
+
+    </div>
+
+    <div class="footer">
+        <p>Credit by <strong>eth production</strong></p>
+    </div>
+</div>
+
+<script>
+/* SCRIPT NAVIGASI DRAWER & DARK MODE */
+const menuToggle = document.getElementById("menuToggle");
+const navDrawer = document.getElementById("navDrawer");
+const navOverlay = document.getElementById("navOverlay");
+
+function bukaMenu() {
+    menuToggle.classList.add("active");
+    navDrawer.classList.add("show");
+    navOverlay.classList.add("show");
+    menuToggle.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+}
+
+function tutupMenu() {
+    menuToggle.classList.remove("active");
+    navDrawer.classList.remove("show");
+    navOverlay.classList.remove("show");
+    menuToggle.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+}
+
+menuToggle.addEventListener("click", function () {
+    if (navDrawer.classList.contains("show")) {
+        tutupMenu();
+    } else {
+        bukaMenu();
+    }
+});
+
+navOverlay.addEventListener("click", tutupMenu);
+
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") tutupMenu();
+});
+
+document.querySelectorAll(".nav-link").forEach(function (link) {
+    link.addEventListener("click", tutupMenu);
+});
+
+/* DARK MODE CONTROLLER */
+const darkModeToggle = document.getElementById("darkModeToggle");
+const darkModeIcon = document.getElementById("darkModeIcon");
+const darkModeText = document.getElementById("darkModeText");
+
+function aturDarkMode(aktif) {
+    document.body.classList.toggle("dark-mode", aktif);
+    darkModeIcon.textContent = aktif ? "☀️" : "🌙";
+    darkModeText.textContent = aktif ? "Light Mode" : "Dark Mode";
+
+    try {
+        localStorage.setItem("kalkulatorDarkMode", aktif ? "aktif" : "nonaktif");
+    } catch (error) {
+        console.warn("Pilihan tema tidak dapat disimpan.", error);
+    }
+}
+
+let darkModeTersimpan = false;
+try {
+    darkModeTersimpan = localStorage.getItem("kalkulatorDarkMode") === "aktif";
+} catch (error) {
+    console.warn("Pilihan tema tidak dapat dibaca.", error);
+}
+
+aturDarkMode(darkModeTersimpan);
+
+darkModeToggle.addEventListener("click", function () {
+    const aktif = !document.body.classList.contains("dark-mode");
+    aturDarkMode(aktif);
+    tutupMenu();
+});
+
+/* CEK APAKAH USER SUDAH LOGIN SEBELUMNYA */
+async function cekStatusLoginTamu() {
+    try {
+        const res = await fetch("/api/user/login?action=check", {
+            method: "GET",
+            credentials: "same-origin",
+            cache: "no-store",
+            headers: { "Accept": "application/json" }
+        });
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        const headerAuthBtn = document.getElementById("headerAuthBtn");
+        const drawerAuthLink = document.getElementById("drawerAuthLink");
+
+        // Jika user ternyata sudah login, ubah tombol jadi "Buka Dashboard"
+        if (data.authenticated && data.user) {
+            if (headerAuthBtn) {
+                headerAuthBtn.textContent = "Buka Dashboard";
+                headerAuthBtn.href = "/dashboard-user.html";
+            }
+            if (drawerAuthLink) {
+                drawerAuthLink.innerHTML = `<span class="nav-icon">📊</span><span>Buka Dashboard</span>`;
+                drawerAuthLink.href = "/dashboard-user.html";
+            }
+        }
+    } catch (err) {
+        // Biarkan tombol login standar jika gagal/offline
+    }
+}
+
+cekStatusLoginTamu();
+</script>
+
+</body>
+</html>
