@@ -1,1 +1,1620 @@
 
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#b91c1c">
+<title>Dashboard Admin</title>
+
+<style>
+:root {
+  --red: #c91f2c;
+  --red-dark: #991b1b;
+  --red-light: #fff1f2;
+  --bg: #f7f7f9;
+  --text: #20212a;
+  --muted: #777985;
+  --border: #eeeef2;
+  --white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+button, a {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+}
+
+.sidebar {
+  width: 245px;
+  background: var(--white);
+  border-right: 1px solid var(--border);
+  padding: 25px 17px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 9px;
+  margin-bottom: 38px;
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: linear-gradient(140deg, #ef4444, #a30e20);
+  border-radius: 13px;
+  font-size: 23px;
+  font-weight: 800;
+  box-shadow: 0 5px 14px #c91f2c2a;
+}
+
+.brand-name {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -.4px;
+}
+
+.brand-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.nav-label {
+  padding: 0 12px;
+  margin: 0 0 12px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #a0a0aa;
+  letter-spacing: 1.3px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border-radius: 11px;
+  margin-bottom: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666774;
+  transition: .2s;
+}
+
+.nav-link:hover {
+  background: var(--red-light);
+  color: var(--red);
+}
+
+.nav-link.active {
+  background: var(--red-light);
+  color: var(--red);
+  font-weight: 750;
+}
+
+.nav-icon {
+  width: 22px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding-top: 25px;
+}
+
+.account-mini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 9px;
+  border-top: 1px solid var(--border);
+  margin-bottom: 8px;
+  min-width: 0;
+}
+
+.avatar {
+  width: 37px;
+  height: 37px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--red-light);
+  color: var(--red);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.account-info {
+  min-width: 0;
+}
+
+.account-name {
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.account-email {
+  color: var(--muted);
+  font-size: 10px;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 30px 36px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.breadcrumb {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.breadcrumb span {
+  color: var(--red);
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(23px, 3vw, 30px);
+  letter-spacing: -1px;
+}
+
+.subtitle {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 9px 0 0;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #ecfdf3;
+  color: #16834a;
+  border: 1px solid #d1f5df;
+  padding: 9px 12px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 15px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: var(--red);
+  color: white;
+  border-color: var(--red);
+  box-shadow: 0 5px 12px #c91f2c20;
+}
+
+.btn-primary:hover {
+  background: var(--red-dark);
+}
+
+.btn-logout {
+  width: 100%;
+  justify-content: flex-start;
+  border: 0;
+  background: transparent;
+  color: #777985;
+  box-shadow: none;
+}
+
+.btn-logout:hover {
+  background: var(--red-light);
+  color: var(--red);
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 29px 30px;
+  border-radius: 18px;
+  color: white;
+  background: linear-gradient(115deg, #a90f24 0%, #d32635 58%, #ef4444 100%);
+  box-shadow: 0 12px 28px #c91f2c18;
+  margin-bottom: 27px;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  right: -65px;
+  top: -110px;
+  border-radius: 50%;
+  border: 35px solid #ffffff13;
+  pointer-events: none;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  width: 125px;
+  height: 125px;
+  right: 105px;
+  bottom: -100px;
+  border-radius: 50%;
+  background: #ffffff12;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+}
+
+.hero-tag {
+  display: inline-block;
+  padding: 6px 10px;
+  background: #ffffff20;
+  border: 1px solid #ffffff24;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .7px;
+  margin-bottom: 15px;
+}
+
+.hero h2 {
+  font-size: clamp(21px, 3vw, 28px);
+  line-height: 1.35;
+  letter-spacing: -.7px;
+  margin: 0;
+}
+
+.hero p {
+  color: #ffe4e6;
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 10px 0 20px;
+  max-width: 420px;
+}
+
+.hero .btn {
+  background: white;
+  border-color: white;
+  color: var(--red-dark);
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+.section-heading h2 {
+  font-size: 16px;
+  letter-spacing: -.3px;
+  margin: 0;
+}
+
+.section-heading p {
+  color: var(--muted);
+  font-size: 11px;
+  margin: 5px 0 0;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 17px;
+  margin-bottom: 30px;
+}
+
+.card {
+  min-width: 0;
+  padding: 21px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  transition: .2s;
+}
+
+.card:hover {
+  border-color: #f1c3c7;
+  transform: translateY(-2px);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.card-label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 650;
+}
+
+.card-icon {
+  display: grid;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  border-radius: 12px;
+  background: var(--red-light);
+  color: var(--red);
+  font-size: 19px;
+}
+
+.card-value {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+  overflow-wrap: anywhere;
+}
+
+.card-note {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 8px;
+  line-height: 1.6;
+}
+
+.card-note strong {
+  color: #16834a;
+}
+
+.bottom-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+}
+
+.panel {
+  min-width: 0;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 22px;
+}
+
+.panel h3 {
+  font-size: 14px;
+  margin: 0;
+}
+
+.panel-desc {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 7px 0 18px;
+}
+
+.security-box {
+  background: #fffafa;
+  border: 1px solid #ffe0e3;
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.security-title {
+  color: var(--red-dark);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.security-text {
+  color: #77717a;
+  font-size: 11px;
+  line-height: 1.8;
+  margin-top: 7px;
+}
+
+.footer {
+  text-align: center;
+  color: #9a9aa4;
+  font-size: 10px;
+  margin-top: 30px;
+  padding-bottom: 5px;
+}
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.loader {
+  width: 34px;
+  height: 34px;
+  border: 3px solid #fee2e2;
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin: 0 auto 15px;
+}
+
+.loading-text {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 1000px) {
+  .sidebar {
+    width: 215px;
+  }
+
+  .main {
+    padding: 25px 22px;
+  }
+
+  .cards {
+    gap: 11px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 760px) {
+  .layout {
+    display: block;
+    padding-bottom: 70px;
+  }
+
+  .sidebar {
+    position: fixed;
+    z-index: 5;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 64px;
+    padding: 6px 10px;
+    border-right: 0;
+    border-top: 1px solid var(--border);
+    display: block;
+    background: #fffffffa;
+  }
+
+  .brand,
+  .nav-label,
+  .sidebar-bottom {
+    display: none;
+  }
+
+  .sidebar nav {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    height: 100%;
+  }
+
+  .nav-link {
+    justify-content: center;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    padding: 5px 3px;
+    font-size: 10px;
+    border-radius: 9px;
+  }
+
+  .nav-icon {
+    font-size: 18px;
+  }
+
+  .main {
+    padding: 23px 16px 20px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+
+  .top-actions {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .status {
+    padding: 7px 9px;
+    font-size: 10px;
+  }
+
+  .top-actions .btn {
+    min-height: 35px;
+    padding: 0 10px;
+    font-size: 10px;
+  }
+
+  .hero {
+    padding: 24px 21px;
+    border-radius: 15px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .card {
+    padding: 15px 17px;
+  }
+
+  .card-top {
+    margin-bottom: 12px;
+  }
+
+  .card-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .card-value {
+    font-size: 18px;
+  }
+
+  .bottom-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 380px) {
+  .main {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .topbar {
+    gap: 8px;
+  }
+
+  .subtitle {
+    font-size: 11px;
+  }
+
+  .hero h2 {
+    font-size: 21px;
+  }
+}
+
+/* Statistik kunjungan */
+.stats-section { margin: 0 0 28px; }
+.stats-total { font-size: clamp(25px, 3vw, 34px); font-weight: 850; letter-spacing: -1px; }
+.chart-panel { background:#fff; border:1px solid var(--border); border-radius:15px; padding:22px; min-width:0; }
+.chart-toolbar { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; margin-bottom:15px; }
+.chart-toolbar h3 { margin:0; font-size:15px; }
+.chart-toolbar p { margin:6px 0 0; color:var(--muted); font-size:11px; line-height:1.6; }
+.chart-controls { display:flex; gap:6px; }
+.chart-range { border:1px solid var(--border); background:#fff; border-radius:8px; padding:8px 10px; font-size:11px; font-weight:700; cursor:pointer; color:#666; }
+.chart-range.active { background:var(--red-light); border-color:#fecdd3; color:var(--red); }
+.chart-wrap { position:relative; width:100%; height:260px; }
+#visitorChart { display:block; width:100%; height:100%; }
+.chart-status { color:var(--muted); font-size:11px; margin-top:10px; }
+.stats-note { background:#fffafa; border:1px solid #ffe0e3; border-radius:10px; padding:12px 14px; color:#77717a; font-size:11px; line-height:1.7; margin-top:13px; }
+@media (max-width:760px) { .chart-panel { padding:17px; } .chart-wrap { height:225px; } .chart-toolbar { gap:10px; } .chart-controls { width:100%; } .chart-range { flex:1; } }
+
+
+/* Riwayat surat */
+.history-section { margin: 0 0 28px; scroll-margin-top: 20px; }
+.history-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(165px,1fr)); gap:12px; margin-bottom:16px; }
+.history-toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+.history-search { flex:1; min-width:180px; min-height:42px; border:1px solid var(--border); border-radius:10px; padding:0 12px; font:inherit; font-size:12px; outline:none; }
+.history-search:focus { border-color:#f1a5ad; box-shadow:0 0 0 3px #c91f2c12; }
+.history-table-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; background:#fff; }
+.history-table { width:100%; border-collapse:collapse; min-width:760px; font-size:12px; }
+.history-table th { text-align:left; padding:13px 14px; color:#777985; background:#fafafa; font-size:10px; letter-spacing:.4px; text-transform:uppercase; white-space:nowrap; }
+.history-table td { padding:13px 14px; border-top:1px solid #f1f1f4; vertical-align:top; }
+.history-table tr:hover td { background:#fffafa; }
+.history-ip { font-weight:750; color:#991b1b; font-variant-numeric:tabular-nums; }
+.history-muted { color:var(--muted); }
+.history-status { font-size:11px; color:var(--muted); margin-top:12px; line-height:1.6; }
+.history-empty { padding:24px 14px !important; text-align:center; color:var(--muted); }
+.history-badge { display:inline-flex; padding:5px 8px; border-radius:20px; background:#fff1f2; color:#991b1b; font-size:10px; font-weight:750; white-space:nowrap; }
+.history-note { background:#fffafa; border:1px solid #ffe0e3; border-radius:10px; padding:12px 14px; color:#77717a; font-size:11px; line-height:1.7; margin-top:13px; }
+@media (max-width:760px) {
+  .sidebar nav { grid-template-columns:repeat(5,minmax(0,1fr)); }
+  .nav-link { font-size:8px; }
+  .history-toolbar .btn { flex:1; }
+}
+
+
+/* Navigasi halaman dashboard dan Pusat Kesehatan Website */
+.page-view { display:none; animation: pageIn .18s ease; }
+.page-view.active { display:block; }
+@keyframes pageIn { from { opacity:.65; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+.health-hero { background:linear-gradient(120deg,#fff,#fff5f5); border:1px solid #ffe0e3; border-radius:16px; padding:22px; margin-bottom:18px; }
+.health-hero-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.health-eyebrow { color:var(--red); font-size:10px; font-weight:800; letter-spacing:1px; margin-bottom:8px; }
+.health-hero h2 { margin:0; font-size:21px; letter-spacing:-.5px; }
+.health-hero p { color:var(--muted); font-size:12px; line-height:1.7; margin:8px 0 0; max-width:620px; }
+.health-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.health-feature { display:flex; align-items:flex-start; gap:14px; text-align:left; width:100%; padding:19px; background:#fff; border:1px solid var(--border); border-radius:14px; cursor:pointer; transition:.18s; color:var(--text); }
+.health-feature:hover { border-color:#f1b7bd; transform:translateY(-2px); box-shadow:0 7px 20px #c91f2c0a; }
+.health-feature-icon { display:grid; place-items:center; width:44px; height:44px; flex-shrink:0; border-radius:12px; background:var(--red-light); font-size:21px; }
+.health-feature-copy { flex:1; min-width:0; }
+.health-feature-title { font-size:13px; font-weight:800; }
+.health-feature-desc { color:var(--muted); font-size:11px; line-height:1.65; margin-top:5px; }
+.health-feature-arrow { color:#a3a3ad; font-size:20px; padding-top:4px; }
+.health-detail-head { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+.health-back { border:1px solid var(--border); background:#fff; border-radius:10px; padding:10px 12px; cursor:pointer; font-size:12px; font-weight:750; }
+.health-detail-head h2 { margin:0; font-size:21px; }
+.health-detail-head p { color:var(--muted); font-size:11px; margin:5px 0 0; }
+.health-check-list { display:grid; gap:10px; }
+.health-check-row { display:flex; align-items:center; gap:12px; background:#fff; border:1px solid var(--border); border-radius:12px; padding:15px; }
+.health-check-symbol { display:grid; place-items:center; width:34px; height:34px; border-radius:10px; background:#f5f5f7; font-size:16px; flex-shrink:0; }
+.health-check-copy { flex:1; min-width:0; }
+.health-check-name { font-size:12px; font-weight:800; }
+.health-check-desc { color:var(--muted); font-size:10px; line-height:1.6; margin-top:4px; overflow-wrap:anywhere; }
+.health-pill { display:inline-flex; align-items:center; padding:6px 9px; border-radius:20px; background:#f4f4f5; color:#666; font-size:10px; font-weight:800; white-space:nowrap; }
+.health-pill.ok { background:#ecfdf3; color:#16834a; }
+.health-pill.bad { background:#fff1f2; color:#b91c1c; }
+.health-pill.wait { background:#fff7ed; color:#9a3412; }
+.health-detail-note { padding:13px 15px; background:#fafafa; border:1px solid var(--border); border-radius:11px; color:var(--muted); font-size:11px; line-height:1.7; margin-top:14px; }
+.health-actions { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 16px; }
+@media(max-width:760px) { .health-grid { grid-template-columns:1fr; } .health-hero { padding:18px; } .health-hero-top { flex-direction:column; } .health-detail-head h2 { font-size:18px; } .health-check-row { padding:12px; } }
+
+</style>
+</head>
+
+<body>
+
+<div class="loading-screen" id="loadingScreen">
+  <div>
+    <div class="loader"></div>
+    <div class="loading-text" id="loadingText">
+      Memeriksa sesi admin...
+    </div>
+  </div>
+</div>
+
+<div class="layout" id="dashboard" hidden>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">K</div>
+      <div>
+        <div class="brand-name">Kalkulator</div>
+        <div class="brand-sub">ADMIN DASHBOARD</div>
+      </div>
+    </div>
+
+    <div class="nav-label">MENU UTAMA</div>
+
+    <nav>
+      <a class="nav-link active" href="dashboard.html">
+        <span class="nav-icon">▦</span>
+        <span>Dashboard</span>
+      </a>
+
+      <a class="nav-link" href="index.html">
+        <span class="nav-icon">▤</span>
+        <span>Kalkulator</span>
+      </a>
+
+      <a class="nav-link" href="#akun">
+        <span class="nav-icon">♙</span>
+        <span>Akun Admin</span>
+      </a>
+
+      <a class="nav-link" href="#riwayat-surat" id="historyNavLink">
+        <span class="nav-icon">▤</span>
+        <span>Riwayat Surat</span>
+      </a>
+      <a class="nav-link" href="#pusat-kesehatan" id="healthNavLink">
+        <span class="nav-icon">♥</span>
+        <span>Pusat Kesehatan</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="account-mini">
+        <div class="avatar" id="sideAvatar">A</div>
+        <div class="account-info">
+          <div class="account-name">Administrator</div>
+          <div class="account-email" id="sideEmail">Memuat...</div>
+        </div>
+      </div>
+
+      <button class="btn btn-logout" id="logoutButton">
+        ↪ &nbsp; Keluar dari akun
+      </button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+      <div>
+        <div class="breadcrumb">Menu / <span>Dashboard</span></div>
+        <h1>Dashboard</h1>
+        <p class="subtitle">
+          Selamat datang di panel admin Kalkulator Harga Tayang.
+        </p>
+      </div>
+
+      <div class="top-actions">
+        <div class="status">
+          <span class="status-dot"></span>
+          Sesi aktif
+        </div>
+        <button class="btn" id="topLogoutButton">↪ Keluar</button>
+      </div>
+    </header>
+
+    <div class="page-view active" id="page-dashboard">
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-tag">✦ PANEL ADMINISTRATOR</div>
+        <h2>Kelola website dengan lebih mudah.</h2>
+        <p>
+          Semua akses utama website kamu bisa dimulai dari satu
+          tempat. Praktis, ringkas, dan nyaman digunakan.
+        </p>
+        <a class="btn" href="index.html">
+          Buka Kalkulator <span>→</span>
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <div>
+          <h2>Ringkasan</h2>
+          <p>Informasi akun dan status panel admin.</p>
+        </div>
+      </div>
+
+      <div class="cards">
+        <article class="card">
+          <div class="card-top">
+            <div class="card-label">Status Akun</div>
+            <div class="card-icon">♙</div>
+          </div>
+          <div class="card-value">Administrator</div>
+          <div class="card-note">
+            Hak akses akun admin terverifikasi.
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <div class="card-label">Status Sesi</div>
+            <div class="card-icon">◉</div>
+          </div>
+          <div class="card-value">Aktif</div>
+          <div class="card-note">
+            Sesi login berhasil diperiksa oleh server.
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-top">
+            <div class="card-label">Aplikasi</div>
+            <div class="card-icon">▤</div>
+          </div>
+          <div class="card-value">Harga Tayang</div>
+          <div class="card-note">
+            Kalkulator siap dibuka melalui tombol akses.
+          </div>
+        </article>
+      </div>
+    </section>
+
+
+    <section class="stats-section">
+      <div class="section-heading">
+        <div>
+          <h2>Statistik Pengunjung</h2>
+          <p>Data kunjungan website yang tersimpan di Upstash Redis.</p>
+        </div>
+      </div>
+      <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin-bottom:16px">
+        <article class="card">
+          <div class="card-top">
+            <div class="card-label">Total Kunjungan Website</div>
+            <div class="card-icon">👁</div>
+          </div>
+          <div class="stats-total" id="visitorTotal">—</div>
+          <div class="card-note">Total global dari penghitung kunjungan kalkulator.</div>
+        </article>
+        <article class="card">
+          <div class="card-top">
+            <div class="card-label">Kunjungan Hari Ini</div>
+            <div class="card-icon">📈</div>
+          </div>
+          <div class="stats-total" id="visitorToday">—</div>
+          <div class="card-note" id="visitorTodayLabel">Hari ini · WIB</div>
+        </article>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-toolbar">
+          <div>
+            <h3>Grafik Kunjungan</h3>
+            <p id="chartSubtitle">Jumlah kunjungan per hari.</p>
+          </div>
+          <div class="chart-controls" aria-label="Rentang grafik">
+            <button class="chart-range active" data-range="7" type="button">7 Hari</button>
+            <button class="chart-range" data-range="30" type="button">30 Hari</button>
+            <button class="chart-range" data-range="365" type="button">12 Bulan</button>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="visitorChart" role="img" aria-label="Grafik jumlah kunjungan website"></canvas></div>
+        <div class="chart-status" id="chartStatus" aria-live="polite">Memuat data kunjungan...</div>
+        <div class="stats-note">Catatan: data harian mulai terkumpul setelah endpoint kunjungan diperbarui. Total kunjungan lama tetap dipertahankan, tetapi riwayat harian sebelum perubahan tidak bisa dibuat ulang jika sebelumnya belum disimpan.</div>
+      </div>
+    </section>
+
+
+    <section class="history-section" id="riwayat-surat">
+      <div class="section-heading">
+        <div>
+          <h2>Riwayat Pembuatan Surat</h2>
+          <p>Data aktivitas pembuatan surat yang tercatat melalui API surat.</p>
+        </div>
+        <button class="btn" id="refreshHistory" type="button">↻ Muat ulang</button>
+      </div>
+
+      <div class="history-stats">
+        <article class="card">
+          <div class="card-top">
+            <div class="card-label">Total Surat Dibuat</div>
+            <div class="card-icon">▤</div>
+          </div>
+          <div class="stats-total" id="letterTotal">—</div>
+          <div class="card-note">Jumlah total dari Upstash Redis.</div>
+        </article>
+        <article class="card">
+          <div class="card-top">
+            <div class="card-label">IP Tercatat</div>
+            <div class="card-icon">⌘</div>
+          </div>
+          <div class="stats-total" id="letterUniqueIps">—</div>
+          <div class="card-note">Jumlah IP unik pada riwayat yang tersedia.</div>
+        </article>
+      </div>
+
+      <div class="chart-panel">
+        <div class="chart-toolbar">
+          <div>
+            <h3>Daftar Aktivitas</h3>
+            <p>IP Address, lokasi perkiraan, waktu, dan jumlah surat.</p>
+          </div>
+        </div>
+        <div class="history-toolbar">
+          <input class="history-search" id="historySearch" type="search"
+            placeholder="Cari IP, kota, provinsi, atau negara..." autocomplete="off"
+            aria-label="Cari riwayat surat">
+          <button class="btn" id="clearHistorySearch" type="button">Hapus pencarian</button>
+        </div>
+        <div class="history-table-wrap">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>IP Address</th>
+                <th>Lokasi Perkiraan</th>
+                <th>Waktu (WIB)</th>
+                <th>Jumlah Surat</th>
+              </tr>
+            </thead>
+            <tbody id="letterHistoryBody">
+              <tr><td colspan="4" class="history-empty">Memuat riwayat surat...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="history-status" id="letterHistoryStatus" aria-live="polite">
+          Memeriksa data riwayat surat...
+        </div>
+        <div class="history-note">
+          Lokasi berdasarkan IP hanya perkiraan dan tidak menunjukkan alamat rumah atau GPS yang pasti.
+          Data IP hanya ditampilkan di area admin. Pastikan pengumpulan data ini diberitahukan kepada pengguna
+          dan simpan hanya selama diperlukan.
+        </div>
+      </div>
+    </section>
+
+    <section class="bottom-grid">
+      <div class="panel" id="akun">
+        <h3>Informasi Akun</h3>
+        <p class="panel-desc">
+          Detail akun yang saat ini masuk ke dashboard.
+        </p>
+
+        <div class="account-mini" style="padding:8px 0 15px;border:0">
+          <div class="avatar" id="mainAvatar">A</div>
+          <div class="account-info">
+            <div class="account-name">Administrator</div>
+            <div class="account-email" id="mainEmail">Memuat...</div>
+          </div>
+        </div>
+
+        <div class="security-box">
+          <div class="security-title">♢ &nbsp; Sesi Terverifikasi</div>
+          <div class="security-text">
+            Identitas akun diperiksa menggunakan API server.
+            Jangan bagikan akses akun atau kredensial admin
+            kepada orang lain.
+          </div>
+        </div>
+
+        <div style="margin-top:17px">
+          <button class="btn btn-primary" id="accountLogout"
+            style="width:100%">
+            Keluar dari Dashboard
+          </button>
+        </div>
+      </div>
+    </section>
+    </div>
+
+    <div class="page-view" id="page-health">
+      <div class="topbar" style="margin-bottom:22px">
+        <div>
+          <div class="breadcrumb">Menu / <span>Pusat Kesehatan Website</span></div>
+          <h1>Pusat Kesehatan Website</h1>
+          <p class="subtitle">Pilih pemeriksaan yang ingin dibuka. Detail hanya ditampilkan setelah fitur dipilih.</p>
+        </div>
+        <div class="top-actions">
+          <div class="status"><span class="status-dot"></span> Panel admin aktif</div>
+        </div>
+      </div>
+      <div class="health-hero">
+        <div class="health-hero-top">
+          <div>
+            <div class="health-eyebrow">WEBSITE MONITORING</div>
+            <h2>Pantau kondisi website dari satu tempat.</h2>
+            <p>Pilih salah satu subfitur untuk melihat hasil pemeriksaan. Status diambil saat pemeriksaan dijalankan dan bukan pemantauan otomatis terus-menerus.</p>
+          </div>
+          <button class="btn btn-primary" type="button" id="runHealthChecks">↻ Cek Status Website</button>
+        </div>
+      </div>
+      <div class="health-grid" id="healthFeatureGrid">
+        <button class="health-feature" type="button" data-health-page="health-overview">
+          <span class="health-feature-icon">◉</span><span class="health-feature-copy"><span class="health-feature-title">Status Website</span><div class="health-feature-desc">Periksa respons website dan status akses dashboard.</div></span><span class="health-feature-arrow">›</span>
+        </button>
+        <button class="health-feature" type="button" data-health-page="health-api">
+          <span class="health-feature-icon">⌘</span><span class="health-feature-copy"><span class="health-feature-title">API & Server</span><div class="health-feature-desc">Tes endpoint admin dan waktu respons API.</div></span><span class="health-feature-arrow">›</span>
+        </button>
+        <button class="health-feature" type="button" data-health-page="health-database">
+          <span class="health-feature-icon">▤</span><span class="health-feature-copy"><span class="health-feature-title">Database Redis</span><div class="health-feature-desc">Periksa layanan yang membaca data dari Upstash Redis.</div></span><span class="health-feature-arrow">›</span>
+        </button>
+        <button class="health-feature" type="button" data-health-page="health-security">
+          <span class="health-feature-icon">♢</span><span class="health-feature-copy"><span class="health-feature-title">Keamanan Admin</span><div class="health-feature-desc">Periksa apakah sesi admin dikenali server dan endpoint terlindungi.</div></span><span class="health-feature-arrow">›</span>
+        </button>
+      </div>
+      <div class="health-detail-note">Catatan: pemeriksaan database dilakukan melalui endpoint admin yang sudah ada. Ini tidak menguji koneksi Redis secara langsung dan tidak menggantikan pemantauan dari Vercel atau Upstash.</div>
+    </div>
+
+    <div class="page-view" id="page-health-detail">
+      <div class="health-detail-head">
+        <button class="health-back" id="healthBack" type="button">← Kembali</button>
+        <div><h2 id="healthDetailTitle">Detail Pemeriksaan</h2><p id="healthDetailSubtitle">Hasil pemeriksaan terakhir.</p></div>
+      </div>
+      <div class="health-actions"><button class="btn btn-primary" id="refreshHealthDetail" type="button">↻ Periksa Ulang</button></div>
+      <div class="health-check-list" id="healthDetailRows">
+        <div class="health-check-row"><div class="health-check-symbol">◌</div><div class="health-check-copy"><div class="health-check-name">Menunggu pemeriksaan</div><div class="health-check-desc">Pilih Periksa Ulang untuk memulai pemeriksaan.</div></div><span class="health-pill wait">Menunggu</span></div>
+      </div>
+      <div class="health-detail-note" id="healthDetailNote">Hasil pemeriksaan ditampilkan di sini.</div>
+    </div>
+
+    <footer class="footer">
+      © <span id="year"></span> Kalkulator Harga Tayang · Admin Panel
+    </footer>
+
+  </main>
+</div>
+
+<script>
+"use strict";
+
+const loadingScreen = document.getElementById("loadingScreen");
+const loadingText = document.getElementById("loadingText");
+const dashboard = document.getElementById("dashboard");
+
+document.getElementById("year").textContent =
+  new Date().getFullYear();
+
+function showLogin() {
+  window.location.replace("/admin.html");
+}
+
+async function checkSession() {
+  try {
+    const response = await fetch("/api/admin/check", {
+      method: "GET",
+      credentials: "same-origin",
+      cache: "no-store",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || !data.success ||
+        !data.user || data.user.role !== "admin") {
+      showLogin();
+      return;
+    }
+
+    const email = typeof data.user.email === "string"
+      ? data.user.email : "Admin";
+
+    const initial = email.charAt(0).toUpperCase() || "A";
+
+    document.getElementById("sideEmail").textContent = email;
+    document.getElementById("mainEmail").textContent = email;
+    document.getElementById("sideAvatar").textContent = initial;
+    document.getElementById("mainAvatar").textContent = initial;
+
+    loadingScreen.style.display = "none";
+    dashboard.hidden = false;
+  } catch (error) {
+    loadingText.textContent =
+      "Tidak dapat memeriksa sesi. Periksa koneksi lalu muat ulang.";
+  }
+}
+
+let loggingOut = false;
+
+async function logout() {
+  if (loggingOut) return;
+
+  loggingOut = true;
+
+  const buttons = [
+    document.getElementById("logoutButton"),
+    document.getElementById("topLogoutButton"),
+    document.getElementById("accountLogout")
+  ];
+
+  buttons.forEach(button => {
+    button.disabled = true;
+  });
+
+  try {
+    const response = await fetch("/api/admin/logout", {
+      method: "POST",
+      credentials: "same-origin",
+      cache: "no-store",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || !data.success) {
+      throw new Error("Logout gagal");
+    }
+
+    window.location.replace("/admin.html");
+  } catch (error) {
+    loggingOut = false;
+    buttons.forEach(button => {
+      button.disabled = false;
+    });
+
+    alert(
+      "Logout belum berhasil. Pastikan file " +
+      "api/admin/logout.js sudah dibuat dan deployment selesai."
+    );
+  }
+}
+
+document.getElementById("logoutButton")
+  .addEventListener("click", logout);
+
+document.getElementById("topLogoutButton")
+  .addEventListener("click", logout);
+
+document.getElementById("accountLogout")
+  .addEventListener("click", logout);
+
+
+const visitorTotalEl = document.getElementById("visitorTotal");
+const visitorTodayEl = document.getElementById("visitorToday");
+const chartCanvas = document.getElementById("visitorChart");
+const chartStatus = document.getElementById("chartStatus");
+const chartSubtitle = document.getElementById("chartSubtitle");
+let visitorStats = null;
+let currentRange = 7;
+
+function formatNumber(value) {
+  return Number(value || 0).toLocaleString("id-ID");
+}
+
+function drawVisitorChart(range) {
+  if (!visitorStats || !Array.isArray(visitorStats.daily)) return;
+  const canvas = chartCanvas;
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+  canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+  const ctx = canvas.getContext("2d");
+  ctx.scale(dpr, dpr);
+  const width = rect.width, height = rect.height;
+  const isYear = range === 365;
+  const raw = visitorStats.daily.slice(-range);
+  let points;
+  if (isYear) {
+    const buckets = new Map();
+    raw.forEach(item => {
+      const key = item.date.slice(0, 7);
+      buckets.set(key, (buckets.get(key) || 0) + Number(item.count || 0));
+    });
+    points = Array.from(buckets, ([date, count]) => ({date, count}));
+    chartSubtitle.textContent = "Total kunjungan per bulan selama 12 bulan terakhir.";
+  } else {
+    points = raw;
+    chartSubtitle.textContent = "Jumlah kunjungan per hari.";
+  }
+  const pad = {left:42, right:12, top:16, bottom:35};
+  const plotW = Math.max(1, width-pad.left-pad.right);
+  const plotH = Math.max(1, height-pad.top-pad.bottom);
+  const maxValue = Math.max(1, ...points.map(p => Number(p.count || 0)));
+  const topValue = maxValue <= 5 ? 5 : Math.ceil(maxValue / 5) * 5;
+  ctx.clearRect(0,0,width,height);
+  ctx.font = "10px sans-serif";
+  ctx.textBaseline = "middle";
+  for (let i=0; i<=4; i++) {
+    const val = topValue * (1-i/4);
+    const y = pad.top + plotH*i/4;
+    ctx.strokeStyle = "#eeeeF2";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(width-pad.right,y); ctx.stroke();
+    ctx.fillStyle = "#888894";
+    ctx.textAlign = "right";
+    ctx.fillText(formatNumber(Math.round(val)), pad.left-8, y);
+  }
+  if (!points.length) {
+    ctx.fillStyle="#777985"; ctx.textAlign="center";
+    ctx.fillText("Belum ada data kunjungan", width/2, height/2);
+    return;
+  }
+  const step = points.length > 1 ? plotW/(points.length-1) : 0;
+  const coords = points.map((p,i)=>({
+    x: points.length === 1 ? pad.left+plotW/2 : pad.left+i*step,
+    y: pad.top+plotH-(Number(p.count||0)/topValue)*plotH
+  }));
+  if (coords.length > 1) {
+    ctx.beginPath();
+    coords.forEach((p,i)=> i ? ctx.lineTo(p.x,p.y) : ctx.moveTo(p.x,p.y));
+    ctx.lineTo(coords[coords.length-1].x,pad.top+plotH);
+    ctx.lineTo(coords[0].x,pad.top+plotH);
+    ctx.closePath();
+    ctx.fillStyle="rgba(201,31,44,0.09)";
+    ctx.fill();
+  }
+  ctx.beginPath();
+  coords.forEach((p,i)=> i ? ctx.lineTo(p.x,p.y) : ctx.moveTo(p.x,p.y));
+  ctx.strokeStyle="#c91f2c"; ctx.lineWidth=2.5; ctx.lineJoin="round"; ctx.lineCap="round"; ctx.stroke();
+  coords.forEach(p=>{
+    ctx.beginPath(); ctx.arc(p.x,p.y,3,0,Math.PI*2);
+    ctx.fillStyle="#c91f2c"; ctx.fill();
+    ctx.strokeStyle="#fff"; ctx.lineWidth=1.5; ctx.stroke();
+  });
+  const labelEvery = isYear ? 1 : (range === 30 ? 5 : 1);
+  points.forEach((p,i)=>{
+    if (i % labelEvery !== 0 && i !== points.length-1) return;
+    const date = isYear ? new Date(p.date+"-01T00:00:00") : new Date(p.date+"T00:00:00");
+    const label = isYear
+      ? date.toLocaleDateString("id-ID",{month:"short"})
+      : (range===7 ? date.toLocaleDateString("id-ID",{day:"2-digit",month:"short"}) : date.toLocaleDateString("id-ID",{day:"2-digit",month:"short"}));
+    ctx.fillStyle="#777985"; ctx.textAlign="center"; ctx.textBaseline="top";
+    ctx.fillText(label, coords[i].x, pad.top+plotH+10);
+  });
+}
+
+async function loadVisitorStats() {
+  chartStatus.textContent = "Memuat data kunjungan...";
+  try {
+    const response = await fetch("/api/admin/stats", {
+      method:"GET", credentials:"same-origin", cache:"no-store",
+      headers:{"Accept":"application/json"}
+    });
+    const data = await response.json().catch(()=>({}));
+    if (!response.ok || data.success !== true) {
+      if (response.status === 401 || response.status === 403) { showLogin(); return; }
+      throw new Error(data.error || "Gagal mengambil statistik.");
+    }
+    visitorStats = data;
+    visitorTotalEl.textContent = formatNumber(data.total);
+    visitorTodayEl.textContent = formatNumber(data.today);
+    visitorTodayEl.title = "Kunjungan pada tanggal " + data.todayDate + " WIB";
+    chartStatus.textContent = "Data diperbarui: " + new Date().toLocaleString("id-ID");
+    drawVisitorChart(currentRange);
+  } catch (error) {
+    visitorTotalEl.textContent = "—";
+    visitorTodayEl.textContent = "—";
+    chartStatus.textContent = "Statistik gagal dimuat. Pastikan api/admin/stats.js dan api/visits.js sudah diperbarui, lalu coba muat ulang.";
+    console.error("Statistik pengunjung:", error);
+  }
+}
+document.querySelectorAll(".chart-range").forEach(button => {
+  button.addEventListener("click", () => {
+    currentRange = Number(button.dataset.range);
+    document.querySelectorAll(".chart-range").forEach(b => b.classList.toggle("active", b === button));
+    if (visitorStats) drawVisitorChart(currentRange);
+  });
+});
+window.addEventListener("resize", () => { if (visitorStats) drawVisitorChart(currentRange); });
+
+
+// Riwayat surat: memerlukan endpoint admin terproteksi /api/admin/surat-history.
+const letterTotalEl = document.getElementById("letterTotal");
+const letterUniqueIpsEl = document.getElementById("letterUniqueIps");
+const letterHistoryBody = document.getElementById("letterHistoryBody");
+const letterHistoryStatus = document.getElementById("letterHistoryStatus");
+const historySearchEl = document.getElementById("historySearch");
+let letterHistoryRows = [];
+
+function safeCell(value, fallback = "—") {
+  return typeof value === "string" && value.trim() ? value : fallback;
+}
+
+function renderLetterHistory() {
+  const query = (historySearchEl.value || "").trim().toLowerCase();
+  const filtered = letterHistoryRows.filter(item => {
+    const searchable = [
+      item.ip, item.city, item.region, item.country, item.location,
+      item.timestamp, item.time, item.date
+    ].filter(Boolean).join(" ").toLowerCase();
+    return searchable.includes(query);
+  });
+
+  letterHistoryBody.replaceChildren();
+
+  if (!filtered.length) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 4;
+    cell.className = "history-empty";
+    cell.textContent = letterHistoryRows.length
+      ? "Tidak ada riwayat yang cocok dengan pencarian."
+      : "Belum ada data riwayat surat.";
+    row.appendChild(cell);
+    letterHistoryBody.appendChild(row);
+    return;
+  }
+
+  filtered.forEach(item => {
+    const row = document.createElement("tr");
+    const ipCell = document.createElement("td");
+    const ip = document.createElement("div");
+    ip.className = "history-ip";
+    ip.textContent = safeCell(item.ip);
+    ipCell.appendChild(ip);
+
+    const locationCell = document.createElement("td");
+    const location = document.createElement("div");
+    location.textContent = safeCell(
+      item.location ||
+      [item.city, item.region, item.country].filter(Boolean).join(", ")
+    , "Lokasi tidak tersedia");
+    locationCell.appendChild(location);
+
+    const timeCell = document.createElement("td");
+    timeCell.textContent = safeCell(item.time || item.timestamp || item.date);
+
+    const countCell = document.createElement("td");
+    const badge = document.createElement("span");
+    badge.className = "history-badge";
+    const count = Number(item.count ?? item.total ?? 1);
+    badge.textContent = Number.isSafeInteger(count) && count >= 0
+      ? count.toLocaleString("id-ID") + " surat"
+      : "—";
+    countCell.appendChild(badge);
+
+    row.append(ipCell, locationCell, timeCell, countCell);
+    letterHistoryBody.appendChild(row);
+  });
+}
+
+async function loadLetterHistory() {
+  letterHistoryStatus.textContent = "Memuat riwayat surat...";
+  const refreshButton = document.getElementById("refreshHistory");
+  refreshButton.disabled = true;
+
+  try {
+    const response = await fetch("/api/admin/surat-history", {
+      method: "GET",
+      credentials: "same-origin",
+      cache: "no-store",
+      headers: { "Accept": "application/json" }
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (response.status === 401 || response.status === 403) {
+      showLogin();
+      return;
+    }
+    if (!response.ok || data.success !== true) {
+      throw new Error(data.error || "API riwayat surat belum tersedia.");
+    }
+
+    letterHistoryRows = Array.isArray(data.records) ? data.records : [];
+    letterTotalEl.textContent = formatNumber(data.total);
+    const uniqueIps = new Set(
+      letterHistoryRows.map(item => item.ip).filter(ip => typeof ip === "string" && ip)
+    );
+    letterUniqueIpsEl.textContent = formatNumber(
+      data.uniqueIps ?? uniqueIps.size
+    );
+
+    renderLetterHistory();
+    letterHistoryStatus.textContent =
+      "Data diperbarui: " + new Date().toLocaleString("id-ID") +
+      " · " + letterHistoryRows.length.toLocaleString("id-ID") + " catatan dimuat.";
+  } catch (error) {
+    letterHistoryBody.replaceChildren();
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 4;
+    cell.className = "history-empty";
+    cell.textContent = "Riwayat belum dapat dimuat.";
+    row.appendChild(cell);
+    letterHistoryBody.appendChild(row);
+    letterTotalEl.textContent = "—";
+    letterUniqueIpsEl.textContent = "—";
+    letterHistoryStatus.textContent =
+      "Gagal memuat riwayat. Endpoint /api/admin/surat-history perlu dibuat dan dilindungi sesi admin.";
+    console.error("Riwayat surat:", error);
+  } finally {
+    refreshButton.disabled = false;
+  }
+}
+
+document.getElementById("refreshHistory")
+  .addEventListener("click", loadLetterHistory);
+historySearchEl.addEventListener("input", renderLetterHistory);
+document.getElementById("clearHistorySearch").addEventListener("click", () => {
+  historySearchEl.value = "";
+  renderLetterHistory();
+});
+
+
+
+
+// Navigasi tampilan: setiap menu membuka halaman tersendiri, bukan menumpuk panjang ke bawah.
+const navLinks = Array.from(document.querySelectorAll(".nav-link"));
+const dashboardPage = document.getElementById("page-dashboard");
+const healthPage = document.getElementById("page-health");
+const healthDetailPage = document.getElementById("page-health-detail");
+let currentHealthPage = "health-overview";
+
+function activateNav(link) {
+  navLinks.forEach(item => item.classList.toggle("active", item === link));
+}
+function showPage(page) {
+  [dashboardPage, healthPage, healthDetailPage].forEach(view => view.classList.remove("active"));
+  if (page === "dashboard") dashboardPage.classList.add("active");
+  else if (page === "health") healthPage.classList.add("active");
+  else if (page === "health-detail") healthDetailPage.classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+document.getElementById("healthNavLink").addEventListener("click", event => {
+  event.preventDefault();
+  activateNav(event.currentTarget);
+  showPage("health");
+});
+document.querySelectorAll('.nav-link[href="dashboard.html"]').forEach(link => {
+  link.addEventListener("click", event => {
+    event.preventDefault();
+    activateNav(link);
+    showPage("dashboard");
+  });
+});
+document.getElementById("historyNavLink").addEventListener("click", event => {
+  event.preventDefault();
+  // Riwayat tetap berada di dashboard, lalu digulirkan ke bagiannya.
+  activateNav(event.currentTarget);
+  showPage("dashboard");
+  setTimeout(() => document.getElementById("riwayat-surat").scrollIntoView({behavior:"smooth", block:"start"}), 80);
+});
+document.querySelectorAll('.nav-link[href="index.html"]').forEach(link => {
+  link.addEventListener("click", event => { event.preventDefault(); window.location.href = "/index.html"; });
+});
+
+const healthPages = {
+  "health-overview": {
+    title: "Status Website",
+    subtitle: "Respons halaman dan validasi sesi admin.",
+    note: "Status website diperiksa dari browser admin. Respons berhasil berarti endpoint menjawab, bukan jaminan semua fungsi website sempurna.",
+    checks: [
+      {name:"Halaman dashboard", url:()=>location.href, kind:"page"},
+      {name:"Validasi sesi admin", url:()=>"/api/admin/check", kind:"api"}
+    ]
+  },
+  "health-api": {
+    title: "API & Server",
+    subtitle: "Pemeriksaan endpoint admin yang digunakan dashboard.",
+    note: "Waktu respons dihitung dari browser sampai endpoint menjawab. Status API dapat bergantung pada sesi login yang aktif.",
+    checks: [
+      {name:"API pemeriksaan admin", url:()=>"/api/admin/check", kind:"api"},
+      {name:"API statistik pengunjung", url:()=>"/api/admin/stats", kind:"api"},
+      {name:"API riwayat surat", url:()=>"/api/admin/surat-history", kind:"api"}
+    ]
+  },
+  "health-database": {
+    title: "Database Redis",
+    subtitle: "Pemeriksaan tidak langsung melalui API yang membaca data.",
+    note: "Jika API statistik atau riwayat berhasil mengembalikan data, layanan penyimpanan yang digunakan endpoint tersebut kemungkinan berfungsi. Hasil ini bukan ping Redis langsung.",
+    checks: [
+      {name:"Pembacaan data statistik", url:()=>"/api/admin/stats", kind:"data"},
+      {name:"Pembacaan data riwayat surat", url:()=>"/api/admin/surat-history", kind:"data"}
+    ]
+  },
+  "health-security": {
+    title: "Keamanan Admin",
+    subtitle: "Validasi sesi dan akses endpoint terproteksi.",
+    note: "Pemeriksaan ini terbatas pada respons endpoint yang diuji. Ini bukan audit keamanan menyeluruh atau uji penetrasi.",
+    checks: [
+      {name:"Validasi sesi login", url:()=>"/api/admin/check", kind:"api"},
+      {name:"Akses API statistik", url:()=>"/api/admin/stats", kind:"api"},
+      {name:"Akses API riwayat surat", url:()=>"/api/admin/surat-history", kind:"api"}
+    ]
+  }
+};
+
+function openHealthDetail(pageKey) {
+  currentHealthPage = pageKey;
+  const page = healthPages[pageKey];
+  document.getElementById("healthDetailTitle").textContent = page.title;
+  document.getElementById("healthDetailSubtitle").textContent = page.subtitle;
+  document.getElementById("healthDetailNote").textContent = page.note;
+  showPage("health-detail");
+  runHealthDetailChecks();
+}
+document.querySelectorAll("[data-health-page]").forEach(button => {
+  button.addEventListener("click", () => openHealthDetail(button.dataset.healthPage));
+});
+document.getElementById("healthBack").addEventListener("click", () => showPage("health"));
+document.getElementById("refreshHealthDetail").addEventListener("click", runHealthDetailChecks);
+document.getElementById("runHealthChecks").addEventListener("click", async () => {
+  // Ringkas: buka status website dan lakukan pemeriksaan awal.
+  openHealthDetail("health-overview");
+});
+
+async function runHealthDetailChecks() {
+  const page = healthPages[currentHealthPage];
+  const container = document.getElementById("healthDetailRows");
+  container.replaceChildren();
+  const tasks = page.checks.map(async check => {
+    const row = document.createElement("div");
+    row.className = "health-check-row";
+    row.innerHTML = '<div class="health-check-symbol">◌</div><div class="health-check-copy"><div class="health-check-name"></div><div class="health-check-desc">Sedang memeriksa...</div></div><span class="health-pill wait">Memeriksa</span>';
+    row.querySelector(".health-check-name").textContent = check.name;
+    container.appendChild(row);
+    const started = performance.now();
+    try {
+      const response = await fetch(check.url(), {
+        method: "GET", credentials: "same-origin", cache: "no-store",
+        headers: {"Accept":"application/json"}
+      });
+      const elapsed = Math.round(performance.now() - started);
+      const data = check.kind === "page" ? {} : await response.json().catch(() => ({}));
+      const unauthorized = response.status === 401 || response.status === 403;
+      const ok = response.ok && (check.kind === "page" || data.success === true);
+      const status = ok ? "Normal" : (unauthorized ? "Sesi ditolak" : "Perlu dicek");
+      row.querySelector(".health-check-symbol").textContent = ok ? "✓" : "!";
+      row.querySelector(".health-check-desc").textContent =
+        "HTTP " + response.status + " · " + elapsed + " ms" +
+        (data.error ? " · " + String(data.error).slice(0,140) : "");
+      const pill = row.querySelector(".health-pill");
+      pill.textContent = status;
+      pill.className = "health-pill " + (ok ? "ok" : "bad");
+    } catch (error) {
+      row.querySelector(".health-check-symbol").textContent = "!";
+      row.querySelector(".health-check-desc").textContent = "Tidak mendapat respons. Periksa koneksi atau konfigurasi endpoint.";
+      const pill = row.querySelector(".health-pill");
+      pill.textContent = "Gagal";
+      pill.className = "health-pill bad";
+    }
+  });
+  await Promise.all(tasks);
+  document.getElementById("healthDetailSubtitle").textContent =
+    page.subtitle + " Diperiksa " + new Date().toLocaleString("id-ID") + ".";
+}
+
+checkSession().then(() => { if (!dashboard.hidden) { loadVisitorStats(); loadLetterHistory(); } });
+</script>
+
+</body>
+</html>
