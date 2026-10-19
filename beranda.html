@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#a80000">
-    <title>Beranda - Kalkulator Harga Tayang</title>
+    <title>Beranda Layanan - Aplikasi Utama</title>
 
     <style>
         * {
@@ -40,7 +40,7 @@
         }
 
         /* ------------------------------------------------------------- */
-        /* MENU NAVIGASI DRAWER (SAMA PERSIS DENGAN BUATANMU) */
+        /* MENU NAVIGASI DRAWER TAMU */
         /* ------------------------------------------------------------- */
         .menu-toggle {
             position: fixed;
@@ -158,7 +158,16 @@
             flex-shrink: 0;
         }
 
-        /* TOMBOL ADMIN DI DRAWER BAWAH */
+        .nav-link.login-link {
+            color: #a80000;
+            background: #fff0f0;
+            border: 1px solid #f2dede;
+        }
+
+        .nav-link.login-link:hover {
+            background: #ffe0e0;
+        }
+
         .nav-link.admin-link {
             color: #a80000;
             background: #fff0f0;
@@ -185,7 +194,7 @@
         }
 
         /* ------------------------------------------------------------- */
-        /* HERO HEADER BANNER */
+        /* HERO HEADER BANNER PUBLIK */
         /* ------------------------------------------------------------- */
         .hero-banner {
             position: relative;
@@ -248,13 +257,13 @@
             line-height: 1.4;
         }
 
-        /* TOMBOL MASUK / PROFIL DI BANNER KANAN ATAS */
+        /* TOMBOL LOGIN DI BANNER KANAN ATAS */
         .auth-trigger-btn {
             position: relative;
             z-index: 2;
             background: #ffffff;
             color: #a80000;
-            padding: 10px 18px;
+            padding: 11px 22px;
             border-radius: 25px;
             font-size: 13px;
             font-weight: 700;
@@ -415,6 +424,7 @@
         }
 
         body.dark-mode .nav-link:hover,
+        body.dark-mode .nav-link.login-link,
         body.dark-mode .nav-link.admin-link {
             background: #382020;
             color: #ff7777;
@@ -452,14 +462,14 @@
 
 <div class="nav-overlay" id="navOverlay"></div>
 
-<!-- NAVIGASI DRAWER (DISESUAIKAN PERSIS DENGAN KODE AWALMU) -->
+<!-- NAVIGASI DRAWER KHUSUS PENGUNJUNG UMUM -->
 <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
     <div class="nav-heading">MENU NAVIGASI</div>
 
-    <!-- MENGARAH KE LOGIN-USER.HTML / DASHBOARD -->
-    <a class="nav-link" href="/login-user.html" id="userMenuLink">
-        <span class="nav-icon">👤</span>
-        <span id="userMenuText">Login User</span>
+    <!-- TOMBOL LOGIN USER UTAMA -->
+    <a class="nav-link login-link" href="/login-user.html" id="userMenuLink">
+        <span class="nav-icon">🔑</span>
+        <span id="userMenuText">Masuk / Login Akun</span>
     </a>
 
     <a class="nav-link" href="/gabung-foto.html">
@@ -494,11 +504,11 @@
 
 <div class="container">
 
-    <!-- BANNER ATAS MODERN + PROFIL / LOGIN DI KANAN ATAS -->
+    <!-- BANNER ATAS PUBLIK -->
     <div class="hero-banner">
         <div class="hero-content">
             <span class="hero-badge">PORTAL LAYANAN</span>
-            <h1 id="bannerGreeting">Selamat datang!</h1>
+            <h1 id="bannerGreeting">Selamat Datang!</h1>
             <p>Pilih fitur yang kamu perlukan untuk mulai bekerja secara efisien.</p>
         </div>
 
@@ -638,8 +648,8 @@ darkModeToggle.addEventListener("click", function () {
     tutupMenu();
 });
 
-/* SIKRONISASI STATUS LOGIN (MENYESUAIKAN TAMPILAN BANNER & MENU NAVIGASI) */
-async function cekStatusLogin() {
+/* SIKRONISASI STATUS LOGIN (OPSIONAL: JIKA PENGUNJUNG TERNYATA SUDAH LOGIN) */
+async function cekStatusLoginTamu() {
     try {
         const res = await fetch("/api/user/login?action=check", {
             method: "GET",
@@ -656,7 +666,7 @@ async function cekStatusLogin() {
         const userMenuText = document.getElementById("userMenuText");
         const bannerGreeting = document.getElementById("bannerGreeting");
 
-        // Jika pengunjung ternyata sudah login
+        // Jika ternyata user sudah login sebelumnya
         if (data.authenticated && data.user) {
             if (data.user.name && bannerGreeting) {
                 bannerGreeting.textContent = `Selamat datang, ${data.user.name}!`;
@@ -668,16 +678,16 @@ async function cekStatusLogin() {
             }
 
             if (userMenuLink && userMenuText) {
-                userMenuText.textContent = "Dashboard User";
+                userMenuText.textContent = "Dashboard Saya";
                 userMenuLink.href = "/dashboard-user.html";
             }
         }
     } catch (err) {
-        // Jika offline / gagal, biarkan tampilan default untuk publik
+        // Biarkan tampilan default khusus tamu/publik
     }
 }
 
-cekStatusLogin();
+cekStatusLoginTamu();
 </script>
 
 </body>
