@@ -1000,15 +1000,21 @@ const fieldIds = [
 // Menggunakan tanggal lokal perangkat.
 // =======================================
 
+// Isi tanggal surat otomatis sesuai tanggal hari ini
 function getTodayLocal() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
 
   return `${year}-${month}-${day}`;
 }
 
+// Tanggal otomatis dan tidak bisa diubah
+$('tanggalSurat').value = getTodayLocal();
+$('tanggalSurat').readOnly = true;
+
+  
 // Isi tanggal surat ketika halaman dibuka.
 $('tanggalSurat').value = getTodayLocal();
 
