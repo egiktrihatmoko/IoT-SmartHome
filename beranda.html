@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#a80000">
-    <title>Kalkulator Harga Tayang - Beranda</title>
+    <title>Beranda - Kalkulator Harga Tayang</title>
 
     <style>
-        /* Menggunakan styling dasar yang sama persis dengan dashboard-user.html */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -41,7 +40,7 @@
         }
 
         /* ------------------------------------------------------------- */
-        /* MENU NAVIGASI DRAWER */
+        /* MENU NAVIGASI DRAWER (SAMA PERSIS DENGAN BUATANMU) */
         /* ------------------------------------------------------------- */
         .menu-toggle {
             position: fixed;
@@ -159,10 +158,15 @@
             flex-shrink: 0;
         }
 
-        .nav-link.login-nav-link {
+        /* TOMBOL ADMIN DI DRAWER BAWAH */
+        .nav-link.admin-link {
             color: #a80000;
             background: #fff0f0;
             border: 1px solid #f2dede;
+        }
+
+        .nav-link.admin-link:hover {
+            background: #ffe0e0;
         }
 
         .nav-divider {
@@ -244,7 +248,7 @@
             line-height: 1.4;
         }
 
-        /* TOMBOL MASUK DI KANAN ATAS (PENGGANTI FOTO PROFIL) */
+        /* TOMBOL MASUK / PROFIL DI BANNER KANAN ATAS */
         .auth-trigger-btn {
             position: relative;
             z-index: 2;
@@ -265,7 +269,7 @@
             background: #fff0f0;
         }
 
-        /* SECTION & GRID FITUR UTAMA */
+        /* GRID FITUR UTAMA */
         .section-header {
             margin-bottom: 18px;
         }
@@ -411,7 +415,7 @@
         }
 
         body.dark-mode .nav-link:hover,
-        body.dark-mode .nav-link.login-nav-link {
+        body.dark-mode .nav-link.admin-link {
             background: #382020;
             color: #ff7777;
             border-color: #493030;
@@ -448,18 +452,24 @@
 
 <div class="nav-overlay" id="navOverlay"></div>
 
-<!-- NAVIGASI DRAWER -->
+<!-- NAVIGASI DRAWER (DISESUAIKAN PERSIS DENGAN KODE AWALMU) -->
 <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
-    <div class="nav-heading">MENU UTAMA</div>
+    <div class="nav-heading">MENU NAVIGASI</div>
 
-    <a class="nav-link" href="/">
-        <span class="nav-icon">🧮</span>
-        <span>Kalkulator Harga Tayang</span>
+    <!-- MENGARAH KE LOGIN-USER.HTML / DASHBOARD -->
+    <a class="nav-link" href="/login-user.html" id="userMenuLink">
+        <span class="nav-icon">👤</span>
+        <span id="userMenuText">Login User</span>
     </a>
 
     <a class="nav-link" href="/gabung-foto.html">
         <span class="nav-icon">🖼️</span>
         <span>Ubah Foto ke PDF</span>
+    </a>
+
+    <a class="nav-link" href="/">
+        <span class="nav-icon">🧮</span>
+        <span>Kalkulator Harga Tayang</span>
     </a>
 
     <a class="nav-link" href="/surat-pernyataan.html">
@@ -469,10 +479,10 @@
 
     <div class="nav-divider"></div>
 
-    <!-- TOMBOL LOGIN DI DRAWER -->
-    <a class="nav-link login-nav-link" href="/login-user.html" id="drawerAuthLink">
-        <span class="nav-icon">👤</span>
-        <span>Masuk / Login Akun</span>
+    <!-- LOGIN ADMIN DI PALING BAWAH -->
+    <a class="nav-link admin-link" href="/admin.html">
+        <span class="nav-icon">🔐</span>
+        <span>Login Admin</span>
     </a>
 
     <!-- TOMBOL DARK MODE -->
@@ -484,15 +494,15 @@
 
 <div class="container">
 
-    <!-- BANNER UTAMA PUBLIK -->
+    <!-- BANNER ATAS MODERN + PROFIL / LOGIN DI KANAN ATAS -->
     <div class="hero-banner">
         <div class="hero-content">
             <span class="hero-badge">PORTAL LAYANAN</span>
-            <h1>Selamat Datang!</h1>
-            <p>Gunakan berbagai alat bantu kerja dan kalkulator profesional dengan mudah.</p>
+            <h1 id="bannerGreeting">Selamat datang!</h1>
+            <p>Pilih fitur yang kamu perlukan untuk mulai bekerja secara efisien.</p>
         </div>
 
-        <!-- TOMBOL MASUK DI KANAN ATAS -->
+        <!-- TOMBOL MASUK DI BANNER KANAN ATAS -->
         <a href="/login-user.html" class="auth-trigger-btn" id="headerAuthBtn">
             Masuk / Login
         </a>
@@ -501,18 +511,18 @@
     <!-- FITUR UTAMA -->
     <div class="section-header">
         <div class="section-title">Fitur Utama</div>
-        <div class="section-subtitle">Pilih layanan yang ingin kamu gunakan.</div>
+        <div class="section-subtitle">Semua kebutuhanmu dalam satu tempat.</div>
     </div>
 
     <div class="features-grid">
 
-        <!-- FITUR 1 -->
+        <!-- FITUR 1: KALKULATOR -->
         <a href="/" class="feature-card">
             <div>
                 <div class="card-icon-wrapper">🧮</div>
                 <div class="card-content">
                     <h3>Kalkulator Harga Tayang</h3>
-                    <p>Hitung estimasi dan rincian harga tayang secara otomatis dan cepat.</p>
+                    <p>Hitung harga tayang dengan cepat, terstruktur, dan praktis.</p>
                 </div>
             </div>
             <div class="card-action">
@@ -520,13 +530,13 @@
             </div>
         </a>
 
-        <!-- FITUR 2 -->
+        <!-- FITUR 2: FOTO KE PDF -->
         <a href="/gabung-foto.html" class="feature-card">
             <div>
                 <div class="card-icon-wrapper">🖼️</div>
                 <div class="card-content">
                     <h3>Foto ke PDF</h3>
-                    <p>Gabungkan foto kelengkapan dokumen menjadi file PDF siap kirim.</p>
+                    <p>Gabungkan atau ubah foto dokumen menjadi file PDF siap kirim.</p>
                 </div>
             </div>
             <div class="card-action">
@@ -534,13 +544,13 @@
             </div>
         </a>
 
-        <!-- FITUR 3 -->
+        <!-- FITUR 3: SURAT PERNYATAAN -->
         <a href="/surat-pernyataan.html" class="feature-card">
             <div>
                 <div class="card-icon-wrapper">📄</div>
                 <div class="card-content">
                     <h3>Surat Pernyataan</h3>
-                    <p>Buat dokumen surat pernyataan resmi lengkap dengan tanda tangan otomatis.</p>
+                    <p>Buat surat pernyataan resmi dan tambahkan tanda tangan secara otomatis.</p>
                 </div>
             </div>
             <div class="card-action">
@@ -550,6 +560,7 @@
 
     </div>
 
+    <!-- FOOTER -->
     <div class="footer">
         <p>Credit by <strong>eth production</strong></p>
     </div>
@@ -627,8 +638,8 @@ darkModeToggle.addEventListener("click", function () {
     tutupMenu();
 });
 
-/* CEK APAKAH USER SUDAH LOGIN SEBELUMNYA */
-async function cekStatusLoginTamu() {
+/* SIKRONISASI STATUS LOGIN (MENYESUAIKAN TAMPILAN BANNER & MENU NAVIGASI) */
+async function cekStatusLogin() {
     try {
         const res = await fetch("/api/user/login?action=check", {
             method: "GET",
@@ -641,25 +652,32 @@ async function cekStatusLoginTamu() {
 
         const data = await res.json();
         const headerAuthBtn = document.getElementById("headerAuthBtn");
-        const drawerAuthLink = document.getElementById("drawerAuthLink");
+        const userMenuLink = document.getElementById("userMenuLink");
+        const userMenuText = document.getElementById("userMenuText");
+        const bannerGreeting = document.getElementById("bannerGreeting");
 
-        // Jika user ternyata sudah login, ubah tombol jadi "Buka Dashboard"
+        // Jika pengunjung ternyata sudah login
         if (data.authenticated && data.user) {
+            if (data.user.name && bannerGreeting) {
+                bannerGreeting.textContent = `Selamat datang, ${data.user.name}!`;
+            }
+
             if (headerAuthBtn) {
-                headerAuthBtn.textContent = "Buka Dashboard";
+                headerAuthBtn.textContent = "Dashboard Saya";
                 headerAuthBtn.href = "/dashboard-user.html";
             }
-            if (drawerAuthLink) {
-                drawerAuthLink.innerHTML = `<span class="nav-icon">📊</span><span>Buka Dashboard</span>`;
-                drawerAuthLink.href = "/dashboard-user.html";
+
+            if (userMenuLink && userMenuText) {
+                userMenuText.textContent = "Dashboard User";
+                userMenuLink.href = "/dashboard-user.html";
             }
         }
     } catch (err) {
-        // Biarkan tombol login standar jika gagal/offline
+        // Jika offline / gagal, biarkan tampilan default untuk publik
     }
 }
 
-cekStatusLoginTamu();
+cekStatusLogin();
 </script>
 
 </body>
