@@ -1,4 +1,3 @@
-
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
@@ -125,35 +124,33 @@ function clearUserCookie(res) {
 
 /*
 ==================================================
-API 1: REGISTER / DAFTAR AKUN
-==================================================
-
-Endpoint:
-POST /api/user
-
-Body:
-{
-  "action": "register",
-  "email": "email@example.com",
-  "password": "password123456"
-}
+API 1: REGISTER / DAFTAR AKUN (Diperbarui dengan Name)
 ==================================================
 */
 
 async function registerUser(req, res) {
-  const { email, password } = getBody(req);
+  const { name, email, password } = getBody(req);
 
   if (
+    typeof name !== "string" ||
     typeof email !== "string" ||
     typeof password !== "string"
   ) {
     return sendJson(res, 400, {
       success: false,
-      message: "Email dan password wajib diisi.",
+      message: "Nama, email, dan password wajib diisi.",
     });
   }
 
+  const normalizedName = name.trim();
   const normalizedEmail = email.trim().toLowerCase();
+
+  if (!normalizedName) {
+    return sendJson(res, 400, {
+      success: false,
+      message: "Nama lengkap tidak boleh kosong.",
+    });
+  }
 
   if (
     !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)
@@ -174,8 +171,10 @@ async function registerUser(req, res) {
   const passwordHash = await bcrypt.hash(password, 12);
 
   const account = {
+    name: normalizedName,
     email: normalizedEmail,
     passwordHash,
+    picture: "", // Kosong dulu saat daftar manual, nanti diisi via dashboard
     role: "user",
     createdAt: new Date().toISOString(),
   };
@@ -204,18 +203,7 @@ async function registerUser(req, res) {
 
 /*
 ==================================================
-API 2: LOGIN PENGGUNA
-==================================================
-
-Endpoint:
-POST /api/user
-
-Body:
-{
-  "action": "login",
-  "email": "email@example.com",
-  "password": "password123456"
-}
+API 2: LOGIN PENGGUNA (Menyimpan Name & Picture ke Sesi)
 ==================================================
 */
 
@@ -285,8 +273,11 @@ async function loginUser(req, res) {
   // Membuat token acak untuk sesi login.
   const token = crypto.randomBytes(32).toString("hex");
 
+  // Menyimpan nama dan foto ke dalam data sesi Redis
   const session = {
     email: normalizedEmail,
+    name: account.name || "",
+    picture: account.picture || "",
     role: "user",
     createdAt: new Date().toISOString(),
   };
@@ -304,19 +295,18 @@ async function loginUser(req, res) {
   return sendJson(res, 200, {
     success: true,
     message: "Login berhasil.",
+    user: {
+      name: session.name,
+      email: session.email,
+      picture: session.picture,
+    },
   });
 }
 
 
 /*
 ==================================================
-API 3: CHECK SESSION / CEK LOGIN
-==================================================
-
-Endpoint:
-GET /api/user?action=check
-
-Mengecek apakah pengguna masih memiliki sesi aktif.
+API 3: CHECK SESSION / CEK LOGIN (Mengirim Data User)
 ==================================================
 */
 
@@ -373,11 +363,14 @@ async function checkUserSession(req, res) {
     });
   }
 
+  // Mengembalikan data user lengkap (termasuk nama dan foto) ke frontend/dashboard
   return sendJson(res, 200, {
     success: true,
     authenticated: true,
     user: {
+      name: session.name || "",
       email: session.email,
+      picture: session.picture || "",
       role: session.role,
     },
   });
@@ -387,17 +380,6 @@ async function checkUserSession(req, res) {
 /*
 ==================================================
 API 4: LOGOUT / KELUAR
-==================================================
-
-Endpoint:
-POST /api/user
-
-Body:
-{
-  "action": "logout"
-}
-
-Menghapus sesi Redis dan cookie pengguna.
 ==================================================
 */
 
@@ -424,10 +406,6 @@ async function logoutUser(req, res) {
 ==================================================
 ROUTER UTAMA
 ==================================================
-
-Semua API pengguna diarahkan melalui file ini.
-API admin tidak diubah.
-==================================================
 */
 
 module.exports = async function handler(req, res) {
@@ -437,7 +415,7 @@ module.exports = async function handler(req, res) {
         ? req.query?.action
         : getBody(req).action;
 
-    // Cek sesi hanya menggunakan GET.
+    // Cek sesi menggunakan GET.
     if (action === "check") {
       if (req.method !== "GET") {
         res.setHeader("Allow", "GET");
@@ -478,7 +456,6 @@ module.exports = async function handler(req, res) {
         });
     }
   } catch (error) {
-    // Detail error disimpan di log Vercel, bukan dikirim ke browser.
     console.error("User API error:", error);
 
     return sendJson(res, 500, {
