@@ -26,7 +26,18 @@
             max-width: 900px;
             margin: auto;
         }
+    /* Ubah .feature-card menjadi interaktif */
+        a.feature-card {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
+        body.dark-mode a.feature-card {
+            color: #f1f1f1;
+        }
         /* ------------------------------------------------------------- */
         /* MENU NAVIGASI DRAWER */
         /* ------------------------------------------------------------- */
