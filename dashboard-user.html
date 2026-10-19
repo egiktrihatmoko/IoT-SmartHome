@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#a80000">
-    <title>Dashboard - Aplikasi Utama</title>
+    <title>Dashboard Penyedia - Aplikasi Utama</title>
 
     <style>
         * {
@@ -27,7 +27,6 @@
             margin: auto;
         }
 
-        /* Ubah .feature-card menjadi interaktif */
         a.feature-card {
             text-decoration: none;
             color: inherit;
@@ -119,10 +118,16 @@
             transform: translateX(-105%);
             transition: transform 0.25s ease;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .nav-drawer.show {
             transform: translateX(0);
+        }
+
+        .nav-drawer-content {
+            flex: 1;
         }
 
         .nav-heading {
@@ -145,6 +150,7 @@
             font-size: 14px;
             font-weight: 600;
             transition: 0.2s;
+            cursor: pointer;
         }
 
         .nav-link:hover {
@@ -159,13 +165,14 @@
             flex-shrink: 0;
         }
 
-        .nav-link.admin-link {
-            color: #a80000;
+        .nav-link.logout-link {
+            color: #d31010;
             background: #fff0f0;
             border: 1px solid #f2dede;
+            margin-top: auto;
         }
 
-        .nav-link.admin-link:hover {
+        .nav-link.logout-link:hover {
             background: #ffe0e0;
         }
 
@@ -179,13 +186,12 @@
             width: 100%;
             border: none;
             background: transparent;
-            cursor: pointer;
             text-align: left;
             font-family: inherit;
         }
 
         /* ------------------------------------------------------------- */
-        /* HERO HEADER (GREETING BANNER MODERN + PROFILE KANAN ATAS) */
+        /* HERO HEADER BANNER */
         /* ------------------------------------------------------------- */
         .hero-banner {
             position: relative;
@@ -236,7 +242,7 @@
         }
 
         .hero-banner h1 {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 800;
             letter-spacing: -0.5px;
             margin-bottom: 6px;
@@ -282,9 +288,7 @@
             font-size: 26px;
         }
 
-        /* ------------------------------------------------------------- */
-        /* MODAL POPUP EDIT FOTO PROFIL */
-        /* ------------------------------------------------------------- */
+        /* MODAL POPUP EDIT FOTO PROFIL & AKUN */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -326,14 +330,21 @@
             font-size: 18px;
             font-weight: 700;
             color: #a80000;
+            margin-bottom: 4px;
+        }
+
+        .modal-email {
+            font-size: 12px;
+            color: #777;
             margin-bottom: 15px;
+            word-break: break-all;
         }
 
         .modal-preview-container {
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
-            margin: 0 auto 18px;
+            margin: 0 auto 16px;
             overflow: hidden;
             border: 3px solid #f2dede;
             background: #fff0f0;
@@ -350,7 +361,7 @@
         }
 
         .modal-preview-container .preview-default-icon {
-            font-size: 45px;
+            font-size: 40px;
         }
 
         .modal-btn-group {
@@ -379,14 +390,26 @@
             background: #8a0000;
         }
 
-        .btn-danger-modal {
+        .btn-secondary-modal {
             background: #fff0f0;
             color: #d31010;
             border: 1px solid #fce8e8;
         }
 
-        .btn-danger-modal:hover {
+        .btn-secondary-modal:hover {
             background: #ffe0e0;
+        }
+
+        .btn-logout-modal {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            margin-top: 5px;
+        }
+
+        .btn-logout-modal:hover {
+            background: #fca5a5;
+            color: #7f1d1d;
         }
 
         .btn-close-modal {
@@ -404,9 +427,7 @@
             color: #222;
         }
 
-        /* ------------------------------------------------------------- */
-        /* SECTION & GRID FITUR UTAMA */
-        /* ------------------------------------------------------------- */
+        /* GRID FITUR UTAMA PENYEDIA */
         .section-header {
             margin-bottom: 18px;
         }
@@ -496,9 +517,6 @@
             color: #d31010;
         }
 
-        /* ------------------------------------------------------------- */
-        /* FOOTER */
-        /* ------------------------------------------------------------- */
         .footer {
             text-align: center;
             margin-top: 45px;
@@ -506,9 +524,7 @@
             font-size: 12px;
         }
 
-        /* ------------------------------------------------------------- */
-        /* DARK MODE */
-        /* ------------------------------------------------------------- */
+        /* DARK MODE STYLES */
         body.dark-mode {
             background: #121212;
             color: #f1f1f1;
@@ -540,7 +556,8 @@
         body.dark-mode .section-subtitle,
         body.dark-mode .card-content p,
         body.dark-mode .footer,
-        body.dark-mode .btn-close-modal {
+        body.dark-mode .btn-close-modal,
+        body.dark-mode .modal-email {
             color: #aaa;
         }
 
@@ -560,27 +577,32 @@
             color: #eee;
         }
 
-        body.dark-mode .nav-link:hover,
-        body.dark-mode .nav-link.admin-link {
+        body.dark-mode .nav-link:hover {
+            background: #382020;
+            color: #ff7777;
+        }
+
+        body.dark-mode .nav-link.logout-link,
+        body.dark-mode .btn-secondary-modal {
             background: #382020;
             color: #ff7777;
             border-color: #493030;
+        }
+
+        body.dark-mode .btn-logout-modal {
+            background: #5c1d1d;
+            color: #fca5a5;
+            border-color: #7f1d1d;
         }
 
         body.dark-mode .nav-divider {
             background: #383838;
         }
 
-        body.dark-mode .btn-danger-modal {
-            background: #382020;
-            color: #ff7777;
-            border-color: #493030;
-        }
-
         @media (max-width: 600px) {
             body { padding: 20px 12px 40px; }
             .hero-banner { padding: 25px 20px; border-radius: 18px; }
-            .hero-banner h1 { font-size: 22px; }
+            .hero-banner h1 { font-size: 20px; }
             .profile-trigger { width: 50px; height: 50px; }
             .features-grid { grid-template-columns: 1fr; }
         }
@@ -600,56 +622,52 @@
 
 <!-- NAVIGASI DRAWER -->
 <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
-    <div class="nav-heading">MENU NAVIGASI</div>
+    <div class="nav-drawer-content">
+        <div class="nav-heading">MENU PENYEDIA</div>
 
-    <!-- MENGARAH KE LOGIN-USER.HTML -->
-    <a class="nav-link" href="/login-user.html">
-        <span class="nav-icon">👤</span>
-        <span>Login User</span>
+        <a class="nav-link" href="/gabung-foto.html">
+            <span class="nav-icon">🖼️</span>
+            <span>Ubah Foto ke PDF</span>
+        </a>
+
+        <a class="nav-link" href="/">
+            <span class="nav-icon">🧮</span>
+            <span>Kalkulator Harga Tayang</span>
+        </a>
+
+        <a class="nav-link" href="/surat-pernyataan.html">
+            <span class="nav-icon">📄</span>
+            <span>Buat Surat Pernyataan</span>
+        </a>
+
+        <div class="nav-divider"></div>
+
+        <!-- TOMBOL DARK MODE -->
+        <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" aria-label="Ganti tema tampilan">
+            <span class="nav-icon" id="darkModeIcon">🌙</span>
+            <span id="darkModeText">Dark Mode</span>
+        </button>
+    </div>
+
+    <!-- TOMBOL LOGOUT ATAS/DRAWER BAWAH -->
+    <a class="nav-link logout-link btn-logout-action">
+        <span class="nav-icon">🚪</span>
+        <span>Keluar / Logout</span>
     </a>
-
-    <a class="nav-link" href="/gabung-foto.html">
-        <span class="nav-icon">🖼️</span>
-        <span>Ubah Foto ke PDF</span>
-    </a>
-
-    <a class="nav-link" href="/">
-        <span class="nav-icon">🧮</span>
-        <span>Kalkulator Harga Tayang</span>
-    </a>
-
-    <a class="nav-link" href="/surat-pernyataan.html">
-        <span class="nav-icon">📄</span>
-        <span>Buat Surat Pernyataan</span>
-    </a>
-
-    <div class="nav-divider"></div>
-
-    <!-- LOGIN ADMIN DI PALING BAWAH -->
-    <a class="nav-link admin-link" href="/admin.html">
-        <span class="nav-icon">🔐</span>
-        <span>Login Admin</span>
-    </a>
-
-    <!-- TOMBOL DARK MODE -->
-    <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" aria-label="Ganti tema tampilan">
-        <span class="nav-icon" id="darkModeIcon">🌙</span>
-        <span id="darkModeText">Dark Mode</span>
-    </button>
 </nav>
 
 <div class="container">
 
-    <!-- BANNER ATAS MODERN + PROFIL DI KANAN -->
+    <!-- BANNER KHUSUS PENYEDIA -->
     <div class="hero-banner">
         <div class="hero-content">
-            <span class="hero-badge">DASHBOARD</span>
+            <span class="hero-badge">DASHBOARD PENYEDIA</span>
             <h1 id="greetingTitle">Selamat datang!</h1>
-            <p>Pilih fitur yang kamu perlukan untuk mulai bekerja secara efisien.</p>
+            <p>Kelola kebutuhan penawaran dan dokumen pekerjaanmu di sini.</p>
         </div>
 
         <!-- FOTO PROFIL KANAN ATAS -->
-        <div class="profile-trigger" id="profileTrigger" title="Klik untuk ubah foto profil">
+        <div class="profile-trigger" id="profileTrigger" title="Klik untuk kelola profil">
             <span class="profile-default-icon" id="headerProfileIcon">👤</span>
             <img id="headerProfileImg" src="" alt="Foto Profil" style="display: none;">
         </div>
@@ -658,7 +676,7 @@
     <!-- FITUR UTAMA -->
     <div class="section-header">
         <div class="section-title">Fitur Utama</div>
-        <div class="section-subtitle">Semua kebutuhanmu dalam satu tempat.</div>
+        <div class="section-subtitle">Semua alat bantu kerja penyedia dalam satu tempat.</div>
     </div>
 
     <div class="features-grid">
@@ -669,7 +687,7 @@
                 <div class="card-icon-wrapper">🧮</div>
                 <div class="card-content">
                     <h3>Kalkulator Harga Tayang</h3>
-                    <p>Hitung harga tayang dengan cepat, terstruktur, dan praktis.</p>
+                    <p>Hitung estimasi dan rincian harga tayang secara otomatis dan cepat.</p>
                 </div>
             </div>
             <div class="card-action">
@@ -683,7 +701,7 @@
                 <div class="card-icon-wrapper">🖼️</div>
                 <div class="card-content">
                     <h3>Foto ke PDF</h3>
-                    <p>Gabungkan atau ubah foto dokumen menjadi file PDF siap kirim.</p>
+                    <p>Gabungkan foto kelengkapan dokumen menjadi file PDF siap kirim.</p>
                 </div>
             </div>
             <div class="card-action">
@@ -697,7 +715,7 @@
                 <div class="card-icon-wrapper">📄</div>
                 <div class="card-content">
                     <h3>Surat Pernyataan</h3>
-                    <p>Buat surat pernyataan resmi dan tambahkan tanda tangan secara otomatis.</p>
+                    <p>Buat dokumen surat pernyataan resmi lengkap dengan tanda tangan otomatis.</p>
                 </div>
             </div>
             <div class="card-action">
@@ -707,17 +725,17 @@
 
     </div>
 
-    <!-- FOOTER -->
     <div class="footer">
         <p>Credit by <strong>eth production</strong></p>
     </div>
 </div>
 
-<!-- MODAL EDIT FOTO PROFIL -->
+<!-- MODAL POPUP EDIT PROFIL & LOGOUT -->
 <div class="modal-overlay" id="profileModal">
     <div class="modal-card">
         <button class="btn-close-modal" id="closeModal">&times;</button>
-        <div class="modal-title">Edit Foto Profil</div>
+        <div class="modal-title" id="modalUserName">Akun Penyedia</div>
+        <div class="modal-email" id="modalUserEmail">user@example.com</div>
 
         <div class="modal-preview-container">
             <span class="preview-default-icon" id="modalPreviewIcon">👤</span>
@@ -730,8 +748,11 @@
             <button class="btn-modal btn-primary-modal" onclick="document.getElementById('profileInput').click()">
                 📷 Pilih Foto Baru
             </button>
-            <button class="btn-modal btn-danger-modal" id="btnDeletePhoto">
-                🗑️ Hapus Foto
+            <button class="btn-modal btn-secondary-modal" id="btnDeletePhoto">
+                🗑️ Hapus Foto Profil
+            </button>
+            <button class="btn-modal btn-logout-modal btn-logout-action">
+                🚪 Keluar / Logout
             </button>
         </div>
     </div>
@@ -777,7 +798,9 @@ document.addEventListener("keydown", function (event) {
 });
 
 document.querySelectorAll(".nav-link").forEach(function (link) {
-    link.addEventListener("click", tutupMenu);
+    if (!link.classList.contains("btn-logout-action")) {
+        link.addEventListener("click", tutupMenu);
+    }
 });
 
 /* DARK MODE CONTROLLER */
@@ -813,7 +836,7 @@ darkModeToggle.addEventListener("click", function () {
 });
 
 /* ------------------------------------------------------------- */
-/* FOTO PROFIL & SIKRONISASI DATA DARI BACKEND/REDIS */
+/* MODAL EDIT FOTO PROFIL */
 /* ------------------------------------------------------------- */
 const profileTrigger = document.getElementById("profileTrigger");
 const profileModal = document.getElementById("profileModal");
@@ -825,26 +848,21 @@ const headerProfileImg = document.getElementById("headerProfileImg");
 const headerProfileIcon = document.getElementById("headerProfileIcon");
 const modalPreviewImg = document.getElementById("modalPreviewImg");
 const modalPreviewIcon = document.getElementById("modalPreviewIcon");
+
 const greetingTitle = document.getElementById("greetingTitle");
+const modalUserName = document.getElementById("modalUserName");
+const modalUserEmail = document.getElementById("modalUserEmail");
 
-function bukaModal() {
-    profileModal.classList.add("show");
-}
-
-function tutupModal() {
-    profileModal.classList.remove("show");
-}
+function bukaModal() { profileModal.classList.add("show"); }
+function tutupModal() { profileModal.classList.remove("show"); }
 
 profileTrigger.addEventListener("click", bukaModal);
 closeModal.addEventListener("click", tutupModal);
 
 profileModal.addEventListener("click", function(e) {
-    if (e.target === profileModal) {
-        tutupModal();
-    }
+    if (e.target === profileModal) tutupModal();
 });
 
-// Render Tampilan Foto Profil
 function pasangFotoProfil(photoUrl) {
     if (photoUrl) {
         headerProfileImg.src = photoUrl;
@@ -863,7 +881,9 @@ function pasangFotoProfil(photoUrl) {
     }
 }
 
-// Cek Sesi Login User ke Backend & Redis saat Dashboard Dibuka
+/* ------------------------------------------------------------- */
+/* VERIFIKASI SESI PENYEDIA VIA REDIS BACKEND */
+/* ------------------------------------------------------------- */
 async function muatDataUser() {
     try {
         const res = await fetch("/api/user/login?action=check", {
@@ -886,9 +906,13 @@ async function muatDataUser() {
             return;
         }
 
-        // Tampilkan Nama Lengkap yang diambil dari Redis/Sesi
-        if (greetingTitle && data.user.name) {
-            greetingTitle.textContent = `Selamat datang, ${data.user.name}!`;
+        // TAMPILKAN NAMA & EMAIL DARI BACKEND JIKA BERHASIL LOGIN
+        if (data.user.name) {
+            if (greetingTitle) greetingTitle.textContent = `Selamat datang, ${data.user.name}!`;
+            if (modalUserName) modalUserName.textContent = data.user.name;
+        }
+        if (data.user.email && modalUserEmail) {
+            modalUserEmail.textContent = data.user.email;
         }
 
         // Ambil Foto dari Redis, atau fallback ke localStorage jika pernah upload manual
@@ -901,7 +925,7 @@ async function muatDataUser() {
     }
 }
 
-// Proses Upload Foto Baru (Lokal)
+/* UPLOAD FOTO PROFIL (LOKAL) */
 profileInput.addEventListener("change", function() {
     const file = this.files[0];
     if (file) {
@@ -920,12 +944,35 @@ profileInput.addEventListener("change", function() {
     }
 });
 
-// Hapus Foto Profil
+/* HAPUS FOTO PROFIL */
 btnDeletePhoto.addEventListener("click", function() {
     localStorage.removeItem("userProfilePhoto");
     profileInput.value = "";
     pasangFotoProfil("");
     tutupModal();
+});
+
+/* ------------------------------------------------------------- */
+/* FUNGSI LOGOUT PENYEDIA */
+/* ------------------------------------------------------------- */
+async function lakukanLogout() {
+    try {
+        await fetch("/api/user/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "logout" })
+        });
+    } catch (e) {
+        console.warn("Gagal request logout di server.");
+    } finally {
+        localStorage.removeItem("userProfilePhoto");
+        window.location.replace("/login-user.html");
+    }
+}
+
+// Pasang handler event ke semua tombol logout (di Drawer & Modal Pop-up)
+document.querySelectorAll(".btn-logout-action").forEach(btn => {
+    btn.addEventListener("click", lakukanLogout);
 });
 
 // Jalankan pemeriksaan sesi saat pertama kali halaman dimuat
