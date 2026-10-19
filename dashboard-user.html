@@ -185,7 +185,7 @@
         }
 
         /* ------------------------------------------------------------- */
-        /* HERO HEADER (GREETING BANNER MODERN) */
+        /* HERO HEADER (GREETING BANNER MODERN + PROFILE KANAN ATAS) */
         /* ------------------------------------------------------------- */
         .hero-banner {
             position: relative;
@@ -197,6 +197,10 @@
             margin-bottom: 30px;
             margin-top: 15px;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
         }
 
         .hero-banner::after {
@@ -209,6 +213,11 @@
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.08);
             pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
         }
 
         .hero-badge {
@@ -237,6 +246,162 @@
             font-size: 14px;
             color: rgba(255, 255, 255, 0.88);
             line-height: 1.4;
+        }
+
+        /* FOTO PROFIL KANAN ATAS */
+        .profile-trigger {
+            position: relative;
+            z-index: 2;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-trigger:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-trigger img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-trigger .profile-default-icon {
+            font-size: 26px;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* MODAL POPUP EDIT FOTO PROFIL */
+        /* ------------------------------------------------------------- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.25s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 380px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.25s ease;
+        }
+
+        .modal-overlay.show .modal-card {
+            transform: translateY(0);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #a80000;
+            margin-bottom: 15px;
+        }
+
+        .modal-preview-container {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 18px;
+            overflow: hidden;
+            border: 3px solid #f2dede;
+            background: #fff0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .modal-preview-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-preview-container .preview-default-icon {
+            font-size: 45px;
+        }
+
+        .modal-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-modal {
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-primary-modal {
+            background: #a80000;
+            color: white;
+        }
+
+        .btn-primary-modal:hover {
+            background: #8a0000;
+        }
+
+        .btn-danger-modal {
+            background: #fff0f0;
+            color: #d31010;
+            border: 1px solid #fce8e8;
+        }
+
+        .btn-danger-modal:hover {
+            background: #ffe0e0;
+        }
+
+        .btn-close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            color: #888;
+            cursor: pointer;
+        }
+
+        .btn-close-modal:hover {
+            color: #222;
         }
 
         /* ------------------------------------------------------------- */
@@ -350,7 +515,8 @@
         }
 
         body.dark-mode .nav-drawer,
-        body.dark-mode .feature-card {
+        body.dark-mode .feature-card,
+        body.dark-mode .modal-card {
             background: #1e1e1e;
             border-color: #383838;
         }
@@ -362,7 +528,8 @@
 
         body.dark-mode .section-title,
         body.dark-mode .nav-heading,
-        body.dark-mode .card-action {
+        body.dark-mode .card-action,
+        body.dark-mode .modal-title {
             color: #ff6666;
         }
 
@@ -372,11 +539,13 @@
 
         body.dark-mode .section-subtitle,
         body.dark-mode .card-content p,
-        body.dark-mode .footer {
+        body.dark-mode .footer,
+        body.dark-mode .btn-close-modal {
             color: #aaa;
         }
 
-        body.dark-mode .card-icon-wrapper {
+        body.dark-mode .card-icon-wrapper,
+        body.dark-mode .modal-preview-container {
             background: #2d1a1a;
             border-color: #493030;
             color: #ff7777;
@@ -402,10 +571,17 @@
             background: #383838;
         }
 
+        body.dark-mode .btn-danger-modal {
+            background: #382020;
+            color: #ff7777;
+            border-color: #493030;
+        }
+
         @media (max-width: 600px) {
             body { padding: 20px 12px 40px; }
             .hero-banner { padding: 25px 20px; border-radius: 18px; }
-            .hero-banner h1 { font-size: 24px; }
+            .hero-banner h1 { font-size: 22px; }
+            .profile-trigger { width: 50px; height: 50px; }
             .features-grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -464,11 +640,19 @@
 
 <div class="container">
 
-    <!-- BANNER ATAS MODERN -->
+    <!-- BANNER ATAS MODERN + PROFIL DI KANAN -->
     <div class="hero-banner">
-        <span class="hero-badge">DASHBOARD</span>
-        <h1>Selamat datang!</h1>
-        <p>Pilih fitur yang kamu perlukan untuk mulai bekerja secara efisien.</p>
+        <div class="hero-content">
+            <span class="hero-badge">DASHBOARD</span>
+            <h1>Selamat datang!</h1>
+            <p>Pilih fitur yang kamu perlukan untuk mulai bekerja secara efisien.</p>
+        </div>
+
+        <!-- FOTO PROFIL KANAN ATAS -->
+        <div class="profile-trigger" id="profileTrigger" title="Klik untuk ubah foto profil">
+            <span class="profile-default-icon" id="headerProfileIcon">👤</span>
+            <img id="headerProfileImg" src="" alt="Foto Profil" style="display: none;">
+        </div>
     </div>
 
     <!-- FITUR UTAMA -->
@@ -529,6 +713,30 @@
     </div>
 </div>
 
+<!-- MODAL EDIT FOTO PROFIL -->
+<div class="modal-overlay" id="profileModal">
+    <div class="modal-card">
+        <button class="btn-close-modal" id="closeModal">&times;</button>
+        <div class="modal-title">Edit Foto Profil</div>
+
+        <div class="modal-preview-container">
+            <span class="preview-default-icon" id="modalPreviewIcon">👤</span>
+            <img id="modalPreviewImg" src="" alt="Preview Foto" style="display: none;">
+        </div>
+
+        <input type="file" id="profileInput" accept="image/*" style="display: none;">
+
+        <div class="modal-btn-group">
+            <button class="btn-modal btn-primary-modal" onclick="document.getElementById('profileInput').click()">
+                📷 Pilih Foto Baru
+            </button>
+            <button class="btn-modal btn-danger-modal" id="btnDeletePhoto">
+                🗑️ Hapus Foto
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
 /* SCRIPT NAVIGASI DRAWER & DARK MODE */
 const menuToggle = document.getElementById("menuToggle");
@@ -564,6 +772,7 @@ navOverlay.addEventListener("click", tutupMenu);
 document.addEventListener("keydown", function (event) {
     if (event.key === "Escape") {
         tutupMenu();
+        tutupModal();
     }
 });
 
@@ -602,6 +811,86 @@ darkModeToggle.addEventListener("click", function () {
     aturDarkMode(aktif);
     tutupMenu();
 });
+
+/* ------------------------------------------------------------- */
+/* FOTO PROFIL CONTROLLER (DENGAN LOCALSTORAGE) */
+/* ------------------------------------------------------------- */
+const profileTrigger = document.getElementById("profileTrigger");
+const profileModal = document.getElementById("profileModal");
+const closeModal = document.getElementById("closeModal");
+const profileInput = document.getElementById("profileInput");
+const btnDeletePhoto = document.getElementById("btnDeletePhoto");
+
+const headerProfileImg = document.getElementById("headerProfileImg");
+const headerProfileIcon = document.getElementById("headerProfileIcon");
+const modalPreviewImg = document.getElementById("modalPreviewImg");
+const modalPreviewIcon = document.getElementById("modalPreviewIcon");
+
+function bukaModal() {
+    profileModal.classList.add("show");
+}
+
+function tutupModal() {
+    profileModal.classList.remove("show");
+}
+
+profileTrigger.addEventListener("click", bukaModal);
+closeModal.addEventListener("click", tutupModal);
+
+profileModal.addEventListener("click", function(e) {
+    if (e.target === profileModal) {
+        tutupModal();
+    }
+});
+
+// Tampilkan foto profil dari localStorage saat pertama kali dimuat
+function muatFotoProfil() {
+    const savedPhoto = localStorage.getItem("userProfilePhoto");
+    if (savedPhoto) {
+        headerProfileImg.src = savedPhoto;
+        headerProfileImg.style.display = "block";
+        headerProfileIcon.style.display = "none";
+
+        modalPreviewImg.src = savedPhoto;
+        modalPreviewImg.style.display = "block";
+        modalPreviewIcon.style.display = "none";
+    } else {
+        headerProfileImg.style.display = "none";
+        headerProfileIcon.style.display = "block";
+
+        modalPreviewImg.style.display = "none";
+        modalPreviewIcon.style.display = "block";
+    }
+}
+
+// Proses Upload Foto Baru
+profileInput.addEventListener("change", function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64Image = e.target.result;
+            try {
+                localStorage.setItem("userProfilePhoto", base64Image);
+                muatFotoProfil();
+                tutupModal();
+            } catch (err) {
+                alert("Ukuran gambar terlalu besar, silakan pilih gambar yang lebih kecil.");
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Hapus Foto Profil
+btnDeletePhoto.addEventListener("click", function() {
+    localStorage.removeItem("userProfilePhoto");
+    profileInput.value = "";
+    muatFotoProfil();
+    tutupModal();
+});
+
+muatFotoProfil();
 </script>
 
 </body>
