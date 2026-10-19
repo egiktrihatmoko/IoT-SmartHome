@@ -124,7 +124,7 @@ function clearUserCookie(res) {
 
 /*
 ==================================================
-API 1: REGISTER / DAFTAR AKUN (Diperbarui dengan Name)
+API 1: REGISTER / DAFTAR AKUN
 ==================================================
 */
 
@@ -152,9 +152,7 @@ async function registerUser(req, res) {
     });
   }
 
-  if (
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)
-  ) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
     return sendJson(res, 400, {
       success: false,
       message: "Format email tidak valid.",
@@ -174,7 +172,7 @@ async function registerUser(req, res) {
     name: normalizedName,
     email: normalizedEmail,
     passwordHash,
-    picture: "", // Kosong dulu saat daftar manual, nanti diisi via dashboard
+    picture: "",
     role: "user",
     createdAt: new Date().toISOString(),
   };
@@ -210,10 +208,7 @@ API 2: LOGIN PENGGUNA (Menyimpan Name & Picture ke Sesi)
 async function loginUser(req, res) {
   const { email, password } = getBody(req);
 
-  if (
-    typeof email !== "string" ||
-    typeof password !== "string"
-  ) {
+  if (typeof email !== "string" || typeof password !== "string") {
     return sendJson(res, 400, {
       success: false,
       message: "Email dan password wajib diisi.",
@@ -248,20 +243,14 @@ async function loginUser(req, res) {
     });
   }
 
-  if (
-    account.role !== "user" ||
-    !account.passwordHash
-  ) {
+  if (account.role !== "user" || !account.passwordHash) {
     return sendJson(res, 401, {
       success: false,
       message: "Akun pengguna tidak valid.",
     });
   }
 
-  const passwordMatch = await bcrypt.compare(
-    password,
-    account.passwordHash
-  );
+  const passwordMatch = await bcrypt.compare(password, account.passwordHash);
 
   if (!passwordMatch) {
     return sendJson(res, 401, {
@@ -273,7 +262,7 @@ async function loginUser(req, res) {
   // Membuat token acak untuk sesi login.
   const token = crypto.randomBytes(32).toString("hex");
 
-  // Menyimpan nama dan foto ke dalam data sesi Redis
+  // Menyimpan nama lengkap dan foto ke dalam sesi Redis
   const session = {
     email: normalizedEmail,
     name: account.name || "",
@@ -306,7 +295,7 @@ async function loginUser(req, res) {
 
 /*
 ==================================================
-API 3: CHECK SESSION / CEK LOGIN (Mengirim Data User)
+API 3: CHECK SESSION / CEK LOGIN
 ==================================================
 */
 
@@ -363,7 +352,7 @@ async function checkUserSession(req, res) {
     });
   }
 
-  // Mengembalikan data user lengkap (termasuk nama dan foto) ke frontend/dashboard
+  // Mengembalikan data user lengkap ke frontend
   return sendJson(res, 200, {
     success: true,
     authenticated: true,
