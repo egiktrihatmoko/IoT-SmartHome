@@ -1,316 +1,251 @@
 
 const crypto = require("crypto");
-const bcrypt = require("bcryptjs");
+
+const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL;
+const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+const SESSION_DURATION = 86400;
+
+async function redisCommand(...command) {
+  if (!REDIS_URL || !REDIS_TOKEN) {
+    throw new Error("Konfigurasi Redis belum tersedia.");
+  }
+
+  const response = await fetch(REDIS_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${REDIS_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(command),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok || data.error) {
+    throw new Error("Perintah Redis gagal.");
+  }
+
+  return data.result;
+}
+
+function getCookie(req, name) {
+  const cookies = (req.headers.cookie || "").split(";");
+
+  const item = cookies
+    .map((cookie) => cookie.trim())
+    .find((cookie) => cookie.startsWith(`${name}=`));
+
+  return item ? item.substring(name.length + 1) : null;
+}
+
+function parseAccount(value) {
+  if (!value) return null;
+
+  return typeof value === "string" ? JSON.parse(value) : value;
+}
+
+function clearStateCookie() {
+  return [
+    "google_auth_state=",
+    "Path=/api/admin/google",
+    "HttpOnly",
+    "Secure",
+    "SameSite=Lax",
+    "Max-Age=0",
+  ].join("; ");
+}
+
+function redirectError(res, message) {
+  res.setHeader("Set-Cookie", clearStateCookie());
+
+  return res.redirect(
+    302,
+    `/login.html?error=${encodeURIComponent(message)}`
+  );
+}
 
 module.exports = async function handler(req, res) {
-    res.setHeader("Cache-Control", "no-store");
+  res.setHeader("Cache-Control", "no-store");
 
-    function redirectError(type) {
-        return res.redirect(
-            302,
-            `/login.html?error=${encodeURIComponent(type)}`
-        );
+  if (req.method !== "GET") {
+    res.setHeader("Allow", "GET");
+    return res.status(405).send("Metode tidak diizinkan.");
+  }
+
+  try {
+    const { code, state, error } = req.query || {};
+
+    if (error) {
+      return redirectError(res, "google_cancelled");
     }
 
-    if (req.method !== "GET") {
-        res.setHeader("Allow", "GET");
-        return res.status(405).send(
-            "Method tidak diizinkan."
-        );
+    const savedState = getCookie(req, "google_auth_state");
+
+    if (
+      typeof state !== "string" ||
+      typeof savedState !== "string" ||
+      !/^[a-f0-9]{64}$/.test(state) ||
+      !/^[a-f0-9]{64}$/.test(savedState)
+    ) {
+      return redirectError(res, "invalid_google_state");
+    }
+
+    const stateMatches = crypto.timingSafeEqual(
+      Buffer.from(state, "hex"),
+      Buffer.from(savedState, "hex")
+    );
+
+    if (!stateMatches || typeof code !== "string" || !code) {
+      return redirectError(res, "invalid_google_state");
     }
 
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-    const redirectUri =
-        process.env.GOOGLE_USER_REDIRECT_URI;
-    const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
-    const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+    const redirectUri = process.env.GOOGLE_USER_REDIRECT_URI;
 
-    if (
-        !clientId ||
-        !clientSecret ||
-        !redirectUri ||
-        !redisUrl ||
-        !redisToken
-    ) {
-        console.error("USER_GOOGLE_CALLBACK_CONFIG_MISSING");
-
-        return res.status(500).send(
-            "Konfigurasi login Google user belum lengkap."
-        );
+    if (!clientId || !clientSecret || !redirectUri) {
+      throw new Error("Konfigurasi Google OAuth belum lengkap.");
     }
 
-    const cookieHeader = req.headers.cookie || "";
-
-    const stateMatch = cookieHeader.match(
-        /(?:^|;\s*)google_user_oauth_state=([a-f0-9]{64})(?:;|$)/
+    // Tukar authorization code dengan token Google.
+    const tokenResponse = await fetch(
+      "https://oauth2.googleapis.com/token",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          code,
+          client_id: clientId,
+          client_secret: clientSecret,
+          redirect_uri: redirectUri,
+          grant_type: "authorization_code",
+        }),
+      }
     );
 
-    const returnedState =
-        typeof req.query.state === "string"
-            ? req.query.state
-            : "";
+    const tokenData = await tokenResponse.json();
 
-    const clearStateCookie =
-        "google_user_oauth_state=; Path=/api/admin/google; HttpOnly; Secure; SameSite=Lax; Max-Age=0";
-
-    const normalizedRedisUrl = redisUrl.replace(/\/+$/, "");
-
-    async function redisCommand(command) {
-        const response = await fetch(normalizedRedisUrl, {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${redisToken}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(command),
-            cache: "no-store"
-        });
-
-        const data = await response.json();
-
-        if (!response.ok || data.error) {
-            throw new Error("Operasi Redis gagal");
-        }
-
-        return data.result;
+    if (!tokenResponse.ok || !tokenData.access_token) {
+      return redirectError(res, "google_token_failed");
     }
 
-    try {
-        // 1. Validasi OAuth state.
-        if (!stateMatch || !returnedState) {
-            res.setHeader("Set-Cookie", clearStateCookie);
-            return redirectError("google_login_failed");
-        }
+    // Ambil profil Google.
+    const profileResponse = await fetch(
+      "https://openidconnect.googleapis.com/v1/userinfo",
+      {
+        headers: {
+          Authorization: `Bearer ${tokenData.access_token}`,
+        },
+      }
+    );
 
-        const expectedState = Buffer.from(stateMatch[1]);
-        const actualState = Buffer.from(returnedState);
+    const profile = await profileResponse.json();
 
-        if (
-            expectedState.length !== actualState.length ||
-            !crypto.timingSafeEqual(
-                expectedState,
-                actualState
-            )
-        ) {
-            res.setHeader("Set-Cookie", clearStateCookie);
-            return redirectError("google_login_failed");
-        }
-
-        res.setHeader("Set-Cookie", clearStateCookie);
-
-        // 2. Validasi respons Google.
-        if (
-            req.query.error ||
-            typeof req.query.code !== "string"
-        ) {
-            return redirectError("google_login_failed");
-        }
-
-        // 3. Tukarkan authorization code dengan token.
-        const tokenResponse = await fetch(
-            "https://oauth2.googleapis.com/token",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type":
-                        "application/x-www-form-urlencoded"
-                },
-                body: new URLSearchParams({
-                    code: req.query.code,
-                    client_id: clientId,
-                    client_secret: clientSecret,
-                    redirect_uri: redirectUri,
-                    grant_type: "authorization_code"
-                }),
-                cache: "no-store"
-            }
-        );
-
-        const tokenData = await tokenResponse.json();
-
-        if (
-            !tokenResponse.ok ||
-            typeof tokenData.access_token !== "string"
-        ) {
-            throw new Error("Google token exchange gagal");
-        }
-
-        // 4. Ambil profil Google.
-        const profileResponse = await fetch(
-            "https://openidconnect.googleapis.com/v1/userinfo",
-            {
-                headers: {
-                    Authorization:
-                        `Bearer ${tokenData.access_token}`
-                },
-                cache: "no-store"
-            }
-        );
-
-        const profile = await profileResponse.json();
-
-        if (
-            !profileResponse.ok ||
-            typeof profile.email !== "string" ||
-            profile.email_verified !== true ||
-            typeof profile.sub !== "string"
-        ) {
-            throw new Error("Profil Google tidak valid");
-        }
-
-        const email = profile.email.trim().toLowerCase();
-
-        if (!email) {
-            throw new Error("Email Google kosong");
-        }
-
-        const nama =
-            typeof profile.name === "string" &&
-            profile.name.trim()
-                ? profile.name.trim()
-                : email.split("@")[0];
-
-        const foto =
-            typeof profile.picture === "string" &&
-            /^https:\/\//i.test(profile.picture)
-                ? profile.picture
-                : null;
-
-        // 5. Cari akun user di Redis.
-        // Sesuaikan prefix dengan API registrasi user kamu.
-        const userKey = `user:${email}`;
-
-        const existingData = await redisCommand([
-            "GET",
-            userKey
-        ]);
-
-        let user;
-
-        if (existingData) {
-            try {
-                user = JSON.parse(existingData);
-            } catch {
-                throw new Error("Data akun Redis tidak valid");
-            }
-
-            if (
-                !user ||
-                typeof user !== "object" ||
-                Array.isArray(user) ||
-                (
-                    typeof user.email === "string" &&
-                    user.email.trim().toLowerCase() !== email
-                )
-            ) {
-                throw new Error("Data akun tidak cocok");
-            }
-
-            // Jangan izinkan akun admin masuk lewat callback user.
-            if (user.role === "admin") {
-                return redirectError("account_conflict");
-            }
-
-            // Tolak jika akun sudah terhubung ke Google berbeda.
-            if (
-                user.googleSub &&
-                user.googleSub !== profile.sub
-            ) {
-                return redirectError("account_conflict");
-            }
-
-            user.email = email;
-            user.nama = nama;
-            user.role = "user";
-            user.googleSub = profile.sub;
-            user.authProvider = "google";
-
-            if (foto) {
-                user.foto = foto;
-                user.picture = foto;
-            } else {
-                user.foto = user.foto || null;
-                user.picture = user.picture || user.foto;
-            }
-
-            // Jangan mengubah password akun lama.
-            if (typeof user.passwordHash !== "string") {
-                user.passwordHash = await bcrypt.hash(
-                    crypto.randomBytes(48).toString("hex"),
-                    12
-                );
-            }
-
-            user.updatedAt = new Date().toISOString();
-
-        } else {
-            // 6. Buat akun user baru.
-            const randomPassword =
-                crypto.randomBytes(48).toString("hex");
-
-            const passwordHash = await bcrypt.hash(
-                randomPassword,
-                12
-            );
-
-            user = {
-                email,
-                nama,
-                foto,
-                picture: foto,
-                passwordHash,
-                role: "user",
-                googleSub: profile.sub,
-                authProvider: "google",
-                createdAt: new Date().toISOString()
-            };
-        }
-
-        // 7. Simpan akun ke Redis.
-        await redisCommand([
-            "SET",
-            userKey,
-            JSON.stringify(user)
-        ]);
-
-        // 8. Buat sesi user selama 24 jam.
-        const sessionToken = crypto
-            .randomBytes(32)
-            .toString("hex");
-
-        const session = JSON.stringify({
-            email,
-            role: "user",
-            createdAt: new Date().toISOString()
-        });
-
-        await redisCommand([
-            "SET",
-            `user_session:${sessionToken}`,
-            session,
-            "EX",
-            "86400"
-        ]);
-
-        // 9. Pasang cookie sesi khusus user.
-        res.setHeader("Set-Cookie", [
-            clearStateCookie,
-            `user_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`
-        ]);
-
-        // 10. Arahkan ke dashboard user.
-        return res.redirect(
-            302,
-            "/dashboard-user.html"
-        );
-
-    } catch (error) {
-        console.error(
-            "USER_GOOGLE_CALLBACK_ERROR:",
-            error.message
-        );
-
-        return redirectError("google_login_failed");
+    if (
+      !profileResponse.ok ||
+      profile.email_verified !== true ||
+      typeof profile.email !== "string" ||
+      typeof profile.sub !== "string"
+    ) {
+      return redirectError(res, "google_profile_invalid");
     }
+
+    const email = profile.email.trim().toLowerCase();
+    const name =
+      typeof profile.name === "string" && profile.name.trim()
+        ? profile.name.trim()
+        : email.split("@")[0];
+
+    const picture =
+      typeof profile.picture === "string" &&
+      profile.picture.startsWith("https://")
+        ? profile.picture
+        : "";
+
+    // Gunakan key akun yang sama dengan API register/login.
+    const accountKey = `user_account:${email}`;
+    const savedAccount = await redisCommand("GET", accountKey);
+
+    let account;
+
+    if (savedAccount) {
+      try {
+        account = parseAccount(savedAccount);
+      } catch {
+        return redirectError(res, "account_data_invalid");
+      }
+
+      // Jangan mengizinkan akun dengan role selain user.
+      if (!account || account.role !== "user") {
+        return redirectError(res, "account_not_allowed");
+      }
+
+      // Jangan menimpa kredensial login email/password.
+      account.name = name || account.name || "";
+      account.picture = picture || account.picture || "";
+      account.googleSub = profile.sub;
+      account.updatedAt = new Date().toISOString();
+    } else {
+      // Buat akun baru bagi pengguna Google yang belum terdaftar.
+      account = {
+        name,
+        email,
+        passwordHash: "",
+        picture,
+        role: "user",
+        googleSub: profile.sub,
+        createdAt: new Date().toISOString(),
+      };
+    }
+
+    await redisCommand(
+      "SET",
+      accountKey,
+      JSON.stringify(account)
+    );
+
+    // Buat sesi dengan format yang dipakai API login kamu.
+    const sessionToken = crypto.randomBytes(32).toString("hex");
+
+    const session = {
+      email,
+      name: account.name || name,
+      picture: account.picture || "",
+      role: "user",
+      createdAt: new Date().toISOString(),
+    };
+
+    await redisCommand(
+      "SET",
+      `user_session:${sessionToken}`,
+      JSON.stringify(session),
+      "EX",
+      SESSION_DURATION
+    );
+
+    res.setHeader("Set-Cookie", [
+      clearStateCookie(),
+      [
+        `user_session=${sessionToken}`,
+        "Path=/",
+        "HttpOnly",
+        "Secure",
+        "SameSite=Lax",
+        `Max-Age=${SESSION_DURATION}`,
+      ].join("; "),
+    ]);
+
+    return res.redirect(302, "/gabung-foto.html");
+  } catch (error) {
+    console.error("Google user callback error:", error);
+
+    res.setHeader("Set-Cookie", clearStateCookie());
+
+    return res.redirect(
+      302,
+      "/login.html?error=google_login_failed"
+    );
+  }
 };
