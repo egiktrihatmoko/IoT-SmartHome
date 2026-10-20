@@ -875,6 +875,13 @@ body.dark-mode .mobile-header {
                 <span>Login User</span>
             </a>
         </li>
+        <li class="sidebar-menu-item" id="sidebarDashboardItem" style="display: none;">
+            <a href="/dashboard-user.html">
+                <span class="menu-icon">📊</span>
+                <span>Dashboard Saya</span>
+            </a>
+        </li>
+
         <li class="sidebar-menu-item">
             <a href="/beranda.html">
                 <span class="menu-icon">🏠</span>
@@ -910,8 +917,8 @@ body.dark-mode .mobile-header {
             </button>
         </li>
 
-        <!-- TOMBOL LOGIN ADMIN DI BAWAH DARK MODE -->
-        <li class="sidebar-menu-item">
+        <!-- TOMBOL LOGIN ADMIN (DIHILANGKAN JIKA SUDAH LOGIN USER) -->
+        <li class="sidebar-menu-item" id="sidebarAdminItem">
             <a href="/admin.html">
                 <span class="menu-icon">🔑</span>
                 <span>Login Admin</span>
@@ -962,7 +969,8 @@ body.dark-mode .mobile-header {
             <span id="darkModeText">Dark Mode</span>
         </button>
 
-        <a class="nav-link admin-link" href="/admin.html" style="margin-top: 5px;">
+        <!-- TOMBOL LOGIN ADMIN MOBILE (DIHILANGKAN JIKA SUDAH LOGIN USER) -->
+        <a class="nav-link admin-link" href="/admin.html" id="mobileAdminMenu" style="margin-top: 5px;">
             <span class="nav-icon">🔑</span>
             <span>Login Admin</span>
         </a>
@@ -1424,19 +1432,24 @@ body.dark-mode .mobile-header {
 
               if (sidebarUserTrigger) sidebarUserTrigger.style.display = "flex";
 
+              // Sembunyikan tombol Login User & Login Admin jika sudah login
               const sidebarAuthItem = document.getElementById("sidebarAuthItem");
+              const sidebarAdminItem = document.getElementById("sidebarAdminItem");
               const sidebarDashboardItem = document.getElementById("sidebarDashboardItem");
               const sidebarLogoutItem = document.getElementById("sidebarLogoutItem");
 
               if (sidebarAuthItem) sidebarAuthItem.style.display = "none";
+              if (sidebarAdminItem) sidebarAdminItem.style.display = "none";
               if (sidebarDashboardItem) sidebarDashboardItem.style.display = "block";
               if (sidebarLogoutItem) sidebarLogoutItem.style.display = "block";
 
               const mobileAuthMenu = document.getElementById("mobileAuthMenu");
+              const mobileAdminMenu = document.getElementById("mobileAdminMenu");
               const mobileDashboardMenu = document.getElementById("mobileDashboardMenu");
               const mobileLogoutBtn = document.getElementById("mobileLogoutBtn");
 
               if (mobileAuthMenu) mobileAuthMenu.style.display = "none";
+              if (mobileAdminMenu) mobileAdminMenu.style.display = "none";
               if (mobileDashboardMenu) mobileDashboardMenu.style.display = "flex";
               if (mobileLogoutBtn) mobileLogoutBtn.style.display = "flex";
           }
@@ -1585,321 +1598,3 @@ body.dark-mode .mobile-header {
       : null;
 
     const dpr = Math.max(1, window.devicePixelRatio || 1);
-
-    canvas.width = Math.round(rect.width * dpr);
-    canvas.height = Math.round(rect.height * dpr);
-
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.strokeStyle = '#111111';
-    ctx.fillStyle = '#111111';
-    ctx.lineWidth = 2.5;
-
-    if (oldData) {
-      const img = new Image();
-
-      img.onload = () => {
-        ctx.drawImage(img, 0, 0, rect.width, rect.height);
-      };
-
-      img.src = oldData;
-    }
-  }
-
-  setupCanvas();
-
-  let resizeTimeout;
-
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(setupCanvas, 150);
-  });
-
-  function getCanvasPoint(event) {
-    const rect = canvas.getBoundingClientRect();
-
-    return {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top
-    };
-  }
-
-  function startDrawing(event) {
-    if (event.button !== undefined && event.button !== 0) return;
-
-    event.preventDefault();
-
-    const point = getCanvasPoint(event);
-
-    isDrawing = true;
-    hasDrawing = true;
-
-    try {
-      canvas.setPointerCapture(event.pointerId);
-    } catch (error) {}
-
-    ctx.beginPath();
-    ctx.arc(point.x, point.y, ctx.lineWidth / 2, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.moveTo(point.x, point.y);
-
-    $('ttdStatus').textContent =
-      'Sedang menggambar. Setelah selesai, tekan Gunakan TTD.';
-  }
-
-  function drawSignature(event) {
-    if (!isDrawing) return;
-
-    event.preventDefault();
-
-    const point = getCanvasPoint(event);
-
-    ctx.lineTo(point.x, point.y);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(point.x, point.y);
-  }
-
-  function stopDrawing(event) {
-    if (!isDrawing) return;
-
-    isDrawing = false;
-
-    if (event && event.pointerId !== undefined) {
-      try {
-        if (canvas.hasPointerCapture(event.pointerId)) {
-          canvas.releasePointerCapture(event.pointerId);
-        }
-      } catch (error) {}
-    }
-
-    ctx.beginPath();
-  }
-
-  canvas.addEventListener('pointerdown', startDrawing);
-  canvas.addEventListener('pointermove', drawSignature);
-  canvas.addEventListener('pointerup', stopDrawing);
-  canvas.addEventListener('pointercancel', stopDrawing);
-
-  canvas.addEventListener('lostpointercapture', () => {
-    isDrawing = false;
-    ctx.beginPath();
-  });
-
-  function useSignature() {
-    if (isDrawing) {
-      alert('Selesaikan gambar tanda tangan terlebih dahulu.');
-      return;
-    }
-
-    if (!hasDrawing) {
-      alert('Silakan gambar tanda tangan terlebih dahulu.');
-      return;
-    }
-
-    try {
-      $('outTtdImage').src = canvas.toDataURL('image/png');
-      $('outTtdImage').hidden = false;
-
-      $('outTtd').hidden = true;
-
-      $('ttdStatus').textContent =
-        '✓ Tanda tangan berhasil digunakan pada pratinjau surat.';
-    } catch (error) {
-      console.error(error);
-      alert('Tanda tangan gagal digunakan. Silakan coba lagi.');
-    }
-  }
-
-  $('useTtdBtn').addEventListener('click', useSignature);
-
-  function clearSignature() {
-    isDrawing = false;
-    hasDrawing = false;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.beginPath();
-
-    $('outTtdImage').removeAttribute('src');
-    $('outTtdImage').hidden = true;
-    $('outTtd').hidden = true;
-
-    $('ttdStatus').textContent =
-      'Belum ada tanda tangan yang digunakan.';
-  }
-
-  $('clearTtdBtn').addEventListener('click', clearSignature);
-
-  $('downloadBtn').addEventListener('click', async () => {
-    const required = [
-      ['nama', 'Nama lengkap'],
-      ['ttl', 'Tempat dan tanggal lahir'],
-      ['alamat', 'Alamat lengkap'],
-      ['pemilik', 'Nama pemilik rekening'],
-      ['bank', 'Nama bank'],
-      ['rekening', 'Nomor rekening'],
-      ['kota', 'Kota/kabupaten'],
-      ['tanggalSurat', 'Tanggal surat']
-    ];
-
-    for (const [id, label] of required) {
-      if (!$(id).value.trim()) {
-        alert(`Silakan isi ${label} terlebih dahulu.`);
-        $(id).focus();
-        return;
-      }
-    }
-
-    if (typeof html2pdf === 'undefined') {
-      alert(
-        'Library PDF gagal dimuat. Periksa koneksi internet lalu coba lagi.'
-      );
-      return;
-    }
-
-    if (isDrawing) {
-      alert('Selesaikan gambar tanda tangan terlebih dahulu.');
-      return;
-    }
-
-    const tombol = $('downloadBtn');
-    const teksAwal = tombol.innerHTML;
-
-    try {
-      updatePreview();
-
-      tombol.disabled = true;
-      tombol.textContent = 'Menyiapkan PDF...';
-
-      const namaFile = $('nama').value
-        .trim()
-        .replace(/[<>:"/\\|?*\x00-\x1F]/g, '')
-        .replace(/\s+/g, '-')
-        .slice(0, 70) || 'Pengguna';
-
-      const opsi = {
-        margin: [12, 12, 12, 12],
-
-        filename: `Surat-Pernyataan-Rekening-${namaFile}.pdf`,
-
-        image: {
-          type: 'jpeg',
-          quality: 0.98
-        },
-
-        html2canvas: {
-          scale: 2,
-          backgroundColor: '#ffffff',
-          scrollY: 0,
-          useCORS: true
-        },
-
-        jsPDF: {
-          unit: 'mm',
-          format: 'a4',
-          orientation: 'portrait'
-        },
-
-        pagebreak: {
-          mode: ['css', 'legacy'],
-          avoid: ['.signature']
-        }
-      };
-
-      await html2pdf()
-        .set(opsi)
-        .from($('paper'))
-        .save();
-
-      try {
-        const response = await fetch('/api/surat', {
-          method: 'POST',
-          cache: 'no-store'
-        });
-
-        const data = await response.json();
-
-        if (!response.ok || !data.success) {
-          throw new Error(data.error || 'Gagal menambah total surat.');
-        }
-
-        const elemenTotal = $('totalsurat');
-
-        if (elemenTotal) {
-          elemenTotal.textContent =
-            Number(data.total).toLocaleString('id-ID');
-        }
-
-      } catch (error) {
-        console.error('Gagal memperbarui total surat:', error);
-      }
-
-    } catch (error) {
-      console.error('Gagal membuat PDF:', error);
-      alert('PDF gagal dibuat. Silakan coba lagi.');
-    } finally {
-      tombol.disabled = false;
-      tombol.innerHTML = teksAwal;
-    }
-  });
-
-  $('resetBtn').addEventListener('click', () => {
-    if (!confirm('Yakin ingin mengosongkan semua data dan tanda tangan?')) {
-      return;
-    }
-
-    fieldIds.forEach(id => {
-      $(id).value = '';
-    });
-
-    $('tanggalSurat').value = getTodayLocal();
-
-    clearSignature();
-    updatePreview();
-  });
-
-  updatePreview();
-
-  async function muatTotalSurat() {
-      const elemen = document.getElementById("totalsurat");
-
-      if (!elemen) return;
-
-      try {
-          const response = await fetch("/api/surat", {
-              method: "GET",
-              cache: "no-store"
-          });
-
-          const data = await response.json().catch(() => ({}));
-
-          if (!response.ok || !data.success) {
-              throw new Error(
-                  data.detail || data.error || `HTTP ${response.status}`
-              );
-          }
-
-          const total = Number(data.total);
-
-          if (!Number.isSafeInteger(total) || total < 0) {
-              throw new Error("Data total surat tidak valid");
-          }
-
-          elemen.textContent = total.toLocaleString("id-ID");
-
-      } catch (error) {
-          elemen.textContent = "-";
-          console.error("Penghitung total surat:", error);
-      }
-  }
-
-  muatTotalSurat();
-  muatDataUser();
-</script>
-
-</body>
-</html>
