@@ -77,6 +77,44 @@ function getBody(req) {
 
 /*
 ==================================================
+FUNGSI BANTUAN: MEMBACA ACTION REQUEST
+==================================================
+*/
+
+function getAction(req) {
+  // Utamakan action dari body untuk POST.
+  if (req.method !== "GET") {
+    const body = getBody(req);
+
+    if (typeof body.action === "string" && body.action) {
+      return body.action;
+    }
+  }
+
+  // Baca query dari Vercel.
+  if (
+    req.query &&
+    typeof req.query.action === "string" &&
+    req.query.action
+  ) {
+    return req.query.action;
+  }
+
+  // Cadangan jika req.query tidak tersedia.
+  try {
+    const parsedUrl = new URL(
+      req.url || "/",
+      `https://${req.headers.host || "localhost"}`
+    );
+
+    return parsedUrl.searchParams.get("action") || "";
+  } catch {
+    return "";
+  }
+}
+
+/*
+==================================================
 FUNGSI BANTUAN: PARSE DATA REDIS
 ==================================================
 */
@@ -366,20 +404,6 @@ async function logoutUser(req, res) {
 ==================================================
 API 5: SIMPAN / HAPUS FOTO PROFIL
 ==================================================
-
-Request simpan:
-{
-  "action": "profile-photo",
-  "pictureAction": "save",
-  "picture": "data:image/jpeg;base64,..."
-}
-
-Request hapus:
-{
-  "action": "profile-photo",
-  "pictureAction": "delete"
-}
-==================================================
 */
 
 async function profilePhoto(req, res) {
@@ -437,7 +461,6 @@ async function profilePhoto(req, res) {
       });
     }
 
-    // Hanya menerima JPEG, PNG, atau WebP dalam format Base64.
     const match = picture.match(
       /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/]+={0,2})$/
     );
@@ -451,8 +474,6 @@ async function profilePhoto(req, res) {
 
     const imageType = match[1];
     const base64Data = match[2];
-
-    // Tolak Base64 yang tidak valid atau tidak kanonis.
     const imageBuffer = Buffer.from(base64Data, "base64");
 
     if (
@@ -472,7 +493,6 @@ async function profilePhoto(req, res) {
       });
     }
 
-    // Validasi tanda tangan file untuk memastikan tipe gambar cocok.
     const isJpeg =
       imageBuffer.length >= 3 &&
       imageBuffer[0] === 0xff &&
@@ -505,7 +525,7 @@ async function profilePhoto(req, res) {
     newPicture = picture;
   }
 
-  // Perbarui data akun di Redis.
+  // Simpan foto pada akun pengguna.
   account.picture = newPicture;
 
   await redisCommand(
@@ -514,7 +534,7 @@ async function profilePhoto(req, res) {
     JSON.stringify(account)
   );
 
-  // Perbarui foto pada sesi aktif agar langsung terbaca saat cek sesi.
+  // Perbarui foto pada sesi aktif.
   session.picture = newPicture;
 
   const ttl = Number(await redisCommand("TTL", sessionKey));
@@ -625,7 +645,6 @@ async function googleCallback(req, res) {
     const redirectUri =
       `${protocol}://${host}/api/user/google/callback`;
 
-    // Tukar kode otorisasi dengan token Google.
     const tokenResponse = await fetch(
       "https://oauth2.googleapis.com/token",
       {
@@ -651,7 +670,6 @@ async function googleCallback(req, res) {
         .send("Gagal mendapatkan token akses dari Google.");
     }
 
-    // Ambil profil Google.
     const userResponse = await fetch(
       "https://www.googleapis.com/oauth2/v2/userinfo",
       {
@@ -685,7 +703,6 @@ async function googleCallback(req, res) {
     let account = parseRedisJson(existingAccountValue);
 
     if (account) {
-      // Pertahankan foto kustom pengguna jika sudah ada.
       account.name = googleName || account.name;
       account.picture = account.picture || googlePicture;
       account.role = "user";
@@ -712,7 +729,6 @@ async function googleCallback(req, res) {
       );
     }
 
-    // Buat sesi pengguna.
     const sessionToken = crypto.randomBytes(32).toString("hex");
 
     const session = {
@@ -758,13 +774,9 @@ ROUTER UTAMA
 module.exports = async function handler(req, res) {
   try {
     const requestUrl = req.url || "";
+    const action = getAction(req);
 
-    const action =
-      req.method === "GET"
-        ? req.query?.action
-        : getBody(req).action;
-
-    // Cek sesi.
+    // Cek sesi pengguna.
     if (action === "check") {
       if (req.method !== "GET") {
         res.setHeader("Allow", "GET");
@@ -826,7 +838,7 @@ module.exports = async function handler(req, res) {
       return await googleCallback(req, res);
     }
 
-    // Aksi selain di atas harus menggunakan POST.
+    // Aksi lainnya harus menggunakan POST.
     if (req.method !== "POST") {
       res.setHeader("Allow", "POST, GET");
 
@@ -857,8 +869,7 @@ module.exports = async function handler(req, res) {
 
     return sendJson(res, 500, {
       success: false,
-      message:
-        "Terjadi kesalahan server. Silakan coba lagi.",
+      message: "Terjadi kesalahan server. Silakan coba lagi.",
     });
   }
 };
