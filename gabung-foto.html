@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gabungkan Foto Jadi PDF</title>
 
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
     <style>
         * {
@@ -28,7 +27,9 @@
             margin: auto;
         }
 
-        /* MENU NAVIGASI */
+        /* ------------------------------------------------------------- */
+        /* SIDEBAR KIRI / DRAWER NAVIGASI */
+        /* ------------------------------------------------------------- */
         .menu-toggle {
             position: fixed;
             top: 18px;
@@ -99,6 +100,8 @@
             transform: translateX(-105%);
             transition: transform 0.25s ease;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .nav-drawer.show {
@@ -125,9 +128,11 @@
             font-size: 14px;
             font-weight: 600;
             transition: 0.2s;
+            cursor: pointer;
+            white-space: nowrap;
         }
 
-        .nav-link:hover {
+        .nav-link:hover, .nav-link.active-link {
             background: #fff0f0;
             color: #a80000;
         }
@@ -139,7 +144,6 @@
             flex-shrink: 0;
         }
 
-/* 1. Tambahan untuk Login User */
         .nav-link.login-link {
             color: #a80000;
             background: #fff0f0;
@@ -150,15 +154,11 @@
             background: #ffe0e0;
         }
 
-        /* 2. Tetap dipertahankan untuk Login Admin */
-        .nav-link.admin-link {
-            color: #a80000;
+        .nav-link.logout-link {
+            color: #d31010;
             background: #fff0f0;
             border: 1px solid #f2dede;
-        }
-
-        .nav-link.admin-link:hover {
-            background: #ffe0e0;
+            margin-top: auto;
         }
 
         .nav-divider {
@@ -175,6 +175,64 @@
             cursor: pointer;
             text-align: left;
             font-family: inherit;
+        }
+
+        /* BAR PROFIL USERS DI DRAWER NAVIGASI */
+        .sidebar-user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: #fff0f0;
+            border-radius: 12px;
+            border: 1px solid #fce8e8;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .sidebar-user-card:hover {
+            background: #ffe0e0;
+        }
+
+        .sidebar-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #a80000;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .sidebar-user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sidebar-user-info {
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .sidebar-user-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #222;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-user-role {
+            font-size: 11px;
+            color: #777;
         }
 
         /* HEADER */
@@ -519,36 +577,35 @@
             border: 1px solid #d3e0fa;
         }
 
-        
-/* PENGHITUNG TOTAL PDF */
-.pdf-counter {
-    position: fixed;
-    top: 18px;
-    right: 18px;
-    z-index: 999;
-    padding: 10px 13px;
-    background: #fff0f0;
-    color: #a80000;
-    border: 1px solid #f2dede;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: bold;
-    box-shadow: 0 3px 10px rgba(150, 0, 0, 0.08);
-}
+        /* PENGHITUNG TOTAL PDF */
+        .pdf-counter {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            z-index: 999;
+            padding: 10px 13px;
+            background: #fff0f0;
+            color: #a80000;
+            border: 1px solid #f2dede;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(150, 0, 0, 0.08);
+        }
 
-body.dark-mode .pdf-counter {
-    background: #382020;
-    color: #ff7777;
-    border-color: #493030;
-}
+        body.dark-mode .pdf-counter {
+            background: #382020;
+            color: #ff7777;
+            border-color: #493030;
+        }
 
-@media (max-width: 600px) {
-    .pdf-counter {
-        top: 18px;
-        right: 12px;
-        padding: 9px 10px;
-        font-size: 10px;
-    }
+        @media (max-width: 600px) {
+            .pdf-counter {
+                top: 18px;
+                right: 12px;
+                padding: 9px 10px;
+                font-size: 10px;
+            }
         }
         
         /* FOOTER */
@@ -575,6 +632,44 @@ body.dark-mode .pdf-counter {
             line-height: 1.5;
         }
 
+        /* ------------------------------------------------------------- */
+        /* MODAL POPUP EDIT FOTO PROFIL */
+        /* ------------------------------------------------------------- */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px);
+            z-index: 2000; display: flex; align-items: center; justify-content: center;
+            padding: 20px; opacity: 0; visibility: hidden; transition: 0.25s ease;
+        }
+
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+
+        .modal-card {
+            background: #ffffff; border-radius: 20px;
+            width: 100%; max-width: 380px; padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            text-align: center; position: relative;
+        }
+
+        .modal-title { font-size: 18px; font-weight: 700; color: #a80000; }
+        .modal-email { font-size: 12px; color: #777; margin-bottom: 15px; }
+
+        .modal-preview-container {
+            width: 90px; height: 90px; border-radius: 50%;
+            margin: 0 auto 16px; overflow: hidden;
+            border: 3px solid #f2dede; background: #fff0f0;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .modal-preview-container img { width: 100%; height: 100%; object-fit: cover; }
+
+        .modal-btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .btn-modal { padding: 12px; border-radius: 10px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .btn-primary-modal { background: #a80000; color: white; }
+        .btn-secondary-modal { background: #fff0f0; color: #d31010; border: 1px solid #fce8e8; }
+        .btn-logout-modal { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .btn-close-modal { position: absolute; top: 15px; right: 15px; background: transparent; border: none; font-size: 20px; color: #888; cursor: pointer; }
+
         /* DARK MODE */
         body.dark-mode {
             background: #121212;
@@ -589,9 +684,19 @@ body.dark-mode .pdf-counter {
             color: #bbb;
         }
 
-        body.dark-mode .card {
+        body.dark-mode .card,
+        body.dark-mode .modal-card {
             background: #1e1e1e;
             border-color: #333;
+        }
+
+        body.dark-mode .sidebar-user-card {
+            background: #2d1a1a;
+            border-color: #493030;
+        }
+
+        body.dark-mode .sidebar-user-name {
+            color: #fff;
         }
 
         body.dark-mode .dark-mode-button,
@@ -607,7 +712,8 @@ body.dark-mode .pdf-counter {
         }
 
         body.dark-mode .nav-link:hover,
-        body.dark-mode .nav-link.admin-link {
+        body.dark-mode .nav-link.admin-link,
+        body.dark-mode .nav-link.login-link {
             background: #382020;
             color: #ff7777;
             border-color: #493030;
@@ -680,10 +786,6 @@ body.dark-mode .pdf-counter {
             border-color: #304a75;
         }
 
-        body.dark-mode .credit {
-            color: #888;
-        }
-
         /* RESPONSIVE */
         @media (max-width: 600px) {
             body {
@@ -725,9 +827,9 @@ body.dark-mode .pdf-counter {
 
 <body>
 
-<div class="pdf-counter">
-    📄 PDF yg berhasil dibuat: <span id="totalPdfCount">0</span>
-</div>
+    <div class="pdf-counter">
+        📄 PDF yg berhasil dibuat: <span id="totalPdfCount">0</span>
+    </div>
     
     <!-- TOMBOL MENU GARIS TIGA -->
     <button
@@ -746,47 +848,68 @@ body.dark-mode .pdf-counter {
     <!-- LAPISAN GELAP -->
     <div class="nav-overlay" id="navOverlay"></div>
 
-    <!-- MENU NAVIGASI -->
-<!-- NAVIGASI DRAWER -->
-<nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
-    <div class="nav-heading">MENU NAVIGASI</div>
+    <!-- MENU NAVIGASI DRAWER -->
+    <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
+        <div class="nav-heading">MENU UTAMA</div>
 
-    <!-- 1. LOGIN USER (DITAMBAHKEUN DI LUHUR) -->
-    <a class="nav-link login-link" href="/login-user.html">
-        <span class="nav-icon">👤</span>
-        <span>Login User</span>
-    </a>
+        <!-- PROFIL PENGGUNA DI SIDEBAR (Hanya tampil jika sudah login) -->
+        <div class="sidebar-user-card" id="sidebarUserTrigger" title="Klik untuk edit profil" style="display: none;">
+            <div class="sidebar-user-avatar">
+                <span id="sidebarUserAvatarIcon">👤</span>
+                <img id="sidebarUserAvatarImg" src="" alt="Avatar" style="display: none;">
+            </div>
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-name" id="sidebarUserName">User</div>
+                <div class="sidebar-user-role">Penyedia</div>
+            </div>
+        </div>
 
-    <!-- 2. FITUR FITUR UTAMA -->
-    <a class="nav-link" href="/gabung-foto.html">
-        <span class="nav-icon">🖼️</span>
-        <span>Ubah Foto ke PDF</span>
-    </a>
+        <!-- 1. LOGIN USER / DASHBOARD DI PALING ATAS -->
+        <a class="nav-link login-link" href="/login-user.html" id="mobileAuthMenu">
+            <span class="nav-icon">🔑</span>
+            <span>Login User</span>
+        </a>
+        <a class="nav-link" href="/dashboard-user.html" id="mobileDashboardMenu" style="display: none;">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard Saya</span>
+        </a>
 
-    <a class="nav-link" href="/">
-        <span class="nav-icon">🧮</span>
-        <span>Kalkulator Harga Tayang</span>
-    </a>
+        <!-- 2. MENU LAINNYA -->
+        <a class="nav-link" href="/beranda.html">
+            <span class="nav-icon">🏠</span>
+            <span>Beranda Utama</span>
+        </a>
 
-    <a class="nav-link" href="/surat-pernyataan.html">
-        <span class="nav-icon">📄</span>
-        <span>Buat Surat Pernyataan</span>
-    </a>
+        <a class="nav-link" href="/">
+            <span class="nav-icon">🧮</span>
+            <span>Kalkulator Harga Tayang</span>
+        </a>
 
-    <div class="nav-divider"></div>
+        <a class="nav-link active-link" href="/gabung-foto.html">
+            <span class="nav-icon">🖼️</span>
+            <span>Foto ke PDF</span>
+        </a>
 
-    <!-- 3. LOGIN ADMIN (DIPINDAHKEUN KA PANGHANDAPNA) -->
-    <a class="nav-link admin-link" href="/admin.html">
-        <span class="nav-icon">🔐</span>
-        <span>Login Admin</span>
-    </a>
+        <a class="nav-link" href="/surat-pernyataan.html">
+            <span class="nav-icon">📄</span>
+            <span>Surat Pernyataan</span>
+        </a>
 
-    <!-- 4. TOMBOL DARK MODE -->
-    <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" aria-label="Ganti tema tampilan">
-        <span class="nav-icon" id="darkModeIcon">🌙</span>
-        <span id="darkModeText">Dark Mode</span>
-    </button>
-</nav>
+        <div class="nav-divider"></div>
+
+        <!-- 3. TOMBOL DARK MODE -->
+        <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" aria-label="Ganti tema tampilan">
+            <span class="nav-icon" id="darkModeIcon">🌙</span>
+            <span id="darkModeText">Dark Mode</span>
+        </button>
+
+        <!-- 4. LOGIN ADMIN DI BAWAH DARK MODE -->
+        <a class="nav-link admin-link" href="/admin.html" style="margin-top: 5px;">
+            <span class="nav-icon">👤 🔑</span>
+            <span>Login Admin</span>
+        </a>
+    </nav>
+    <a class="nav-link logout-link btn-logout-action" id="mobileLogoutBtn" style="display: none; position: fixed; bottom: 15px; left: 18px; width: 254px; z-index: 1002;"><span class="nav-icon">🚪</span> Keluar / Logout</a>
 
     <main class="container">
 
@@ -940,37 +1063,59 @@ body.dark-mode .pdf-counter {
             ></div>
         </section>
 
-            <!-- FOOTER -->
-    <div class="footer">
-        <p
-            class="contact-question"
-            style="font-weight: bold; color: #a80000; margin-bottom: 8px;"
-        >
-            Ada saran atau pertanyaan?
-        </p>
-
-        <p class="contact-instruction" style="margin-bottom: 8px;">
-            Silakan hubungi nomor di bawah ini:
-        </p>
-
-        <p>
-            <a
-                class="contact-link"
-                href="https://wa.me/6281125213879"
-                target="_blank"
-                rel="noopener noreferrer"
-                style="color: #25D366; text-decoration: none; font-weight: bold;"
+        <!-- FOOTER -->
+        <div class="footer">
+            <p
+                class="contact-question"
+                style="font-weight: bold; color: #a80000; margin-bottom: 8px;"
             >
-                ☎ 081125213879 (Egik)
-            </a>
-        </p>
+                Ada saran atau pertanyaan?
+            </p>
 
-        <p style="margin-top: 10px;">
-            Credit by <strong>eth production</strong>
-        </p>
-    </div>
+            <p class="contact-instruction" style="margin-bottom: 8px;">
+                Silakan hubungi nomor di bawah ini:
+            </p>
+
+            <p>
+                <a
+                    class="contact-link"
+                    href="https://wa.me/6281125213879"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style="color: #25D366; text-decoration: none; font-weight: bold;"
+                >
+                    ☎ 081125213879 (Egik)
+                </a>
+            </p>
+
+            <p style="margin-top: 10px;">
+                Credit by <strong>eth production</strong>
+            </p>
+        </div>
 
     </main>
+
+    <!-- MODAL EDIT PROFIL -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-card">
+            <button class="btn-close-modal" id="closeModal">&times;</button>
+            <div class="modal-title" id="modalUserName">Akun Penyedia</div>
+            <div class="modal-email" id="modalUserEmail">user@example.com</div>
+
+            <div class="modal-preview-container">
+                <span id="modalPreviewIcon" style="font-size: 40px;">👤</span>
+                <img id="modalPreviewImg" src="" alt="Preview" style="display: none;">
+            </div>
+
+            <input type="file" id="profileInput" accept="image/*" style="display: none;">
+
+            <div class="modal-btn-group">
+                <button class="btn-modal btn-primary-modal" onclick="document.getElementById('profileInput').click()">📷 Pilih Foto Baru</button>
+                <button class="btn-modal btn-secondary-modal" id="btnDeletePhoto">🗑️ Hapus Foto Profil</button>
+                <button class="btn-modal btn-logout-modal btn-logout-action">🚪 Keluar / Logout</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         /* MENU NAVIGASI */
@@ -1011,7 +1156,9 @@ body.dark-mode .pdf-counter {
         });
 
         document.querySelectorAll("#navDrawer .nav-link").forEach(function (link) {
-            link.addEventListener("click", tutupMenu);
+            if (!link.classList.contains("dark-mode-button")) {
+                link.addEventListener("click", tutupMenu);
+            }
         });
 
         /* DARK MODE */
@@ -1050,6 +1197,125 @@ body.dark-mode .pdf-counter {
             const aktif = !document.body.classList.contains("dark-mode");
             aturDarkMode(aktif);
             tutupMenu();
+        });
+
+        /* MODAL PROFIL */
+        const sidebarUserTrigger = document.getElementById("sidebarUserTrigger");
+        const profileModal = document.getElementById("profileModal");
+        const closeModal = document.getElementById("closeModal");
+        const profileInput = document.getElementById("profileInput");
+        const btnDeletePhoto = document.getElementById("btnDeletePhoto");
+
+        function bukaModal() { profileModal.classList.add("show"); }
+        function tutupModal() { profileModal.classList.remove("show"); }
+
+        if (sidebarUserTrigger) sidebarUserTrigger.addEventListener("click", bukaModal);
+        if (closeModal) closeModal.addEventListener("click", tutupModal);
+
+        function pasangFotoProfil(photoUrl) {
+            const ids = ["modalPreviewImg", "sidebarUserAvatarImg"];
+            const icons = ["modalPreviewIcon", "sidebarUserAvatarIcon"];
+
+            if (photoUrl) {
+                ids.forEach(id => { const el = document.getElementById(id); if (el) { el.src = photoUrl; el.style.display = "block"; } });
+                icons.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "none"; });
+            } else {
+                ids.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "none"; });
+                icons.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "block"; });
+            }
+        }
+
+        /* VERIFIKASI SESI BACKEND & DATA USER (TANPA LOADING) */
+        async function muatDataUser() {
+            try {
+                const res = await fetch("/api/user/login?action=check", {
+                    method: "GET",
+                    credentials: "same-origin",
+                    cache: "no-store",
+                    headers: { "Accept": "application/json" }
+                });
+
+                if (!res.ok) return;
+
+                const data = await res.json();
+
+                if (data.authenticated && data.user) {
+                    if (data.user.name) {
+                        const modalUser = document.getElementById("modalUserName");
+                        const sidebarUser = document.getElementById("sidebarUserName");
+
+                        if (modalUser) modalUser.textContent = data.user.name;
+                        if (sidebarUser) sidebarUser.textContent = data.user.name;
+                    }
+
+                    if (data.user.email) {
+                        const emailEl = document.getElementById("modalUserEmail");
+                        if (emailEl) emailEl.textContent = data.user.email;
+                    }
+
+                    const fotoProfil = data.user.picture || localStorage.getItem("userProfilePhoto") || "";
+                    pasangFotoProfil(fotoProfil);
+
+                    if (sidebarUserTrigger) sidebarUserTrigger.style.display = "flex";
+
+                    // Jika sudah login, sesuaikan tombol menu di drawer
+                    const mobileAuthMenu = document.getElementById("mobileAuthMenu");
+                    const mobileDashboardMenu = document.getElementById("mobileDashboardMenu");
+                    const mobileLogoutBtn = document.getElementById("mobileLogoutBtn");
+
+                    if (mobileAuthMenu) mobileAuthMenu.style.display = "none";
+                    if (mobileDashboardMenu) mobileDashboardMenu.style.display = "flex";
+                    if (mobileLogoutBtn) mobileLogoutBtn.style.display = "flex";
+                }
+            } catch (err) {
+                console.warn("Belum login atau gagal cek sesi.");
+            }
+        }
+
+        if (profileInput) {
+            profileInput.addEventListener("change", function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const base64Image = e.target.result;
+                        try {
+                            localStorage.setItem("userProfilePhoto", base64Image);
+                            pasangFotoProfil(base64Image);
+                            tutupModal();
+                        } catch (err) { alert("Gambar terlalu besar."); }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        if (btnDeletePhoto) {
+            btnDeletePhoto.addEventListener("click", function() {
+                localStorage.removeItem("userProfilePhoto");
+                if (profileInput) profileInput.value = "";
+                pasangFotoProfil("");
+                tutupModal();
+            });
+        }
+
+        async function lakukanLogout() {
+            try {
+                await fetch("/api/user/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ action: "logout" })
+                });
+            } catch (e) {
+                console.warn("Gagal logout di server.");
+            } finally {
+                localStorage.removeItem("userProfilePhoto");
+                window.location.reload();
+            }
+        }
+
+        document.querySelectorAll(".btn-logout-action").forEach(btn => {
+            btn.addEventListener("click", lakukanLogout);
         });
 
         /* ELEMEN FOTO DAN PDF */
@@ -1398,46 +1664,45 @@ body.dark-mode .pdf-counter {
             });
         }
 
-        
-/* TOTAL PDF BERHASIL DIBUAT */
-async function loadTotalPdf() {
-    const counter = document.getElementById("totalPdfCount");
+        /* TOTAL PDF BERHASIL DIBUAT */
+        async function loadTotalPdf() {
+            const counter = document.getElementById("totalPdfCount");
 
-    try {
-        const response = await fetch("/api/pdf-count", {
-            method: "GET",
-            cache: "no-store"
-        });
+            try {
+                const response = await fetch("/api/pdf-count", {
+                    method: "GET",
+                    cache: "no-store"
+                });
 
-        if (!response.ok) throw new Error("Gagal membaca total PDF");
+                if (!response.ok) throw new Error("Gagal membaca total PDF");
 
-        const data = await response.json();
+                const data = await response.json();
 
-        counter.textContent = Number(data.total).toLocaleString("id-ID");
-    } catch (error) {
-        console.error("Gagal memuat total PDF:", error);
-    }
-}
+                counter.textContent = Number(data.total).toLocaleString("id-ID");
+            } catch (error) {
+                console.error("Gagal memuat total PDF:", error);
+            }
+        }
 
-async function tambahTotalPdf() {
-    const counter = document.getElementById("totalPdfCount");
+        async function tambahTotalPdf() {
+            const counter = document.getElementById("totalPdfCount");
 
-    try {
-        const response = await fetch("/api/pdf-count", {
-            method: "POST"
-        });
+            try {
+                const response = await fetch("/api/pdf-count", {
+                    method: "POST"
+                });
 
-        if (!response.ok) throw new Error("Gagal menambah total PDF");
+                if (!response.ok) throw new Error("Gagal menambah total PDF");
 
-        const data = await response.json();
+                const data = await response.json();
 
-        counter.textContent = Number(data.total).toLocaleString("id-ID");
-    } catch (error) {
-        console.error("Gagal memperbarui total PDF:", error);
-    }
-}
+                counter.textContent = Number(data.total).toLocaleString("id-ID");
+            } catch (error) {
+                console.error("Gagal memperbarui total PDF:", error);
+            }
+        }
 
-loadTotalPdf();
+        loadTotalPdf();
         
         /* BUAT PDF */
         createPdfButton.addEventListener("click", async function () {
@@ -1579,8 +1844,9 @@ loadTotalPdf();
             });
         });
 
-        /* TAMPILKAN FOTO AWAL */
+        /* TAMPILKAN FOTO AWAL & CEK SESI USER */
         renderPhotos();
+        muatDataUser();
     </script>
 
 </body>
