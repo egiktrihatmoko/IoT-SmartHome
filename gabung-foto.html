@@ -333,11 +333,28 @@
         }
 
         .nav-link.logout-link {
-            color: #d31010;
-            background: #fff0f0;
-            border: 1px solid #f2dede;
-            margin-top: auto;
-        }
+    margin-top: 0;
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+
+        @media (max-width: 850px) {
+    .nav-drawer {
+        height: 100vh;
+        height: 100dvh;
+        padding-bottom: max(25px, env(safe-area-inset-bottom));
+    }
+
+    .nav-drawer-content {
+        flex: 0 0 auto;
+    }
+
+    .nav-link.logout-link {
+        margin-top: 0;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+}
 
         /* HEADER & KARTU */
         header {
