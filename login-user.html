@@ -1,7 +1,7 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <!-- Pengaturan dasar halaman dan tampilan pada perangkat seluler -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#b91c1c">
@@ -14,11 +14,6 @@
   <title>Login & Daftar User - Kalkulator Harga Tayang</title>
 
   <style>
-    /* =========================================================
-       1. PENGATURAN DASAR
-       Menghapus margin bawaan dan menyamakan perhitungan ukuran.
-    ========================================================= */
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -28,60 +23,40 @@
     body {
       min-height: 100vh;
       padding: 20px;
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       font-family: Arial, Helvetica, sans-serif;
       background: #fff5f5;
       color: #222;
     }
 
-
-    /* =========================================================
-       2. KARTU LOGIN DAN PENDAFTARAN
-       Membuat kotak utama putih dengan sudut membulat.
-    ========================================================= */
-
     .container {
       width: 100%;
       max-width: 390px;
       padding: 28px 24px;
-
       background: #fff;
       border: 1px solid #f3dada;
       border-radius: 16px;
-
       box-shadow: 0 8px 30px rgba(150, 0, 0, 0.08);
     }
-
-
-    /* Logo huruf U untuk menandai halaman pengguna */
 
     .logo {
       width: 52px;
       height: 52px;
       margin: 0 auto 14px;
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       border-radius: 14px;
       background: #b91c1c;
       color: #fff;
-
       font-size: 25px;
       font-weight: bold;
     }
 
-
-    /* Judul dan keterangan halaman */
-
     h1 {
       margin-bottom: 8px;
-
       text-align: center;
       font-size: 23px;
       color: #991b1b;
@@ -89,26 +64,17 @@
 
     .subtitle {
       margin-bottom: 24px;
-
       text-align: center;
       color: #777;
       font-size: 13px;
       line-height: 1.5;
     }
 
-
-    /* =========================================================
-       3. TOMBOL TAB MASUK DAN MENDAFTAR
-       Tab digunakan untuk berpindah antara dua formulir.
-    ========================================================= */
-
     .tabs {
       display: flex;
       gap: 5px;
-
       padding: 5px;
       margin-bottom: 24px;
-
       border-radius: 10px;
       background: #fee2e2;
     }
@@ -116,32 +82,20 @@
     .tab {
       flex: 1;
       padding: 11px 8px;
-
       border: none;
       border-radius: 7px;
-
       background: transparent;
       color: #991b1b;
-
       font-size: 14px;
       font-weight: bold;
-
       cursor: pointer;
     }
-
-    /* Tampilan tab yang sedang dipilih */
 
     .tab.active {
       background: #b91c1c;
       color: #fff;
-
       box-shadow: 0 2px 6px rgba(185, 28, 28, 0.2);
     }
-
-
-    /* =========================================================
-       4. JUDUL DAN KETERANGAN FORMULIR
-    ========================================================= */
 
     .form-title {
       margin-bottom: 6px;
@@ -150,16 +104,10 @@
 
     .form-description {
       margin-bottom: 20px;
-
       color: #777;
       font-size: 13px;
       line-height: 1.5;
     }
-
-
-    /* =========================================================
-       5. INPUT EMAIL, NAMA, DAN PASSWORD
-    ========================================================= */
 
     .form-group {
       margin-bottom: 16px;
@@ -168,7 +116,6 @@
     label {
       display: block;
       margin-bottom: 8px;
-
       font-size: 13px;
       font-weight: bold;
     }
@@ -176,42 +123,28 @@
     input {
       width: 100%;
       padding: 13px 12px;
-
       border: 1px solid #ddd;
       border-radius: 9px;
       outline: none;
-
       background: #fff;
       font-size: 14px;
     }
-
-    /* Efek saat kolom sedang dipilih */
 
     input:focus {
       border-color: #dc2626;
       box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
     }
 
-
-    /* =========================================================
-       6. TOMBOL UTAMA
-       Tombol Masuk dan Daftar menggunakan gaya yang sama.
-    ========================================================= */
-
     .submit-btn {
       width: 100%;
       padding: 14px;
       margin-top: 4px;
-
       border: none;
       border-radius: 9px;
-
       background: #b91c1c;
       color: #fff;
-
       font-size: 14px;
       font-weight: bold;
-
       cursor: pointer;
     }
 
@@ -219,27 +152,16 @@
       background: #991b1b;
     }
 
-    /* Tampilan ketika permintaan sedang diproses */
-
     .submit-btn:disabled {
       opacity: 0.65;
       cursor: wait;
     }
 
-
-    /* =========================================================
-       7. PEMISAH DAN TOMBOL GOOGLE
-       Tombol ini hanya bekerja jika endpoint OAuth Google
-       di backend sudah dibuat dan dikonfigurasi.
-    ========================================================= */
-
     .google-divider {
       display: flex;
       align-items: center;
       gap: 12px;
-
       margin: 24px 0;
-
       color: #94a3b8;
       font-size: 12px;
     }
@@ -249,7 +171,6 @@
       content: "";
       flex: 1;
       height: 1px;
-
       background: #e2e8f0;
     }
 
@@ -257,22 +178,17 @@
       width: 100%;
       min-height: 48px;
       padding: 12px 16px;
-
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 12px;
-
       border: 1px solid #e2e8f0;
       border-radius: 11px;
-
       background: #fff;
       color: #334155;
-
       font-size: 14px;
       font-weight: 600;
       text-decoration: none;
-
       transition: background 0.2s, border-color 0.2s;
     }
 
@@ -285,25 +201,15 @@
       flex-shrink: 0;
     }
 
-
-    /* =========================================================
-       8. PESAN SUKSES ATAU ERROR
-       Pesan ini digunakan untuk memberi tahu hasil permintaan.
-    ========================================================= */
-
     .message {
       display: none;
-
       padding: 12px;
       margin-top: 16px;
-
       border-radius: 8px;
       background: #fff1f2;
       color: #991b1b;
-
       font-size: 13px;
       line-height: 1.5;
-
       overflow-wrap: anywhere;
     }
 
@@ -312,26 +218,16 @@
       color: #166534;
     }
 
-
-    /* Keterangan hak cipta di bagian bawah */
-
     .footer {
       margin-top: 24px;
-
       text-align: center;
       font-size: 11px;
       color: #999;
     }
 
-
-    /* Menyembunyikan formulir yang tidak sedang dipakai */
-
     [hidden] {
       display: none !important;
     }
-
-
-    /* Penyesuaian jarak untuk layar HP yang kecil */
 
     @media (max-width: 420px) {
       .container {
@@ -342,28 +238,13 @@
 </head>
 
 <body>
-
   <main class="container">
-
-    <!-- Logo halaman pengguna -->
     <div class="logo" aria-hidden="true">U</div>
 
-    <!-- Judul utama halaman -->
     <h1>Akun Penyedia</h1>
-
-    <p class="subtitle">
-      Kalkulator Harga Tayang
-    </p>
-
-
-    <!-- =======================================================
-         TAB NAVIGASI
-         Tombol Masuk menampilkan formulir login.
-         Tombol Mendaftar menampilkan formulir pendaftaran.
-    ======================================================== -->
+    <p class="subtitle">Kalkulator Harga Tayang</p>
 
     <div class="tabs" role="tablist" aria-label="Menu akun">
-
       <button
         type="button"
         class="tab active"
@@ -385,34 +266,18 @@
       >
         Mendaftar
       </button>
-
     </div>
 
-
-    <!-- =======================================================
-         FORMULIR LOGIN USER
-         Mengirim email dan password ke /api/user/login.
-         Backend harus memeriksa akun dan membuat sesi user.
-    ======================================================== -->
-
+    <!-- FORM LOGIN USER -->
     <form id="loginForm">
-
-      <h2 class="form-title">
-        Selamat datang!
-      </h2>
+      <h2 class="form-title">Selamat datang!</h2>
 
       <p class="form-description">
         Masuk ke akun penyedia kamu.
       </p>
 
-
-      <!-- Kolom email untuk login -->
-
       <div class="form-group">
-
-        <label for="loginEmail">
-          Email
-        </label>
+        <label for="loginEmail">Email</label>
 
         <input
           type="email"
@@ -423,17 +288,10 @@
           maxlength="254"
           required
         >
-
       </div>
 
-
-      <!-- Kolom password untuk login -->
-
       <div class="form-group">
-
-        <label for="loginPassword">
-          Password
-        </label>
+        <label for="loginPassword">Password</label>
 
         <input
           type="password"
@@ -444,11 +302,7 @@
           maxlength="128"
           required
         >
-
       </div>
-
-
-      <!-- Tombol untuk mengirim data login ke backend -->
 
       <button
         type="submit"
@@ -458,27 +312,15 @@
         Masuk
       </button>
 
-
-      <!-- Pemisah antara login email dan login Google -->
-
       <div class="google-divider">
         <span>atau masuk dengan</span>
       </div>
 
-
-      <!--
-        LOGIN GOOGLE USER.
-        Tautan ini memanggil endpoint OAuth user.
-        Endpoint tersebut harus tersedia di backend Vercel.
-      -->
-
+      <!-- GOOGLE LOGIN USER -->
       <a
-        href="/api/user/google/start"
+        href="/api/admin/google/start"
         class="google-login-btn"
       >
-
-        <!-- Ikon Google berbentuk SVG -->
-
         <svg
           viewBox="0 0 48 48"
           width="20"
@@ -491,19 +333,16 @@
             d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.01 13.22l7.98 6.19C11.88 13.72 17.49 9.5 24 9.5Z"
             transform="translate(0 5)"
           />
-
           <path
             fill="#4285F4"
             d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 37.85 46.98 31.76 46.98 24.55Z"
             transform="translate(0 -1)"
           />
-
           <path
             fill="#FBBC05"
             d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.53 10.78l8-6.19Z"
             transform="translate(0 -1)"
           />
-
           <path
             fill="#34A853"
             d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.51 0-12.12-4.22-14.11-10.06l-7.98 6.19C6.51 42.62 14.62 48 24 48Z"
@@ -511,39 +350,20 @@
           />
         </svg>
 
-        <span>
-          Masuk dengan Google
-        </span>
-
+        <span>Masuk dengan Google</span>
       </a>
-
     </form>
 
-
-    <!-- =======================================================
-         FORMULIR PENDAFTARAN USER
-         Mengirim nama, email, dan password ke
-         /api/user/register. Backend wajib menetapkan role user.
-    ======================================================== -->
-
+    <!-- FORM PENDAFTARAN USER -->
     <form id="registerForm" hidden>
-
-      <h2 class="form-title">
-        Buat akun penyedia
-      </h2>
+      <h2 class="form-title">Buat akun penyedia</h2>
 
       <p class="form-description">
         Daftar untuk menggunakan fitur penyedia.
       </p>
 
-
-      <!-- Kolom nama lengkap -->
-
       <div class="form-group">
-
-        <label for="registerName">
-          Nama lengkap
-        </label>
+        <label for="registerName">Nama lengkap</label>
 
         <input
           type="text"
@@ -554,17 +374,10 @@
           maxlength="100"
           required
         >
-
       </div>
 
-
-      <!-- Kolom email pendaftaran -->
-
       <div class="form-group">
-
-        <label for="registerEmail">
-          Email
-        </label>
+        <label for="registerEmail">Email</label>
 
         <input
           type="email"
@@ -575,17 +388,10 @@
           maxlength="254"
           required
         >
-
       </div>
 
-
-      <!-- Kolom password baru -->
-
       <div class="form-group">
-
-        <label for="registerPassword">
-          Password
-        </label>
+        <label for="registerPassword">Password</label>
 
         <input
           type="password"
@@ -597,17 +403,10 @@
           autocomplete="new-password"
           required
         >
-
       </div>
 
-
-      <!-- Kolom konfirmasi password untuk menghindari salah ketik -->
-
       <div class="form-group">
-
-        <label for="confirmPassword">
-          Konfirmasi password
-        </label>
+        <label for="confirmPassword">Konfirmasi password</label>
 
         <input
           type="password"
@@ -619,11 +418,7 @@
           autocomplete="new-password"
           required
         >
-
       </div>
-
-
-      <!-- Tombol mengirim data pendaftaran ke backend -->
 
       <button
         type="submit"
@@ -633,27 +428,15 @@
         Daftar
       </button>
 
-
-      <!-- Pemisah antara pendaftaran email dan Google -->
-
       <div class="google-divider">
         <span>atau daftar dengan</span>
       </div>
 
-
-      <!--
-        PENDAFTARAN / LOGIN GOOGLE USER.
-        Google OAuth dapat membuat atau menghubungkan akun,
-        tergantung implementasi backend yang dibuat.
-      -->
-
+      <!-- GOOGLE REGISTRASI USER -->
       <a
-        href="/api/user/google/start"
+        href="/api/admin/google/start"
         class="google-login-btn"
       >
-
-        <!-- Ikon Google berbentuk SVG -->
-
         <svg
           viewBox="0 0 48 48"
           width="20"
@@ -666,19 +449,16 @@
             d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.01 13.22l7.98 6.19C11.88 13.72 17.49 9.5 24 9.5Z"
             transform="translate(0 5)"
           />
-
           <path
             fill="#4285F4"
             d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 37.85 46.98 31.76 46.98 24.55Z"
             transform="translate(0 -1)"
           />
-
           <path
             fill="#FBBC05"
             d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.53 10.78l8-6.19Z"
             transform="translate(0 -1)"
           />
-
           <path
             fill="#34A853"
             d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.51 0-12.12-4.22-14.11-10.06l-7.98 6.19C6.51 42.62 14.62 48 24 48Z"
@@ -686,18 +466,9 @@
           />
         </svg>
 
-        <span>
-          Daftar dengan Google
-        </span>
-
+        <span>Daftar dengan Google</span>
       </a>
-
     </form>
-
-
-    <!--
-      Tempat menampilkan pesan sukses atau error.
-    -->
 
     <div
       class="message"
@@ -706,23 +477,13 @@
       aria-live="polite"
     ></div>
 
-
-    <!-- Footer halaman -->
-
     <p class="footer">
       &copy; 2026 Kalkulator Harga Tayang
     </p>
-
   </main>
-
 
   <script>
     "use strict";
-
-
-    /* =========================================================
-       1. MENGAMBIL ELEMEN HALAMAN
-    ========================================================= */
 
     const loginTab = document.getElementById("loginTab");
     const registerTab = document.getElementById("registerTab");
@@ -734,11 +495,6 @@
 
     const loginButton = document.getElementById("loginButton");
     const registerButton = document.getElementById("registerButton");
-
-
-    /* =========================================================
-       2. BERPINDAH TAB
-    ========================================================= */
 
     function showTab(tab) {
       const isLogin = tab === "login";
@@ -760,21 +516,11 @@
     loginTab.addEventListener("click", () => showTab("login"));
     registerTab.addEventListener("click", () => showTab("register"));
 
-
-    /* =========================================================
-       3. MENAMPILKAN PESAN
-    ========================================================= */
-
     function showMessage(text, success = false) {
       message.textContent = text;
       message.style.display = "block";
       message.classList.toggle("success", success);
     }
-
-
-    /* =========================================================
-       4. FUNGSI REQUEST KE BACKEND
-    ========================================================= */
 
     async function sendRequest(endpoint, payload) {
       let response;
@@ -792,7 +538,9 @@
         });
       } catch (error) {
         console.error("Koneksi API gagal:", error);
-        throw new Error("Tidak dapat terhubung ke server. Periksa koneksi internet.");
+        throw new Error(
+          "Tidak dapat terhubung ke server. Periksa koneksi internet."
+        );
       }
 
       const responseText = await response.text();
@@ -801,28 +549,29 @@
       try {
         data = JSON.parse(responseText);
       } catch {
-        throw new Error(`Respons server tidak valid (HTTP ${response.status}).`);
+        throw new Error(
+          `Respons server tidak valid (HTTP ${response.status}).`
+        );
       }
 
       if (!response.ok || data.success !== true) {
-        throw new Error(data.message || `Permintaan gagal (HTTP ${response.status}).`);
+        throw new Error(
+          data.message || `Permintaan gagal (HTTP ${response.status}).`
+        );
       }
 
       return data;
     }
 
-
-    /* =========================================================
-       5. PENDAFTARAN USER
-    ========================================================= */
-
+    // PENDAFTARAN USER
     registerForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
       const name = document.getElementById("registerName").value.trim();
       const email = document.getElementById("registerEmail").value.trim();
       const password = document.getElementById("registerPassword").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
+      const confirmPassword =
+        document.getElementById("confirmPassword").value;
 
       if (!name) {
         showMessage("Nama lengkap wajib diisi.");
@@ -854,8 +603,10 @@
         showTab("login");
         document.getElementById("loginEmail").value = email;
 
-        showMessage(data.message || "Pendaftaran berhasil. Silakan masuk.", true);
-
+        showMessage(
+          data.message || "Pendaftaran berhasil. Silakan masuk.",
+          true
+        );
       } catch (error) {
         showMessage(error.message || "Pendaftaran gagal.");
       } finally {
@@ -864,11 +615,7 @@
       }
     });
 
-
-    /* =========================================================
-       6. LOGIN USER (DIARAHKAN KE DASHBOARD-USER.HTML)
-    ========================================================= */
-
+    // LOGIN USER
     loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
@@ -885,11 +632,12 @@
           password
         });
 
-        showMessage(data.message || "Login berhasil. Mengalihkan...", true);
+        showMessage(
+          data.message || "Login berhasil. Mengalihkan...",
+          true
+        );
 
-        // Arahkan user ke dashboard khusus penyedia
         window.location.replace("/dashboard-user.html");
-
       } catch (error) {
         showMessage(error.message || "Login gagal.");
         loginButton.disabled = false;
@@ -897,38 +645,40 @@
       }
     });
 
-
-    /* =========================================================
-       7. MEMERIKSA SESI USER YANG SUDAH LOGIN
-    ========================================================= */
-
+    // PEMERIKSAAN SESI USER
     async function checkExistingSession() {
       try {
-        const response = await fetch("/api/user/login?action=check", {
-          method: "GET",
-          credentials: "same-origin",
-          cache: "no-store",
-          headers: { "Accept": "application/json" }
-        });
+        const response = await fetch(
+          "/api/user/login?action=check",
+          {
+            method: "GET",
+            credentials: "same-origin",
+            cache: "no-store",
+            headers: {
+              "Accept": "application/json"
+            }
+          }
+        );
 
         if (!response.ok) return;
 
         const data = await response.json();
 
-        // Jika sesi valid dan role user adalah "user", langsung arahkan ke dashboard-user.html
-        if (data.success === true && data.authenticated === true && data.user && data.user.role === "user") {
+        if (
+          data.success === true &&
+          data.authenticated === true &&
+          data.user &&
+          data.user.role === "user"
+        ) {
           window.location.replace("/dashboard-user.html");
         }
-
       } catch (error) {
-        // Abaikan jika belum login
+        // Abaikan jika pengguna belum login.
       }
     }
 
-    /* Jalankan pemeriksaan sesi saat halaman dibuka. */
     checkExistingSession();
-
   </script>
-
 </body>
 </html>
+```
