@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#a80000">
     <title>YUK BERES - Beranda Layanan</title>
-    <!-- Google Font untuk gaya huruf bulat modern ala ungu.in -->
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -49,27 +47,7 @@
             padding: 0 10px;
             display: flex;
             align-items: center;
-        }
-
-        /* Gaya Logo Model ungu.in khusus Teks Yuk Beres */
-        .logo-yukberes {
-            font-family: 'Comfortaa', cursive, sans-serif;
-            font-size: 22px;
-            font-weight: 700;
-            color: #a80000;
-            letter-spacing: -0.5px;
-        }
-        .logo-yukberes span.beres {
-            color: #d31010;
-        }
-        .logo-yukberes span.dot {
-            display: inline-block;
-            width: 5px;
-            height: 5px;
-            background: #a80000;
-            border-radius: 50%;
-            margin-left: 2px;
-            vertical-align: baseline;
+            gap: 8px;
         }
 
         .sidebar-menu-list {
@@ -397,7 +375,7 @@
 <!-- SIDEBAR KIRI (TAMPILAN LAPTOP / DESKTOP) -->
 <aside class="sidebar-desktop">
     <div class="sidebar-logo">
-        <div class="logo-yukberes">yuk<span class="beres">beres</span><span class="dot"></span></div>
+        <span>🌐</span> YUK BERES
     </div>
 
     <!-- MENU VERTIKAL SIDEBAR -->
@@ -451,9 +429,7 @@
     <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu">
         <span></span><span></span><span></span>
     </button>
-    <div class="mobile-brand">
-        <div class="logo-yukberes" style="font-size: 16px;">yuk<span class="beres">beres</span><span class="dot" style="width: 4px; height: 4px;"></span></div>
-    </div>
+    <div class="mobile-brand">YUK BERES</div>
 </header>
 
 <div class="nav-overlay" id="navOverlay"></div>
