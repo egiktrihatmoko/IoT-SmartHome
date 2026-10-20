@@ -40,8 +40,8 @@
         }
 
         .sidebar-logo {
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 20px;
+            font-weight: 800;
             color: #a80000;
             margin-bottom: 25px;
             padding: 0 10px;
@@ -62,8 +62,8 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 11px 14px;
-            border-radius: 8px;
+            padding: 12px 14px;
+            border-radius: 10px;
             color: #444;
             text-decoration: none;
             font-size: 14px;
@@ -85,23 +85,13 @@
         }
 
         .sidebar-menu-item .menu-icon {
-            font-size: 16px;
-            width: 20px;
+            font-size: 18px;
+            width: 22px;
             text-align: center;
         }
 
-        /* GARIS PEMBATAS DI SIDEBAR */
-        .sidebar-divider {
-            height: 1px;
-            background: #f2dede;
-            margin: 15px 10px;
-        }
-
-        body.dark-mode .sidebar-divider {
-            background: #383838;
-        }
-
         .sidebar-login-btn {
+            margin-top: auto;
             color: #a80000 !important;
             background: #fff0f0;
             border: 1px solid #f2dede;
@@ -112,7 +102,7 @@
         }
 
         /* ------------------------------------------------------------- */
-        /* AREA KONTEN UTAMA */
+        /* AREA KONTEN UTAMA (DI SEBELAH KANAN SIDEBAR DESKTOP) */
         /* ------------------------------------------------------------- */
         .main-wrapper {
             margin-left: 260px;
@@ -162,27 +152,27 @@
             gap: 5px;
             background: #a80000;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             box-shadow: 0 3px 10px rgba(168, 0, 0, 0.2);
         }
 
         .menu-toggle span {
             display: block;
-            width: 18px;
-            height: 2px;
-            border-radius: 2px;
+            width: 20px;
+            height: 2.5px;
+            border-radius: 3px;
             background: #fff;
             transition: 0.25s;
         }
 
-        .menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .menu-toggle.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
         .menu-toggle.active span:nth-child(2) { opacity: 0; }
-        .menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+        .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
 
         .mobile-brand {
             font-size: 15px;
-            font-weight: 700;
+            font-weight: 800;
             color: #a80000;
         }
 
@@ -204,12 +194,12 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 280px;
+            width: 290px;
             max-width: 85%;
             height: 100vh;
             background: #fff;
             z-index: 1001;
-            padding: 80px 16px 25px;
+            padding: 85px 18px 25px;
             box-shadow: 5px 0 25px rgba(0, 0, 0, 0.12);
             transform: translateX(-105%);
             transition: transform 0.25s ease;
@@ -219,22 +209,23 @@
         }
 
         .nav-drawer.show { transform: translateX(0); }
-        
+        .nav-drawer-content { flex: 1; }
+
         .nav-heading {
             color: #a80000;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            margin: 0 10px 12px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin: 0 12px 15px;
         }
 
         .nav-link {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px;
-            margin-bottom: 6px;
-            border-radius: 8px;
+            padding: 14px 13px;
+            margin-bottom: 7px;
+            border-radius: 10px;
             color: #333;
             text-decoration: none;
             font-size: 14px;
@@ -261,11 +252,11 @@
         .hero-banner {
             position: relative;
             background: linear-gradient(135deg, #8a0000 0%, #a80000 50%, #d31010 100%);
-            border-radius: 18px;
-            padding: 32px 28px;
+            border-radius: 22px;
+            padding: 35px 30px;
             color: white;
-            box-shadow: 0 8px 25px rgba(168, 0, 0, 0.15);
-            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(168, 0, 0, 0.18);
+            margin-bottom: 30px;
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -283,27 +274,27 @@
             color: #fff;
             font-size: 11px;
             font-weight: 700;
-            letter-spacing: 1px;
-            padding: 3px 10px;
-            border-radius: 15px;
-            margin-bottom: 10px;
+            letter-spacing: 1.5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
             text-transform: uppercase;
         }
 
-        .hero-banner h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
-        .hero-banner p { font-size: 13px; color: rgba(255, 255, 255, 0.88); }
+        .hero-banner h1 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+        .hero-banner p { font-size: 14px; color: rgba(255, 255, 255, 0.88); }
 
         .auth-trigger-btn {
             position: relative;
             z-index: 2;
             background: #ffffff;
             color: #a80000;
-            padding: 10px 20px;
-            border-radius: 20px;
+            padding: 11px 22px;
+            border-radius: 25px;
             font-size: 13px;
             font-weight: 700;
             text-decoration: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             transition: transform 0.2s, background 0.2s;
             white-space: nowrap;
         }
@@ -313,48 +304,48 @@
             background: #fff0f0;
         }
 
-        .section-header { margin-bottom: 15px; }
-        .section-title { color: #a80000; font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+        .section-header { margin-bottom: 18px; }
+        .section-title { color: #a80000; font-size: 18px; font-weight: 800; margin-bottom: 4px; }
         .section-subtitle { font-size: 13px; color: #777; }
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 18px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
         }
 
         .feature-card {
             background: #ffffff;
             border: 1px solid #f2dede;
-            border-radius: 14px;
-            padding: 20px;
+            border-radius: 18px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            gap: 16px;
-            box-shadow: 0 4px 15px rgba(150, 0, 0, 0.04);
-            transition: all 0.2s ease;
+            gap: 20px;
+            box-shadow: 0 6px 20px rgba(150, 0, 0, 0.05);
+            transition: all 0.25s ease;
         }
 
         .feature-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-4px);
             border-color: #e00000;
-            box-shadow: 0 8px 22px rgba(168, 0, 0, 0.1);
+            box-shadow: 0 12px 28px rgba(168, 0, 0, 0.12);
         }
 
         .card-icon-wrapper {
-            width: 42px; height: 42px;
-            border-radius: 10px; background: #fff0f0;
+            width: 48px; height: 48px;
+            border-radius: 14px; background: #fff0f0;
             border: 1px solid #fce8e8;
             display: flex; align-items: center; justify-content: center;
-            font-size: 18px; color: #a80000; margin-bottom: 12px;
+            font-size: 22px; color: #a80000; margin-bottom: 14px;
         }
 
-        .card-content h3 { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 4px; }
-        .card-content p { font-size: 12px; color: #666; line-height: 1.4; }
-        .card-action { color: #a80000; font-size: 12px; font-weight: 700; }
+        .card-content h3 { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 6px; }
+        .card-content p { font-size: 13px; color: #666; line-height: 1.45; }
+        .card-action { color: #a80000; font-size: 13px; font-weight: 700; }
 
-        .footer { text-align: center; margin-top: 40px; color: #999; font-size: 12px; }
+        .footer { text-align: center; margin-top: 45px; color: #999; font-size: 12px; }
 
         /* ------------------------------------------------------------- */
         /* DARK MODE */
@@ -373,7 +364,7 @@
         /* ------------------------------------------------------------- */
         @media (max-width: 850px) {
             .sidebar-desktop { display: none !important; }
-            .main-wrapper { margin-left: 0 !important; padding-top: 75px; padding-left: 12px; padding-right: 12px; }
+            .main-wrapper { margin-left: 0 !important; padding-top: 80px; padding-left: 15px; padding-right: 15px; }
             .mobile-header { display: flex !important; }
         }
     </style>
@@ -381,59 +372,59 @@
 
 <body>
 
-<!-- SIDEBAR KIRI (DESKTOP) -->
+<!-- SIDEBAR KIRI (TAMPILAN LAPTOP / DESKTOP) -->
 <aside class="sidebar-desktop">
     <div class="sidebar-logo">
-        <span>[ Beranda ]</span> Portal Layanan
+        <span>🌐</span> Portal Layanan
     </div>
 
-    <!-- MENU UTAMA -->
+    <!-- MENU VERTIKAL SIDEBAR -->
     <ul class="sidebar-menu-list">
         <li class="sidebar-menu-item">
             <a href="/" class="active-link">
-                <span class="menu-icon">-</span>
+                <span class="menu-icon">🏠</span>
                 <span>Beranda Utama</span>
             </a>
         </li>
         <li class="sidebar-menu-item">
             <a href="/">
-                <span class="menu-icon">-</span>
+                <span class="menu-icon">🧮</span>
                 <span>Kalkulator</span>
             </a>
         </li>
         <li class="sidebar-menu-item">
             <a href="/gabung-foto.html">
-                <span class="menu-icon">-</span>
+                <span class="menu-icon">🖼️</span>
                 <span>Foto ke PDF</span>
             </a>
         </li>
         <li class="sidebar-menu-item">
             <a href="/surat-pernyataan.html">
-                <span class="menu-icon">-</span>
+                <span class="menu-icon">📄</span>
                 <span>Surat Pernyataan</span>
             </a>
         </li>
 
-        <!-- GARIS PEMBATAS ANTARA FITUR UTAMA & PENGATURAN/LOGIN -->
-        <div class="sidebar-divider"></div>
+        <!-- GARIS PEMBATAS SIDEBAR DESKTOP -->
+        <div style="height: 1px; background: #f2dede; margin: 12px 10px;"></div>
 
         <li class="sidebar-menu-item">
             <button id="desktopDarkModeToggle" type="button">
-                <span class="menu-icon">o</span>
+                <span class="menu-icon" id="desktopDarkModeIcon">🌙</span>
                 <span id="desktopDarkModeText">Dark Mode</span>
             </button>
         </li>
 
         <li class="sidebar-menu-item">
             <a href="/login-user.html" class="sidebar-login-btn" id="sidebarLoginLink">
-                <span class="menu-icon">&gt;</span>
+                <span class="menu-icon">🔑</span>
                 <span id="sidebarLoginText">Masuk / Login</span>
             </a>
         </li>
     </ul>
 </aside>
 
-<!-- HEADER & DRAWER HP -->
+<!-- HEADER & DRAWER KHUSUS HP -->
 <header class="mobile-header">
     <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu">
         <span></span><span></span><span></span>
@@ -444,20 +435,24 @@
 <div class="nav-overlay" id="navOverlay"></div>
 
 <nav class="nav-drawer" id="navDrawer">
-    <div class="nav-heading">MENU UTAMA</div>
-    <a class="nav-link" href="/"><span>-</span> Beranda Utama</a>
-    <a class="nav-link" href="/"><span>-</span> Kalkulator</a>
-    <a class="nav-link" href="/gabung-foto.html"><span>-</span> Foto ke PDF</a>
-    <a class="nav-link" href="/surat-pernyataan.html"><span>-</span> Surat Pernyataan</a>
-    
-    <div style="height: 1px; background: #f2dede; margin: 12px 6px;"></div>
+    <div class="nav-drawer-content">
+        <div class="nav-heading">MENU UTAMA</div>
+        <a class="nav-link" href="/"><span class="nav-icon">🏠</span> Beranda Utama</a>
+        <a class="nav-link" href="/"><span class="nav-icon">🧮</span> Kalkulator</a>
+        <a class="nav-link" href="/gabung-foto.html"><span class="nav-icon">🖼️</span> Foto ke PDF</a>
+        <a class="nav-link" href="/surat-pernyataan.html"><span class="nav-icon">📄</span> Surat Pernyataan</a>
+        
+        <!-- GARIS PEMBATAS DRAWER MOBILE -->
+        <div style="height: 1px; background: #f2dede; margin: 12px 10px;"></div>
 
-    <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" style="border:none; background:transparent; width:100%; text-align:left; font-family:inherit;">
-        <span>o</span> <span id="darkModeText">Dark Mode</span>
-    </button>
-
-    <a class="nav-link login-link" href="/login-user.html" id="mobileLoginLink" style="margin-top: 6px;">
-        <span>&gt;</span> <span id="mobileLoginText">Masuk / Login Akun</span>
+        <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" style="border:none; background:transparent; width:100%; text-align:left; font-family:inherit;">
+            <span class="nav-icon" id="darkModeIcon">🌙</span>
+            <span id="darkModeText">Dark Mode</span>
+        </button>
+    </div>
+    <a class="nav-link login-link" href="/login-user.html" id="mobileLoginLink">
+        <span class="nav-icon">🔑</span>
+        <span id="mobileLoginText">Masuk / Login Akun</span>
     </a>
 </nav>
 
@@ -487,7 +482,7 @@
         <div class="features-grid">
             <a href="/" class="feature-card">
                 <div>
-                    <div class="card-icon-wrapper">#</div>
+                    <div class="card-icon-wrapper">🧮</div>
                     <div class="card-content">
                         <h3>Kalkulator Harga Tayang</h3>
                         <p>Hitung harga tayang dengan cepat, terstruktur, dan praktis.</p>
@@ -498,7 +493,7 @@
 
             <a href="/gabung-foto.html" class="feature-card">
                 <div>
-                    <div class="card-icon-wrapper">#</div>
+                    <div class="card-icon-wrapper">🖼️</div>
                     <div class="card-content">
                         <h3>Foto ke PDF</h3>
                         <p>Gabungkan atau ubah foto dokumen menjadi file PDF siap kirim.</p>
@@ -509,7 +504,7 @@
 
             <a href="/surat-pernyataan.html" class="feature-card">
                 <div>
-                    <div class="card-icon-wrapper">#</div>
+                    <div class="card-icon-wrapper">📄</div>
                     <div class="card-content">
                         <h3>Surat Pernyataan</h3>
                         <p>Buat surat pernyataan resmi dan tambahkan tanda tangan secara otomatis.</p>
@@ -527,6 +522,7 @@
 </div>
 
 <script>
+/* SCRIPT NAVIGASI DRAWER MOBILE */
 const menuToggle = document.getElementById("menuToggle");
 const navDrawer = document.getElementById("navDrawer");
 const navOverlay = document.getElementById("navOverlay");
@@ -548,14 +544,21 @@ function tutupMenu() {
 if (menuToggle) menuToggle.addEventListener("click", () => navDrawer.classList.contains("show") ? tutupMenu() : bukaMenu());
 if (navOverlay) navOverlay.addEventListener("click", tutupMenu);
 
+/* DARK MODE CONTROLLER */
 const darkModeToggle = document.getElementById("darkModeToggle");
 const desktopDarkModeToggle = document.getElementById("desktopDarkModeToggle");
+const darkModeIcon = document.getElementById("darkModeIcon");
+const desktopDarkModeIcon = document.getElementById("desktopDarkModeIcon");
 const darkModeText = document.getElementById("darkModeText");
 const desktopDarkModeText = document.getElementById("desktopDarkModeText");
 
 function aturDarkMode(aktif) {
     document.body.classList.toggle("dark-mode", aktif);
+    const icon = aktif ? "☀️" : "🌙";
     const text = aktif ? "Light Mode" : "Dark Mode";
+
+    if (darkModeIcon) darkModeIcon.textContent = icon;
+    if (desktopDarkModeIcon) desktopDarkModeIcon.textContent = icon;
     if (darkModeText) darkModeText.textContent = text;
     if (desktopDarkModeText) desktopDarkModeText.textContent = text;
 
@@ -569,6 +572,7 @@ aturDarkMode(darkModeTersimpan);
 if (darkModeToggle) darkModeToggle.addEventListener("click", () => { aturDarkMode(!document.body.classList.contains("dark-mode")); tutupMenu(); });
 if (desktopDarkModeToggle) desktopDarkModeToggle.addEventListener("click", () => { aturDarkMode(!document.body.classList.contains("dark-mode")); });
 
+/* SIKRONISASI STATUS LOGIN (JIKA PENGUNJUNG TERNYATA SUDAH LOGIN) */
 async function cekStatusLoginTamu() {
     try {
         const res = await fetch("/api/user/login?action=check", {
@@ -608,7 +612,9 @@ async function cekStatusLoginTamu() {
                 mobileLoginLink.href = "/dashboard-user.html";
             }
         }
-    } catch (err) {}
+    } catch (err) {
+        // Biarkan mode publik/tamu
+    }
 }
 
 cekStatusLoginTamu();
