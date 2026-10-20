@@ -8,7 +8,7 @@ module.exports = async function handler(req, res) {
     function redirectError(type) {
         return res.redirect(
             302,
-            `/admin.html?error=${encodeURIComponent(type)}`
+            `/login.html?error=${encodeURIComponent(type)}`
         );
     }
 
@@ -21,7 +21,7 @@ module.exports = async function handler(req, res) {
 
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-    const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+    const redirectUri = process.env.GOOGLE_USER_REDIRECT_URI;
     const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
     const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
 
@@ -32,16 +32,17 @@ module.exports = async function handler(req, res) {
         !redisUrl ||
         !redisToken
     ) {
-        console.error("GOOGLE_CALLBACK_CONFIG_MISSING");
+        console.error("USER_GOOGLE_CALLBACK_CONFIG_MISSING");
+
         return res.status(500).send(
-            "Konfigurasi login belum lengkap."
+            "Konfigurasi login Google user belum lengkap."
         );
     }
 
     const cookieHeader = req.headers.cookie || "";
 
     const stateMatch = cookieHeader.match(
-        /(?:^|;\s*)google_oauth_state=([a-f0-9]{64})(?:;|$)/
+        /(?:^|;\s*)google_user_oauth_state=([a-f0-9]{64})(?:;|$)/
     );
 
     const returnedState =
@@ -50,7 +51,7 @@ module.exports = async function handler(req, res) {
             : "";
 
     const clearStateCookie =
-        "google_oauth_state=; Path=/api/admin/google; HttpOnly; Secure; SameSite=Lax; Max-Age=0";
+        "google_user_oauth_state=; Path=/api/user/google; HttpOnly; Secure; SameSite=Lax; Max-Age=0";
 
     const normalizedRedisUrl = redisUrl.replace(/\/+$/, "");
 
@@ -97,6 +98,7 @@ module.exports = async function handler(req, res) {
 
         res.setHeader("Set-Cookie", clearStateCookie);
 
+        // 2. Pastikan Google mengembalikan authorization code.
         if (
             req.query.error ||
             typeof req.query.code !== "string"
@@ -104,7 +106,7 @@ module.exports = async function handler(req, res) {
             return redirectError("google_login_failed");
         }
 
-        // 2. Tukarkan authorization code dengan token Google.
+        // 3. Tukarkan authorization code dengan token Google.
         const tokenResponse = await fetch(
             "https://oauth2.googleapis.com/token",
             {
@@ -133,7 +135,7 @@ module.exports = async function handler(req, res) {
             throw new Error("Google token exchange gagal");
         }
 
-        // 3. Ambil profil dari endpoint resmi Google.
+        // 4. Ambil profil dari Google.
         const profileResponse = await fetch(
             "https://openidconnect.googleapis.com/v1/userinfo",
             {
@@ -162,8 +164,22 @@ module.exports = async function handler(req, res) {
             throw new Error("Email Google kosong");
         }
 
-        // 4. Cari akun di Redis.
-        const userKey = `admin_user:${email}`;
+        const nama =
+            typeof profile.name === "string" &&
+            profile.name.trim()
+                ? profile.name.trim()
+                : email.split("@")[0];
+
+        const foto =
+            typeof profile.picture === "string" &&
+            /^https:\/\//i.test(profile.picture)
+                ? profile.picture
+                : null;
+
+        // 5. Cari akun user di Redis.
+        // Pastikan prefix ini sesuai dengan API registrasi user.
+        const userKey = `user:${email}`;
+
         const existingData = await redisCommand([
             "GET",
             userKey
@@ -181,6 +197,7 @@ module.exports = async function handler(req, res) {
             if (
                 !user ||
                 typeof user !== "object" ||
+                Array.isArray(user) ||
                 (
                     typeof user.email === "string" &&
                     user.email.trim().toLowerCase() !== email
@@ -189,21 +206,50 @@ module.exports = async function handler(req, res) {
                 throw new Error("Data akun tidak cocok");
             }
 
-            // Sesuai permintaan: akun Google diberi role admin.
+            // Jangan izinkan callback user masuk sebagai admin.
+            if (user.role === "admin") {
+                return redirectError("account_conflict");
+            }
+
+            // Jangan menautkan akun Google berbeda secara
+            // otomatis ke akun yang sudah tertaut.
+            if (
+                user.googleSub &&
+                user.googleSub !== profile.sub
+            ) {
+                return redirectError("account_conflict");
+            }
+
             user.email = email;
-            user.role = "admin";
+            user.nama = nama;
+            user.role = "user";
             user.googleSub = profile.sub;
             user.authProvider = "google";
 
+            // Simpan foto terbaru jika Google menyediakan foto.
+            if (foto) {
+                user.foto = foto;
+                user.picture = foto;
+            } else if (
+                typeof user.foto !== "string" ||
+                !user.foto
+            ) {
+                user.foto = null;
+                user.picture = null;
+            }
+
+            // Jangan mengganti password akun lama.
             if (typeof user.passwordHash !== "string") {
                 user.passwordHash = await bcrypt.hash(
                     crypto.randomBytes(48).toString("hex"),
                     12
                 );
             }
+
+            user.updatedAt = new Date().toISOString();
+
         } else {
-            // 5. Daftarkan akun Google baru secara otomatis.
-            // Password acak tidak diketahui oleh pengguna.
+            // 6. Buat akun user baru.
             const randomPassword =
                 crypto.randomBytes(48).toString("hex");
 
@@ -214,52 +260,55 @@ module.exports = async function handler(req, res) {
 
             user = {
                 email,
+                nama,
+                foto,
+                picture: foto,
                 passwordHash,
-                role: "admin",
+                role: "user",
                 googleSub: profile.sub,
                 authProvider: "google",
                 createdAt: new Date().toISOString()
             };
         }
 
-        // Simpan akun ke Redis.
+        // 7. Simpan data akun ke Redis.
         await redisCommand([
             "SET",
             userKey,
             JSON.stringify(user)
         ]);
 
-        // 6. Buat sesi admin selama 24 jam.
+        // 8. Buat sesi khusus user selama 24 jam.
         const sessionToken = crypto
             .randomBytes(32)
             .toString("hex");
 
         const session = JSON.stringify({
             email,
-            role: "admin",
+            role: "user",
             createdAt: new Date().toISOString()
         });
 
         await redisCommand([
             "SET",
-            `admin_session:${sessionToken}`,
+            `user_session:${sessionToken}`,
             session,
             "EX",
             "86400"
         ]);
 
-        // Hapus cookie OAuth dan pasang cookie sesi.
+        // 9. Pasang cookie sesi user.
         res.setHeader("Set-Cookie", [
             clearStateCookie,
-            `admin_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`
+            `user_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`
         ]);
 
-        // 7. Masuk ke dashboard.
-        return res.redirect(302, "/dashboard.html");
+        // 10. Arahkan user ke dashboard.
+        return res.redirect(302, "/user-dashboard.html");
 
     } catch (error) {
         console.error(
-            "GOOGLE_CALLBACK_ERROR:",
+            "USER_GOOGLE_CALLBACK_ERROR:",
             error.message
         );
 
