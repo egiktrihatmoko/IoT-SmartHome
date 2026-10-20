@@ -90,6 +90,13 @@
             justify-content: center;
         }
 
+        .sidebar-logo a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
         .sidebar-logo img {
             height: 58px;
             width: auto;
@@ -278,6 +285,12 @@
         .mobile-brand {
             display: flex;
             align-items: center;
+        }
+
+        .mobile-brand a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
         }
 
         .mobile-brand img {
@@ -528,7 +541,9 @@
 <!-- SIDEBAR KIRI (TAMPILAN KHUSUS LAPTOP / DESKTOP) -->
 <aside class="sidebar-desktop">
     <div class="sidebar-logo">
-        <img src="ykk.png" alt="YUK BERES">
+        <a href="/dashboard-user.html">
+            <img src="ykk.png" alt="YUK BERES">
+        </a>
     </div>
 
     <!-- PROFIL PENGGUNA DI SIDEBAR -->
@@ -570,6 +585,14 @@
             </a>
         </li>
 
+        <!-- LOGIN ADMIN DI ATAS DARK MODE -->
+        <li class="sidebar-menu-item">
+            <a href="/admin.html">
+                <span class="menu-icon">🔑</span>
+                <span>Login Admin</span>
+            </a>
+        </li>
+
         <!-- GARIS PEMBATAS SIDEBAR DESKTOP -->
         <div style="height: 1px; background: #f2dede; margin: 12px 10px;"></div>
 
@@ -595,7 +618,9 @@
         <span></span><span></span><span></span>
     </button>
     <div class="mobile-brand">
-        <img src="ykk.png" alt="YUK BERES">
+        <a href="/dashboard-user.html">
+            <img src="ykk.png" alt="YUK BERES">
+        </a>
     </div>
 </header>
 
@@ -608,6 +633,7 @@
         <a class="nav-link" href="/"><span class="nav-icon">🧮</span> Kalkulator</a>
         <a class="nav-link" href="/gabung-foto.html"><span class="nav-icon">🖼️</span> Foto ke PDF</a>
         <a class="nav-link" href="/surat-pernyataan.html"><span class="nav-icon">📄</span> Surat Pernyataan</a>
+        <a class="nav-link" href="/admin.html"><span class="nav-icon">🔑</span> Login Admin</a>
         
         <!-- GARIS PEMBATAS DRAWER MOBILE -->
         <div style="height: 1px; background: #f2dede; margin: 12px 10px;"></div>
