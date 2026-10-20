@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#a80000">
-    <title>Kalkulator Harga Tayang</title>
+    <title>Kalkulator Harga Tayang - Aplikasi Utama</title>
 
     <style>
         * {
@@ -14,11 +14,212 @@
         }
 
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             background: #fff5f5;
             color: #222;
             min-height: 100vh;
-            padding: 40px 15px;
+            transition: background 0.25s, color 0.25s;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* LAPISAN LOADING / PEMERIKSAAN SESI */
+        /* ------------------------------------------------------------- */
+        #authLoader {
+            position: fixed;
+            inset: 0;
+            background: #fff5f5;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #a80000;
+            font-weight: 600;
+            transition: opacity 0.3s ease;
+        }
+
+        .spinner {
+            width: 45px;
+            height: 45px;
+            border: 4px solid #f2dede;
+            border-top: 4px solid #a80000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        body.dark-mode #authLoader {
+            background: #121212;
+            color: #ff7777;
+        }
+
+        body.dark-mode .spinner {
+            border-color: #383838;
+            border-top-color: #ff5555;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* SIDEBAR KIRI (UNTUK DESKTOP / LAPTOP) */
+        /* ------------------------------------------------------------- */
+        .sidebar-desktop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            background: #ffffff;
+            border-right: 1px solid #f2dede;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            margin-bottom: 25px;
+            padding: 0 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-logo a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .sidebar-logo img {
+            height: 58px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        /* BAR PROFIL USERS DI SIDEBAR */
+        .sidebar-user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: #fff0f0;
+            border-radius: 12px;
+            border: 1px solid #fce8e8;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .sidebar-user-card:hover {
+            background: #ffe0e0;
+        }
+
+        .sidebar-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #a80000;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .sidebar-user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sidebar-user-info {
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .sidebar-user-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #222;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-user-role {
+            font-size: 11px;
+            color: #777;
+        }
+
+        .sidebar-menu-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .sidebar-menu-item a, .sidebar-menu-item button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            color: #444;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+            width: 100%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .sidebar-menu-item a:hover, 
+        .sidebar-menu-item button:hover, 
+        .sidebar-menu-item a.active-link {
+            background: #fff0f0;
+            color: #a80000;
+        }
+
+        .sidebar-menu-item .menu-icon {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .sidebar-logout {
+            margin-top: auto;
+            color: #d31010 !important;
+            background: #fff0f0;
+            border: 1px solid #f2dede;
+        }
+
+        .sidebar-logout:hover {
+            background: #ffe0e0 !important;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* AREA KONTEN UTAMA (DI SEBELAH KANAN SIDEBAR DESKTOP) */
+        /* ------------------------------------------------------------- */
+        .main-wrapper {
+            margin-left: 260px;
+            padding: 30px 25px 60px;
+            min-height: 100vh;
         }
 
         .container {
@@ -26,14 +227,28 @@
             margin: auto;
         }
 
-        /* MENU NAVIGASI */
-        .menu-toggle {
+        /* ------------------------------------------------------------- */
+        /* NAVBAR HEADER MOBILE (HANYA UNTUK HP) */
+        /* ------------------------------------------------------------- */
+        .mobile-header {
+            display: none;
             position: fixed;
-            top: 18px;
-            left: 18px;
-            z-index: 1002;
-            width: 44px;
-            height: 44px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background: rgba(255, 245, 245, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #f2dede;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 99;
+        }
+
+        .menu-toggle {
+            width: 40px;
+            height: 40px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -43,44 +258,52 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            box-shadow: 0 3px 10px rgba(150, 0, 0, 0.18);
+            box-shadow: 0 3px 10px rgba(168, 0, 0, 0.2);
         }
 
         .menu-toggle span {
             display: block;
-            width: 22px;
+            width: 20px;
             height: 2.5px;
             border-radius: 3px;
             background: #fff;
             transition: 0.25s;
         }
 
-        .menu-toggle.active span:nth-child(1) {
-            transform: translateY(7.5px) rotate(45deg);
+        .menu-toggle.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+        .mobile-brand {
+            display: flex;
+            align-items: center;
         }
 
-        .menu-toggle.active span:nth-child(2) {
-            opacity: 0;
+        .mobile-brand a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
         }
 
-        .menu-toggle.active span:nth-child(3) {
-            transform: translateY(-7.5px) rotate(-45deg);
+        .mobile-brand img {
+            height: 46px;
+            width: auto;
+            object-fit: contain;
         }
 
+        /* DRAWER NAVIGATION MOBILE */
         .nav-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(2px);
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
             transition: 0.25s;
         }
 
-        .nav-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
+        .nav-overlay.show { opacity: 1; visibility: visible; }
 
         .nav-drawer {
             position: fixed;
@@ -89,7 +312,6 @@
             width: 290px;
             max-width: 85%;
             height: 100vh;
-            height: 100dvh;
             background: #fff;
             z-index: 1001;
             padding: 85px 18px 25px;
@@ -101,13 +323,8 @@
             flex-direction: column;
         }
 
-        .nav-drawer.show {
-            transform: translateX(0);
-        }
-
-        .nav-drawer-content {
-            flex: 1;
-        }
+        .nav-drawer.show { transform: translateX(0); }
+        .nav-drawer-content { flex: 1; }
 
         .nav-heading {
             color: #a80000;
@@ -129,38 +346,12 @@
             font-size: 14px;
             font-weight: 600;
             transition: 0.2s;
+            cursor: pointer;
         }
 
-        .nav-link:hover {
+        .nav-link:hover, .nav-link.active-link {
             background: #fff0f0;
             color: #a80000;
-        }
-
-        .nav-link .nav-icon {
-            width: 22px;
-            text-align: center;
-            font-size: 19px;
-            flex-shrink: 0;
-        }
-
-        .nav-link.login-link {
-            color: #a80000;
-            background: #fff0f0;
-            border: 1px solid #f2dede;
-        }
-
-        .nav-link.login-link:hover {
-            background: #ffe0e0;
-        }
-
-        .nav-link.admin-link {
-            color: #a80000;
-            background: #fff0f0;
-            border: 1px solid #f2dede;
-        }
-
-        .nav-link.admin-link:hover {
-            background: #ffe0e0;
         }
 
         .nav-link.logout-link {
@@ -168,35 +359,14 @@
             background: #fff0f0;
             border: 1px solid #f2dede;
             margin-top: auto;
-            cursor: pointer;
         }
 
-        .nav-link.logout-link:hover {
-            background: #ffe0e0;
-        }
-
-        .nav-divider {
-            height: 1px;
-            background: #eee;
-            margin: 15px 0;
-        }
-
-        /* TOMBOL DARK MODE */
-        .dark-mode-button {
-            width: 100%;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            text-align: left;
-            font-family: inherit;
-        }
-
-        /* HEADER */
+        /* HEADER KALKULATOR */
         .header {
             position: relative;
             text-align: center;
             margin-bottom: 25px;
-            padding-top: 40px;
+            padding-top: 10px;
         }
 
         .header h1 {
@@ -480,7 +650,7 @@
         /* FOOTER */
         .footer {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 30px;
             color: #999;
             font-size: 12px;
         }
@@ -501,16 +671,79 @@
             line-height: 1.5;
         }
 
+        /* ------------------------------------------------------------- */
+        /* MODAL POPUP EDIT FOTO PROFIL */
+        /* ------------------------------------------------------------- */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px);
+            z-index: 2000; display: flex; align-items: center; justify-content: center;
+            padding: 20px; opacity: 0; visibility: hidden; transition: 0.25s ease;
+        }
+
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+
+        .modal-card {
+            background: #ffffff; border-radius: 20px;
+            width: 100%; max-width: 380px; padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            text-align: center; position: relative;
+        }
+
+        .modal-title { font-size: 18px; font-weight: 700; color: #a80000; }
+        .modal-email { font-size: 12px; color: #777; margin-bottom: 15px; }
+
+        .modal-preview-container {
+            width: 90px; height: 90px; border-radius: 50%;
+            margin: 0 auto 16px; overflow: hidden;
+            border: 3px solid #f2dede; background: #fff0f0;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .modal-preview-container img { width: 100%; height: 100%; object-fit: cover; }
+
+        .modal-btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .btn-modal { padding: 12px; border-radius: 10px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .btn-primary-modal { background: #a80000; color: white; }
+        .btn-secondary-modal { background: #fff0f0; color: #d31010; border: 1px solid #fce8e8; }
+        .btn-logout-modal { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .btn-close-modal { position: absolute; top: 15px; right: 15px; background: transparent; border: none; font-size: 20px; color: #888; cursor: pointer; }
+
+        /* ------------------------------------------------------------- */
         /* DARK MODE */
+        /* ------------------------------------------------------------- */
         body.dark-mode {
             background: #121212;
             color: #f1f1f1;
         }
 
+        body.dark-mode .sidebar-desktop,
+        body.dark-mode .nav-drawer,
         body.dark-mode .card,
-        body.dark-mode .nav-drawer {
+        body.dark-mode .modal-card {
             background: #1e1e1e;
             border-color: #383838;
+        }
+
+        body.dark-mode .sidebar-user-card {
+            background: #2d1a1a;
+            border-color: #493030;
+        }
+
+        body.dark-mode .sidebar-user-name {
+            color: #fff;
+        }
+
+        body.dark-mode .sidebar-menu-item a, 
+        body.dark-mode .sidebar-menu-item button {
+            color: #eee;
+        }
+
+        body.dark-mode .sidebar-menu-item a:hover, 
+        body.dark-mode .sidebar-menu-item button:hover, 
+        body.dark-mode .sidebar-menu-item a.active-link {
+            background: #382020;
+            color: #ff7777;
         }
 
         body.dark-mode .header h1,
@@ -631,356 +864,365 @@
             border-color: #493030;
         }
 
-        body.dark-mode .nav-divider {
-            background: #383838;
+        body.dark-mode .mobile-header {
+            background: rgba(18, 18, 18, 0.95);
+            border-bottom-color: #383838;
         }
 
-        body.dark-mode .nav-overlay {
-            background: rgba(0, 0, 0, 0.65);
-        }
-
-        body.dark-mode .footer a {
-            color: #4ade80 !important;
-        }
-
-        /* MOBILE */
-        @media (max-width: 600px) {
-            body {
-                padding: 25px 12px;
-            }
-
-            .menu-toggle {
-                top: 12px;
-                left: 12px;
-                width: 40px;
-                height: 40px;
-            }
-
-            .header {
-                padding-top: 40px;
-            }
-
-            .header h1 {
-                font-size: 25px;
-            }
-
-            .visit-counter {
-                font-size: 12px;
-                padding: 5px 8px;
-            }
-
-            .visit-counter svg {
-                width: 15px;
-                height: 15px;
-            }
-
-            .card {
-                padding: 20px;
-            }
-
-            .options {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .row {
-                align-items: flex-start;
-            }
-
-            .amount {
-                text-align: right;
-            }
-
-            .final {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .final-price {
-                text-align: left;
-            }
+        /* ------------------------------------------------------------- */
+        /* ATURAN LAYOUT HP (RESPONSIF) */
+        /* ------------------------------------------------------------- */
+        @media (max-width: 850px) {
+            .sidebar-desktop { display: none !important; }
+            .main-wrapper { margin-left: 0 !important; padding-top: 80px; padding-left: 15px; padding-right: 15px; }
+            .mobile-header { display: flex !important; }
         }
     </style>
 </head>
 
 <body>
 
-<!-- TOMBOL MENU GARIS TIGA -->
-<button
-    class="menu-toggle"
-    id="menuToggle"
-    type="button"
-    aria-label="Buka menu navigasi"
-    aria-expanded="false"
-    aria-controls="navDrawer"
->
-    <span></span>
-    <span></span>
-    <span></span>
-</button>
+<!-- INDIKATOR PEMERIKSAAN SESI -->
+<div id="authLoader">
+    <div class="spinner"></div>
+    <span>Memeriksa sesi akun...</span>
+</div>
 
-<!-- LAPISAN GELAP DI BELAKANG MENU -->
+<!-- SIDEBAR KIRI (TAMPILAN KHUSUS LAPTOP / DESKTOP) -->
+<aside class="sidebar-desktop">
+    <div class="sidebar-logo">
+        <a href="/dashboard-user.html">
+            <img src="ykk.png" alt="YUK BERES">
+        </a>
+    </div>
+
+    <!-- PROFIL PENGGUNA DI SIDEBAR -->
+    <div class="sidebar-user-card" id="sidebarUserTrigger" title="Klik untuk edit profil">
+        <div class="sidebar-user-avatar">
+            <span id="sidebarUserAvatarIcon">👤</span>
+            <img id="sidebarUserAvatarImg" src="" alt="Avatar" style="display: none;">
+        </div>
+        <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebarUserName">User</div>
+            <div class="sidebar-user-role">Penyedia</div>
+        </div>
+    </div>
+
+    <!-- MENU VERTIKAL SIDEBAR -->
+    <ul class="sidebar-menu-list">
+        <li class="sidebar-menu-item">
+            <a href="/dashboard-user.html">
+                <span class="menu-icon">🏠</span>
+                <span>Beranda Utama</span>
+            </a>
+        </li>
+        <li class="sidebar-menu-item">
+            <a href="/" class="active-link">
+                <span class="menu-icon">🧮</span>
+                <span>Kalkulator Harga Tayang</span>
+            </a>
+        </li>
+        <li class="sidebar-menu-item">
+            <a href="/gabung-foto.html">
+                <span class="menu-icon">🖼️</span>
+                <span>Foto ke PDF</span>
+            </a>
+        </li>
+        <li class="sidebar-menu-item">
+            <a href="/surat-pernyataan.html">
+                <span class="menu-icon">📄</span>
+                <span>Surat Pernyataan</span>
+            </a>
+        </li>
+
+        <!-- GARIS PEMBATAS SIDEBAR DESKTOP -->
+        <div style="height: 1px; background: #f2dede; margin: 12px 10px;"></div>
+
+        <li class="sidebar-menu-item">
+            <button id="desktopDarkModeToggle" type="button">
+                <span class="menu-icon" id="desktopDarkModeIcon">🌙</span>
+                <span id="desktopDarkModeText">Dark Mode</span>
+            </button>
+        </li>
+
+        <li class="sidebar-menu-item">
+            <button class="sidebar-logout btn-logout-action" type="button">
+                <span class="menu-icon">🚪</span>
+                <span>Keluar / Logout</span>
+            </button>
+        </li>
+    </ul>
+</aside>
+
+<!-- HEADER & DRAWER KHUSUS TAMPILAN HP -->
+<header class="mobile-header">
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="navDrawer">
+        <span></span><span></span><span></span>
+    </button>
+    <div class="mobile-brand">
+        <a href="/dashboard-user.html">
+            <img src="ykk.png" alt="YUK BERES">
+        </a>
+    </div>
+</header>
+
 <div class="nav-overlay" id="navOverlay"></div>
 
-<!-- NAVIGASI DRAWER DINAMIS -->
 <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
     <div class="nav-drawer-content">
-        <div class="nav-heading">MENU NAVIGASI</div>
+        <div class="nav-heading">MENU UTAMA</div>
+        <a class="nav-link" href="/dashboard-user.html"><span class="nav-icon">🏠</span> Beranda Utama</a>
+        <a class="nav-link active-link" href="/"><span class="nav-icon">🧮</span> Kalkulator Harga Tayang</a>
+        <a class="nav-link" href="/gabung-foto.html"><span class="nav-icon">🖼️</span> Foto ke PDF</a>
+        <a class="nav-link" href="/surat-pernyataan.html"><span class="nav-icon">📄</span> Surat Pernyataan</a>
+        
+        <!-- GARIS PEMBATAS DRAWER MOBILE -->
+        <div style="height: 1px; background: #f2dede; margin: 12px 10px;"></div>
 
-        <!-- 1. LOGIN USER / DASHBOARD (BERUBAH OTOMATIS) -->
-        <a class="nav-link login-link" href="/login-user.html" id="userMenuLink">
-            <span class="nav-icon" id="userMenuIcon">👤</span>
-            <span id="userMenuText">Login User</span>
-        </a>
-
-        <!-- 2. FITUR FITUR UTAMA -->
-        <a class="nav-link" href="/gabung-foto.html">
-            <span class="nav-icon">🖼️</span>
-            <span>Ubah Foto ke PDF</span>
-        </a>
-
-        <a class="nav-link" href="/">
-            <span class="nav-icon">🧮</span>
-            <span>Kalkulator Harga Tayang</span>
-        </a>
-
-        <a class="nav-link" href="/surat-pernyataan.html">
-            <span class="nav-icon">📄</span>
-            <span>Buat Surat Pernyataan</span>
-        </a>
-
-        <div class="nav-divider" id="adminDivider"></div>
-
-        <!-- 3. LOGIN ADMIN (DISEMBUNYIKAN JIKA SUDAH LOGIN) -->
-        <a class="nav-link admin-link" href="/admin.html" id="adminMenuLink">
-            <span class="nav-icon">🔐</span>
-            <span>Login Admin</span>
-        </a>
-    </div>
-
-    <!-- 4. TOMBOL LOGOUT (HANYA MUNCUL JIKA SUDAH LOGIN) -->
-    <a class="nav-link logout-link btn-logout-action" id="drawerLogoutBtn" style="display: none;">
-        <span class="nav-icon">🚪</span>
-        <span>Keluar / Logout</span>
-    </a>
-
-    <!-- 5. TOMBOL DARK MODE -->
-    <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" aria-label="Ganti tema tampilan" style="margin-top: 8px;">
-        <span class="nav-icon" id="darkModeIcon">🌙</span>
-        <span id="darkModeText">Dark Mode</span>
-    </button>
-</nav>
-
-<div class="container">
-
-    <!-- HEADER -->
-    <div class="header">
-
-        <!-- TOTAL KUNJUNGAN -->
-        <div class="visit-counter" title="Total kunjungan website">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-            >
-                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
-                <circle cx="12" cy="12" r="3"/>
-            </svg>
-
-            <span>Total Kunjungan</span>
-            <span id="totalKunjungan">...</span>
-        </div>
-
-        <h1 id="mainTitle">Kalkulator Harga Tayang</h1>
-        <p>Perhitungan harga dasar, pajak, PPh dan fee</p>
-    </div>
-
-    <div class="card">
-
-        <!-- INPUT HARGA -->
-        <div class="section">
-            <div class="section-title">
-                <div class="number">1</div>
-                Masukkan Harga
-            </div>
-
-            <div class="input-group">
-                <label class="input-label" for="hargaDasar">
-                    Harga Dasar
-                    <span class="input-note">(sudah termasuk ongkir)</span>
-                </label>
-
-                <input
-                    type="number"
-                    id="hargaDasar"
-                    placeholder="Contoh: 2000000"
-                    min="0"
-                    oninput="hitung()"
-                >
-            </div>
-        </div>
-
-        <!-- PAJAK -->
-        <div class="section">
-            <div class="section-title">
-                <div class="number">2</div>
-                Pilih Pajak
-            </div>
-
-            <div class="options">
-                <label class="option">
-                    <input
-                        type="radio"
-                        name="pajak"
-                        value="12"
-                        checked
-                        onchange="hitung()"
-                    >
-                    PPN 12%
-                </label>
-
-                <label class="option">
-                    <input
-                        type="radio"
-                        name="pajak"
-                        value="10"
-                        onchange="hitung()"
-                    >
-                    Pajak Daerah 10%
-                </label>
-            </div>
-        </div>
-
-        <!-- PPH -->
-        <div class="section">
-            <div class="section-title">
-                <div class="number">3</div>
-                Pilih Jenis PPh
-            </div>
-
-            <div class="options">
-                <label class="option">
-                    <input
-                        type="radio"
-                        name="pph"
-                        value="1.5"
-                        checked
-                        onchange="hitung()"
-                    >
-                    PPh 1,5% — Barang
-                </label>
-
-                <label class="option">
-                    <input
-                        type="radio"
-                        name="pph"
-                        value="2"
-                        onchange="hitung()"
-                    >
-                    PPh 23 2% — Jasa
-                </label>
-            </div>
-        </div>
-
-        <!-- HASIL -->
-        <div class="result">
-            <div class="result-title">Rincian Perhitungan</div>
-
-            <div class="row disabled-row">
-                <div>
-                    <div class="row-title">Harga Dasar</div>
-                    <div class="calculation">Sudah termasuk ongkir</div>
-                </div>
-                <div class="amount" id="hasilHargaDasar">Rp0</div>
-            </div>
-
-            <div class="row subtotal space-top">
-                <div>
-                    <div class="row-title">Dasar Perhitungan Pajak</div>
-                    <div class="calculation" id="hitungDasarPajak">Rp0</div>
-                </div>
-                <div class="amount" id="hasilDasarPajak">Rp0</div>
-            </div>
-
-            <div class="row space-top">
-                <div>
-                    <div class="row-title" id="namaPajak">PPN 12%</div>
-                    <div class="calculation" id="hitungPajak">Rp0 × 11%</div>
-                </div>
-                <div class="amount" id="hasilPajak">Rp0</div>
-            </div>
-
-            <div class="row space-top">
-                <div>
-                    <div class="row-title" id="namaPph">PPh 1,5% — Barang</div>
-                    <div class="calculation" id="hitungPph">Rp0 × 1,5%</div>
-                </div>
-                <div class="amount" id="hasilPph">Rp0</div>
-            </div>
-
-            <div class="row subtotal space-top">
-                <div>
-                    <div class="row-title">Total Sebelum Fee</div>
-                    <div class="calculation" id="hitungSubtotal">
-                        Rp0 + Rp0 + Rp0
-                    </div>
-                </div>
-                <div class="amount" id="hasilSubtotal">Rp0</div>
-            </div>
-
-            <div class="row space-top">
-                <div>
-                    <div class="row-title">Fee 0,5%</div>
-                    <div class="calculation" id="hitungFee">Rp0 × 0,5%</div>
-                </div>
-                <div class="amount" id="hasilFee">Rp0</div>
-            </div>
-
-            <div class="final">
-                <div class="final-label">HARGA TAYANG</div>
-                <div class="final-price" id="hargaTayang">Rp0</div>
-            </div>
-        </div>
-
-        <!-- RESET -->
-        <button class="reset" type="button" onclick="resetForm()">
-            ↻ Reset Perhitungan
+        <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" style="border:none; background:transparent; width:100%; text-align:left; font-family:inherit;">
+            <span class="nav-icon" id="darkModeIcon">🌙</span>
+            <span id="darkModeText">Dark Mode</span>
         </button>
     </div>
+    <a class="nav-link logout-link btn-logout-action"><span class="nav-icon">🚪</span> Keluar / Logout</a>
+</nav>
 
-    <!-- FOOTER -->
-    <div class="footer">
-        <p
-            class="contact-question"
-            style="font-weight: bold; color: #a80000; margin-bottom: 8px;"
-        >
-            Ada saran atau pertanyaan?
-        </p>
+<!-- KONTEN UTAMA (KALKULATOR) -->
+<div class="main-wrapper">
+    <div class="container">
 
-        <p class="contact-instruction" style="margin-bottom: 8px;">
-            Silakan hubungi nomor di bawah ini:
-        </p>
+        <!-- HEADER -->
+        <div class="header">
 
-        <p>
-            <a
-                class="contact-link"
-                href="https://wa.me/6281125213879"
-                target="_blank"
-                rel="noopener noreferrer"
-                style="color: #25D366; text-decoration: none; font-weight: bold;"
+            <!-- TOTAL KUNJUNGAN -->
+            <div class="visit-counter" title="Total kunjungan website">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+
+                <span>Total Kunjungan</span>
+                <span id="totalKunjungan">...</span>
+            </div>
+
+            <h1 id="mainTitle">Kalkulator Harga Tayang</h1>
+            <p>Perhitungan harga dasar, pajak, PPh dan fee</p>
+        </div>
+
+        <div class="card">
+
+            <!-- INPUT HARGA -->
+            <div class="section">
+                <div class="section-title">
+                    <div class="number">1</div>
+                    Masukkan Harga
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="hargaDasar">
+                        Harga Dasar
+                        <span class="input-note">(sudah termasuk ongkir)</span>
+                    </label>
+
+                    <input
+                        type="number"
+                        id="hargaDasar"
+                        placeholder="Contoh: 2000000"
+                        min="0"
+                        oninput="hitung()"
+                    >
+                </div>
+            </div>
+
+            <!-- PAJAK -->
+            <div class="section">
+                <div class="section-title">
+                    <div class="number">2</div>
+                    Pilih Pajak
+                </div>
+
+                <div class="options">
+                    <label class="option">
+                        <input
+                            type="radio"
+                            name="pajak"
+                            value="12"
+                            checked
+                            onchange="hitung()"
+                        >
+                        PPN 12%
+                    </label>
+
+                    <label class="option">
+                        <input
+                            type="radio"
+                            name="pajak"
+                            value="10"
+                            onchange="hitung()"
+                        >
+                        Pajak Daerah 10%
+                    </label>
+                </div>
+            </div>
+
+            <!-- PPH -->
+            <div class="section">
+                <div class="section-title">
+                    <div class="number">3</div>
+                    Pilih Jenis PPh
+                </div>
+
+                <div class="options">
+                    <label class="option">
+                        <input
+                            type="radio"
+                            name="pph"
+                            value="1.5"
+                            checked
+                            onchange="hitung()"
+                        >
+                        PPh 1,5% — Barang
+                    </label>
+
+                    <label class="option">
+                        <input
+                            type="radio"
+                            name="pph"
+                            value="2"
+                            onchange="hitung()"
+                        >
+                        PPh 23 2% — Jasa
+                    </label>
+                </div>
+            </div>
+
+            <!-- HASIL -->
+            <div class="result">
+                <div class="result-title">Rincian Perhitungan</div>
+
+                <div class="row disabled-row">
+                    <div>
+                        <div class="row-title">Harga Dasar</div>
+                        <div class="calculation">Sudah termasuk ongkir</div>
+                    </div>
+                    <div class="amount" id="hasilHargaDasar">Rp0</div>
+                </div>
+
+                <div class="row subtotal space-top">
+                    <div>
+                        <div class="row-title">Dasar Perhitungan Pajak</div>
+                        <div class="calculation" id="hitungDasarPajak">Rp0</div>
+                    </div>
+                    <div class="amount" id="hasilDasarPajak">Rp0</div>
+                </div>
+
+                <div class="row space-top">
+                    <div>
+                        <div class="row-title" id="namaPajak">PPN 12%</div>
+                        <div class="calculation" id="hitungPajak">Rp0 × 11%</div>
+                    </div>
+                    <div class="amount" id="hasilPajak">Rp0</div>
+                </div>
+
+                <div class="row space-top">
+                    <div>
+                        <div class="row-title" id="namaPph">PPh 1,5% — Barang</div>
+                        <div class="calculation" id="hitungPph">Rp0 × 1,5%</div>
+                    </div>
+                    <div class="amount" id="hasilPph">Rp0</div>
+                </div>
+
+                <div class="row subtotal space-top">
+                    <div>
+                        <div class="row-title">Total Sebelum Fee</div>
+                        <div class="calculation" id="hitungSubtotal">
+                            Rp0 + Rp0 + Rp0
+                        </div>
+                    </div>
+                    <div class="amount" id="hasilSubtotal">Rp0</div>
+                </div>
+
+                <div class="row space-top">
+                    <div>
+                        <div class="row-title">Fee 0,5%</div>
+                        <div class="calculation" id="hitungFee">Rp0 × 0,5%</div>
+                    </div>
+                    <div class="amount" id="hasilFee">Rp0</div>
+                </div>
+
+                <div class="final">
+                    <div class="final-label">HARGA TAYANG</div>
+                    <div class="final-price" id="hargaTayang">Rp0</div>
+                </div>
+            </div>
+
+            <!-- RESET -->
+            <button class="reset" type="button" onclick="resetForm()">
+                ↻ Reset Perhitungan
+            </button>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p
+                class="contact-question"
+                style="font-weight: bold; color: #a80000; margin-bottom: 8px;"
             >
-                ☎ 081125213879 (Egik)
-            </a>
-        </p>
+                Ada saran atau pertanyaan?
+            </p>
 
-        <p style="margin-top: 10px;">
-            Credit by <strong>eth production</strong>
-        </p>
+            <p class="contact-instruction" style="margin-bottom: 8px;">
+                Silakan hubungi nomor di bawah ini:
+            </p>
+
+            <p>
+                <a
+                    class="contact-link"
+                    href="https://wa.me/6281125213879"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style="color: #25D366; text-decoration: none; font-weight: bold;"
+                >
+                    ☎ 081125213879 (Egik)
+                </a>
+            </p>
+
+            <p style="margin-top: 10px;">
+                Credit by <strong>eth production</strong>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<!-- MODAL EDIT PROFIL -->
+<div class="modal-overlay" id="profileModal">
+    <div class="modal-card">
+        <button class="btn-close-modal" id="closeModal">&times;</button>
+        <div class="modal-title" id="modalUserName">Akun Penyedia</div>
+        <div class="modal-email" id="modalUserEmail">user@example.com</div>
+
+        <div class="modal-preview-container">
+            <span id="modalPreviewIcon" style="font-size: 40px;">👤</span>
+            <img id="modalPreviewImg" src="" alt="Preview" style="display: none;">
+        </div>
+
+        <input type="file" id="profileInput" accept="image/*" style="display: none;">
+
+        <div class="modal-btn-group">
+            <button class="btn-modal btn-primary-modal" onclick="document.getElementById('profileInput').click()">📷 Pilih Foto Baru</button>
+            <button class="btn-modal btn-secondary-modal" id="btnDeletePhoto">🗑️ Hapus Foto Profil</button>
+            <button class="btn-modal btn-logout-modal btn-logout-action">🚪 Keluar / Logout</button>
+        </div>
     </div>
 </div>
 
@@ -1081,7 +1323,7 @@ function resetForm() {
     hitung();
 }
 
-/* MENU NAVIGASI */
+/* SCRIPT NAVIGASI DRAWER MOBILE */
 const menuToggle = document.getElementById("menuToggle");
 const navDrawer = document.getElementById("navDrawer");
 const navOverlay = document.getElementById("navOverlay");
@@ -1102,15 +1344,17 @@ function tutupMenu() {
     document.body.style.overflow = "";
 }
 
-menuToggle.addEventListener("click", function () {
-    if (navDrawer.classList.contains("show")) {
-        tutupMenu();
-    } else {
-        bukaMenu();
-    }
-});
+if (menuToggle) {
+    menuToggle.addEventListener("click", function () {
+        if (navDrawer.classList.contains("show")) {
+            tutupMenu();
+        } else {
+            bukaMenu();
+        }
+    });
+}
 
-navOverlay.addEventListener("click", tutupMenu);
+if (navOverlay) navOverlay.addEventListener("click", tutupMenu);
 
 document.addEventListener("keydown", function (event) {
     if (event.key === "Escape") {
@@ -1118,49 +1362,169 @@ document.addEventListener("keydown", function (event) {
     }
 });
 
-/* Tutup menu ketika tautan navigasi diklik (kecuali tombol logout) */
-document.querySelectorAll(".nav-link").forEach(function (link) {
-    if (!link.classList.contains("btn-logout-action")) {
-        link.addEventListener("click", tutupMenu);
-    }
-});
-
-/* DARK MODE */
+/* DARK MODE CONTROLLER */
 const darkModeToggle = document.getElementById("darkModeToggle");
+const desktopDarkModeToggle = document.getElementById("desktopDarkModeToggle");
 const darkModeIcon = document.getElementById("darkModeIcon");
+const desktopDarkModeIcon = document.getElementById("desktopDarkModeIcon");
 const darkModeText = document.getElementById("darkModeText");
+const desktopDarkModeText = document.getElementById("desktopDarkModeText");
 
 function aturDarkMode(aktif) {
     document.body.classList.toggle("dark-mode", aktif);
+    const icon = aktif ? "☀️" : "🌙";
+    const text = aktif ? "Light Mode" : "Dark Mode";
 
-    darkModeIcon.textContent = aktif ? "☀️" : "🌙";
-    darkModeText.textContent = aktif ? "Light Mode" : "Dark Mode";
+    if (darkModeIcon) darkModeIcon.textContent = icon;
+    if (desktopDarkModeIcon) desktopDarkModeIcon.textContent = icon;
+    if (darkModeText) darkModeText.textContent = text;
+    if (desktopDarkModeText) desktopDarkModeText.textContent = text;
 
     try {
-        localStorage.setItem(
-            "kalkulatorDarkMode",
-            aktif ? "aktif" : "nonaktif"
-        );
+        localStorage.setItem("kalkulatorDarkMode", aktif ? "aktif" : "nonaktif");
     } catch (error) {
         console.warn("Pilihan tema tidak dapat disimpan.", error);
     }
 }
 
 let darkModeTersimpan = false;
-
 try {
-    darkModeTersimpan =
-        localStorage.getItem("kalkulatorDarkMode") === "aktif";
+    darkModeTersimpan = localStorage.getItem("kalkulatorDarkMode") === "aktif";
 } catch (error) {
     console.warn("Pilihan tema tidak dapat dibaca.", error);
 }
 
 aturDarkMode(darkModeTersimpan);
 
-darkModeToggle.addEventListener("click", function () {
-    const aktif = !document.body.classList.contains("dark-mode");
-    aturDarkMode(aktif);
-    tutupMenu();
+if (darkModeToggle) {
+    darkModeToggle.addEventListener("click", function () {
+        aturDarkMode(!document.body.classList.contains("dark-mode"));
+        tutupMenu();
+    });
+}
+
+if (desktopDarkModeToggle) {
+    desktopDarkModeToggle.addEventListener("click", function () {
+        aturDarkMode(!document.body.classList.contains("dark-mode"));
+    });
+}
+
+/* MODAL PROFIL */
+const sidebarUserTrigger = document.getElementById("sidebarUserTrigger");
+const profileModal = document.getElementById("profileModal");
+const closeModal = document.getElementById("closeModal");
+const profileInput = document.getElementById("profileInput");
+const btnDeletePhoto = document.getElementById("btnDeletePhoto");
+
+function bukaModal() { profileModal.classList.add("show"); }
+function tutupModal() { profileModal.classList.remove("show"); }
+
+if (sidebarUserTrigger) sidebarUserTrigger.addEventListener("click", bukaModal);
+if (closeModal) closeModal.addEventListener("click", tutupModal);
+
+function pasangFotoProfil(photoUrl) {
+    const ids = ["modalPreviewImg", "sidebarUserAvatarImg"];
+    const icons = ["modalPreviewIcon", "sidebarUserAvatarIcon"];
+
+    if (photoUrl) {
+        ids.forEach(id => { const el = document.getElementById(id); if (el) { el.src = photoUrl; el.style.display = "block"; } });
+        icons.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "none"; });
+    } else {
+        ids.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "none"; });
+        icons.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "block"; });
+    }
+}
+
+/* VERIFIKASI SESI BACKEND & DATA USER */
+async function muatDataUser() {
+    const loader = document.getElementById("authLoader");
+    try {
+        const res = await fetch("/api/user/login?action=check", {
+            method: "GET",
+            credentials: "same-origin",
+            cache: "no-store",
+            headers: { "Accept": "application/json" }
+        });
+
+        if (!res.ok) { window.location.replace("/login-user.html"); return; }
+        const data = await res.json();
+
+        if (!data.authenticated || !data.user) {
+            window.location.replace("/login-user.html");
+            return;
+        }
+
+        if (data.user.name) {
+            const modalUser = document.getElementById("modalUserName");
+            const sidebarUser = document.getElementById("sidebarUserName");
+
+            if (modalUser) modalUser.textContent = data.user.name;
+            if (sidebarUser) sidebarUser.textContent = data.user.name;
+        }
+
+        if (data.user.email) {
+            const emailEl = document.getElementById("modalUserEmail");
+            if (emailEl) emailEl.textContent = data.user.email;
+        }
+
+        const fotoProfil = data.user.picture || localStorage.getItem("userProfilePhoto") || "";
+        pasangFotoProfil(fotoProfil);
+
+        if (loader) {
+            loader.style.opacity = "0";
+            setTimeout(() => loader.style.display = "none", 300);
+        }
+
+    } catch (err) {
+        console.error("Gagal verifikasi sesi:", err);
+        window.location.replace("/login-user.html");
+    }
+}
+
+if (profileInput) {
+    profileInput.addEventListener("change", function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Image = e.target.result;
+                try {
+                    localStorage.setItem("userProfilePhoto", base64Image);
+                    pasangFotoProfil(base64Image);
+                    tutupModal();
+                } catch (err) { alert("Gambar terlalu besar."); }
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+if (btnDeletePhoto) {
+    btnDeletePhoto.addEventListener("click", function() {
+        localStorage.removeItem("userProfilePhoto");
+        if (profileInput) profileInput.value = "";
+        pasangFotoProfil("");
+        tutupModal();
+    });
+}
+
+async function lakukanLogout() {
+    try {
+        await fetch("/api/user/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "logout" })
+        });
+    } catch (e) {
+        console.warn("Gagal logout di server.");
+    } finally {
+        localStorage.removeItem("userProfilePhoto");
+        window.location.replace("/login-user.html");
+    }
+}
+
+document.querySelectorAll(".btn-logout-action").forEach(btn => {
+    btn.addEventListener("click", lakukanLogout);
 });
 
 /* TOTAL KUNJUNGAN GLOBAL DARI UPSTASH REDIS */
@@ -1176,9 +1540,7 @@ async function muatTotalKunjungan() {
         const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-            throw new Error(
-                data.detail || data.error || `HTTP ${response.status}`
-            );
+            throw new Error(data.detail || data.error || `HTTP ${response.status}`);
         }
 
         const total = Number(data.total);
@@ -1195,73 +1557,9 @@ async function muatTotalKunjungan() {
     }
 }
 
-/* ------------------------------------------------------------- */
-/* CEK STATUS LOGIN OTOMATIS (MENYESUAIKAN NAVIGASI) */
-/* ------------------------------------------------------------- */
-async function cekStatusSesi() {
-    try {
-        const res = await fetch("/api/user/login?action=check", {
-            method: "GET",
-            credentials: "same-origin",
-            cache: "no-store",
-            headers: { "Accept": "application/json" }
-        });
-
-        if (!res.ok) return;
-
-        const data = await res.json();
-        
-        const userMenuLink = document.getElementById("userMenuLink");
-        const userMenuText = document.getElementById("userMenuText");
-        const userMenuIcon = document.getElementById("userMenuIcon");
-        const adminMenuLink = document.getElementById("adminMenuLink");
-        const adminDivider = document.getElementById("adminDivider");
-        const drawerLogoutBtn = document.getElementById("drawerLogoutBtn");
-
-        // JIKA PENGGUNA SUDAH LOGIN
-        if (data.authenticated && data.user) {
-            // Ubah tombol menu atas dari "Login User" menjadi "Dashboard Saya"
-            if (userMenuLink && userMenuText) {
-                userMenuText.textContent = "Dashboard Saya";
-                userMenuLink.href = "/dashboard-user.html";
-                if (userMenuIcon) userMenuIcon.textContent = "📊";
-            }
-
-            // Sembunyikan menu Login Admin agar rapi untuk member biasa
-            if (adminMenuLink) adminMenuLink.style.display = "none";
-            if (adminDivider) adminDivider.style.display = "none";
-
-            // Munculkan tombol Logout di bagian bawah drawer
-            if (drawerLogoutBtn) drawerLogoutBtn.style.display = "flex";
-        }
-    } catch (err) {
-        console.warn("Belum login atau gagal cek sesi.");
-    }
-}
-
-/* FUNGSI LOGOUT */
-async function lakukanLogout() {
-    try {
-        await fetch("/api/user/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "logout" })
-        });
-    } catch (e) {
-        console.warn("Gagal request logout.");
-    } finally {
-        localStorage.removeItem("userProfilePhoto");
-        window.location.reload(); // Muat ulang halaman jadi status tamu
-    }
-}
-
-document.querySelectorAll(".btn-logout-action").forEach(btn => {
-    btn.addEventListener("click", lakukanLogout);
-});
-
 hitung();
 muatTotalKunjungan();
-cekStatusSesi();
+muatDataUser();
 </script>
 
 </body>
