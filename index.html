@@ -204,6 +204,16 @@
             flex-shrink: 0;
         }
 
+        .sidebar-login-btn {
+            color: #a80000 !important;
+            background: #fff0f0;
+            border: 1px solid #f2dede;
+        }
+
+        .sidebar-login-btn:hover {
+            background: #ffe0e0 !important;
+        }
+
         .sidebar-logout {
             margin-top: auto;
             color: #d31010 !important;
@@ -355,6 +365,12 @@
         .nav-link:hover, .nav-link.active-link {
             background: #fff0f0;
             color: #a80000;
+        }
+
+        .nav-link.login-link {
+            color: #a80000;
+            background: #fff0f0;
+            border: 1px solid #f2dede;
         }
 
         .nav-link.logout-link {
@@ -915,8 +931,8 @@
     <ul class="sidebar-menu-list">
         <!-- TOMBOL LOGIN / DASHBOARD DI PALING ATAS -->
         <li class="sidebar-menu-item" id="sidebarAuthItem">
-            <a href="/login-user.html">
-                <span class="menu-icon">👤</span>
+            <a href="/login-user.html" class="sidebar-login-btn">
+                <span class="menu-icon">🔑</span>
                 <span>Login User</span>
             </a>
         </li>
@@ -962,6 +978,14 @@
             </button>
         </li>
 
+        <!-- TOMBOL LOGIN ADMIN DI BAWAH DARK MODE -->
+        <li class="sidebar-menu-item">
+            <a href="/admin.html">
+                <span class="menu-icon">👤 🔑</span>
+                <span>Login Admin</span>
+            </a>
+        </li>
+
         <li class="sidebar-menu-item" id="sidebarLogoutItem" style="display: none;">
             <button class="sidebar-logout btn-logout-action" type="button">
                 <span class="menu-icon">🚪</span>
@@ -990,7 +1014,7 @@
         <div class="nav-heading">MENU UTAMA</div>
         
         <!-- TOMBOL LOGIN / DASHBOARD DI PALING ATAS (MOBILE) -->
-        <a class="nav-link" href="/login-user.html" id="mobileAuthMenu"><span class="nav-icon">👤</span> Login User</a>
+        <a class="nav-link login-link" href="/login-user.html" id="mobileAuthMenu"><span class="nav-icon">🔑</span> Login User</a>
         <a class="nav-link" href="/dashboard-user.html" id="mobileDashboardMenu" style="display: none;"><span class="nav-icon">📊</span> Dashboard Saya</a>
 
         <a class="nav-link" href="/beranda.html"><span class="nav-icon">🏠</span> Beranda Utama</a>
@@ -1005,6 +1029,12 @@
             <span class="nav-icon" id="darkModeIcon">🌙</span>
             <span id="darkModeText">Dark Mode</span>
         </button>
+
+        <!-- TOMBOL LOGIN ADMIN DI BAWAH DARK MODE MOBILE -->
+        <a class="nav-link" href="/admin.html" style="margin-top: 5px;">
+            <span class="nav-icon">👤 🔑</span>
+            <span>Login Admin</span>
+        </a>
     </div>
     <a class="nav-link logout-link btn-logout-action" id="mobileLogoutBtn" style="display: none;"><span class="nav-icon">🚪</span> Keluar / Logout</a>
 </nav>
