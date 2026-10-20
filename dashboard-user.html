@@ -18,68 +18,11 @@
             background: #fff5f5;
             color: #222;
             min-height: 100vh;
-            padding-top: 75px; /* Memberi jarak agar konten tidak tertutup navbar atas */
-            padding-bottom: 60px;
-            padding-left: 15px;
-            padding-right: 15px;
             transition: background 0.25s, color 0.25s;
         }
 
-        .container {
-            max-width: 900px;
-            margin: auto;
-        }
-
-        a.feature-card {
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        body.dark-mode a.feature-card {
-            color: #f1f1f1;
-        }
-
         /* ------------------------------------------------------------- */
-        /* NAVBAR ATAS TETAP (FIXED HEADER) */
-        /* ------------------------------------------------------------- */
-        .top-navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 60px;
-            background: rgba(255, 245, 245, 0.9);
-            backdrop-filter: blur(8px);
-            border-bottom: 1px solid #f2dede;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 999;
-            transition: background 0.25s, border-color 0.25s;
-        }
-
-        body.dark-mode .top-navbar {
-            background: rgba(18, 18, 18, 0.9);
-            border-bottom-color: #383838;
-        }
-
-        .navbar-brand {
-            font-size: 15px;
-            font-weight: 800;
-            color: #a80000;
-            letter-spacing: 0.5px;
-        }
-
-        body.dark-mode .navbar-brand {
-            color: #ff6666;
-        }
-
-        /* ------------------------------------------------------------- */
-        /* LAPISAN LOADING / PEMERIKSAAN SESI (MUTER) */
+        /* LAPISAN LOADING / PEMERIKSAAN SESI */
         /* ------------------------------------------------------------- */
         #authLoader {
             position: fixed;
@@ -122,8 +65,184 @@
         }
 
         /* ------------------------------------------------------------- */
-        /* TOMBOL MENU DRAWER */
+        /* SIDEBAR KIRI (UNTUK DESKTOP / LAPTOP) */
         /* ------------------------------------------------------------- */
+        .sidebar-desktop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            background: #ffffff;
+            border-right: 1px solid #f2dede;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            font-size: 20px;
+            font-weight: 800;
+            color: #a80000;
+            margin-bottom: 25px;
+            padding: 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* BAR PROFIL USERS DI SIDEBAR */
+        .sidebar-user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: #fff0f0;
+            border-radius: 12px;
+            border: 1px solid #fce8e8;
+            margin-bottom: 25px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .sidebar-user-card:hover {
+            background: #ffe0e0;
+        }
+
+        .sidebar-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #a80000;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .sidebar-user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sidebar-user-info {
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .sidebar-user-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #222;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-user-role {
+            font-size: 11px;
+            color: #777;
+        }
+
+        .sidebar-menu-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .sidebar-menu-item a, .sidebar-menu-item button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            color: #444;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+            width: 100%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .sidebar-menu-item a:hover, 
+        .sidebar-menu-item button:hover, 
+        .sidebar-menu-item a.active-link {
+            background: #fff0f0;
+            color: #a80000;
+        }
+
+        .sidebar-menu-item .menu-icon {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .sidebar-logout {
+            margin-top: auto;
+            color: #d31010 !important;
+            background: #fff0f0;
+            border: 1px solid #f2dede;
+        }
+
+        .sidebar-logout:hover {
+            background: #ffe0e0 !important;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* AREA KONTEN UTAMA (DI SEBELAH KANAN SIDEBAR DESKTOP) */
+        /* ------------------------------------------------------------- */
+        .main-wrapper {
+            margin-left: 260px;
+            padding: 30px 25px 60px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        a.feature-card {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* NAVBAR HEADER MOBILE (HANYA UNTUK HP) */
+        /* ------------------------------------------------------------- */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(255, 245, 245, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #f2dede;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 99;
+        }
+
         .menu-toggle {
             width: 40px;
             height: 40px;
@@ -137,11 +256,6 @@
             border-radius: 10px;
             cursor: pointer;
             box-shadow: 0 3px 10px rgba(168, 0, 0, 0.2);
-            transition: 0.2s;
-        }
-
-        .menu-toggle:hover {
-            transform: scale(1.04);
         }
 
         .menu-toggle span {
@@ -153,18 +267,17 @@
             transition: 0.25s;
         }
 
-        .menu-toggle.active span:nth-child(1) {
-            transform: translateY(7.5px) rotate(45deg);
+        .menu-toggle.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+        .mobile-brand {
+            font-size: 15px;
+            font-weight: 800;
+            color: #a80000;
         }
 
-        .menu-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .menu-toggle.active span:nth-child(3) {
-            transform: translateY(-7.5px) rotate(-45deg);
-        }
-
+        /* DRAWER NAVIGATION MOBILE */
         .nav-overlay {
             position: fixed;
             inset: 0;
@@ -176,10 +289,7 @@
             transition: 0.25s;
         }
 
-        .nav-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
+        .nav-overlay.show { opacity: 1; visibility: visible; }
 
         .nav-drawer {
             position: fixed;
@@ -188,7 +298,6 @@
             width: 290px;
             max-width: 85%;
             height: 100vh;
-            height: 100dvh;
             background: #fff;
             z-index: 1001;
             padding: 85px 18px 25px;
@@ -200,13 +309,8 @@
             flex-direction: column;
         }
 
-        .nav-drawer.show {
-            transform: translateX(0);
-        }
-
-        .nav-drawer-content {
-            flex: 1;
-        }
+        .nav-drawer.show { transform: translateX(0); }
+        .nav-drawer-content { flex: 1; }
 
         .nav-heading {
             color: #a80000;
@@ -231,22 +335,9 @@
             cursor: pointer;
         }
 
-        .nav-link:hover {
+        .nav-link:hover, .nav-link.active-link {
             background: #fff0f0;
             color: #a80000;
-        }
-
-        .nav-link.active-link {
-            background: #fff0f0;
-            color: #a80000;
-            border-left: 4px solid #a80000;
-        }
-
-        .nav-link .nav-icon {
-            width: 22px;
-            text-align: center;
-            font-size: 19px;
-            flex-shrink: 0;
         }
 
         .nav-link.logout-link {
@@ -256,26 +347,8 @@
             margin-top: auto;
         }
 
-        .nav-link.logout-link:hover {
-            background: #ffe0e0;
-        }
-
-        .nav-divider {
-            height: 1px;
-            background: #eee;
-            margin: 15px 0;
-        }
-
-        .dark-mode-button {
-            width: 100%;
-            border: none;
-            background: transparent;
-            text-align: left;
-            font-family: inherit;
-        }
-
         /* ------------------------------------------------------------- */
-        /* HERO HEADER BANNER */
+        /* BANNER & KARTU FITUR */
         /* ------------------------------------------------------------- */
         .hero-banner {
             position: relative;
@@ -285,7 +358,6 @@
             color: white;
             box-shadow: 0 10px 30px rgba(168, 0, 0, 0.18);
             margin-bottom: 30px;
-            margin-top: 10px;
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -293,22 +365,7 @@
             gap: 20px;
         }
 
-        .hero-banner::after {
-            content: "";
-            position: absolute;
-            top: -40px;
-            right: -40px;
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.08);
-            pointer-events: none;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-        }
+        .hero-content { position: relative; z-index: 2; }
 
         .hero-badge {
             display: inline-block;
@@ -325,20 +382,9 @@
             text-transform: uppercase;
         }
 
-        .hero-banner h1 {
-            font-size: 26px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            margin-bottom: 6px;
-        }
+        .hero-banner h1 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+        .hero-banner p { font-size: 14px; color: rgba(255, 255, 255, 0.88); }
 
-        .hero-banner p {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.88);
-            line-height: 1.4;
-        }
-
-        /* FOTO PROFIL KANAN ATAS */
         .profile-trigger {
             position: relative;
             z-index: 2;
@@ -353,187 +399,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .profile-trigger:hover {
-            transform: scale(1.08);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
+        .profile-trigger img { width: 100%; height: 100%; object-fit: cover; }
 
-        .profile-trigger img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-trigger .profile-default-icon {
-            font-size: 26px;
-        }
-
-        /* MODAL POPUP EDIT FOTO PROFIL & AKUN */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(3px);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            opacity: 0;
-            visibility: hidden;
-            transition: 0.25s ease;
-        }
-
-        .modal-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-card {
-            background: #ffffff;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 380px;
-            padding: 25px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            position: relative;
-            transform: translateY(20px);
-            transition: transform 0.25s ease;
-        }
-
-        .modal-overlay.show .modal-card {
-            transform: translateY(0);
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #a80000;
-            margin-bottom: 4px;
-        }
-
-        .modal-email {
-            font-size: 12px;
-            color: #777;
-            margin-bottom: 15px;
-            word-break: break-all;
-        }
-
-        .modal-preview-container {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            margin: 0 auto 16px;
-            overflow: hidden;
-            border: 3px solid #f2dede;
-            background: #fff0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .modal-preview-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .modal-preview-container .preview-default-icon {
-            font-size: 40px;
-        }
-
-        .modal-btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .btn-modal {
-            padding: 12px;
-            border-radius: 10px;
-            border: none;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btn-primary-modal {
-            background: #a80000;
-            color: white;
-        }
-
-        .btn-primary-modal:hover {
-            background: #8a0000;
-        }
-
-        .btn-secondary-modal {
-            background: #fff0f0;
-            color: #d31010;
-            border: 1px solid #fce8e8;
-        }
-
-        .btn-secondary-modal:hover {
-            background: #ffe0e0;
-        }
-
-        .btn-logout-modal {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fca5a5;
-            margin-top: 5px;
-        }
-
-        .btn-logout-modal:hover {
-            background: #fca5a5;
-            color: #7f1d1d;
-        }
-
-        .btn-close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: transparent;
-            border: none;
-            font-size: 20px;
-            color: #888;
-            cursor: pointer;
-        }
-
-        .btn-close-modal:hover {
-            color: #222;
-        }
-
-        /* GRID FITUR UTAMA PENYEDIA */
-        .section-header {
-            margin-bottom: 18px;
-        }
-
-        .section-title {
-            color: #a80000;
-            font-size: 18px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 4px;
-        }
-
-        .section-subtitle {
-            font-size: 13px;
-            color: #777;
-        }
+        .section-header { margin-bottom: 18px; }
+        .section-title { color: #a80000; font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+        .section-subtitle { font-size: 13px; color: #777; }
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
         }
 
@@ -547,9 +423,7 @@
             justify-content: space-between;
             gap: 20px;
             box-shadow: 0 6px 20px rgba(150, 0, 0, 0.05);
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
+            transition: all 0.25s ease;
         }
 
         .feature-card:hover {
@@ -559,279 +433,243 @@
         }
 
         .card-icon-wrapper {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            background: #fff0f0;
+            width: 48px; height: 48px;
+            border-radius: 14px; background: #fff0f0;
             border: 1px solid #fce8e8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            color: #a80000;
-            margin-bottom: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: #a80000; margin-bottom: 14px;
         }
 
-        .card-content h3 {
-            font-size: 16px;
-            font-weight: 700;
-            color: #111;
-            margin-bottom: 6px;
+        .card-content h3 { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 6px; }
+        .card-content p { font-size: 13px; color: #666; line-height: 1.45; }
+        .card-action { color: #a80000; font-size: 13px; font-weight: 700; }
+
+        .footer { text-align: center; margin-top: 45px; color: #999; font-size: 12px; }
+
+        /* ------------------------------------------------------------- */
+        /* MODAL POPUP EDIT FOTO PROFIL */
+        /* ------------------------------------------------------------- */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px);
+            z-index: 2000; display: flex; align-items: center; justify-content: center;
+            padding: 20px; opacity: 0; visibility: hidden; transition: 0.25s ease;
         }
 
-        .card-content p {
-            font-size: 13px;
-            color: #666;
-            line-height: 1.45;
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+
+        .modal-card {
+            background: #ffffff; border-radius: 20px;
+            width: 100%; max-width: 380px; padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            text-align: center; position: relative;
         }
 
-        .card-action {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: #a80000;
-            font-size: 13px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: gap 0.2s ease;
+        .modal-title { font-size: 18px; font-weight: 700; color: #a80000; }
+        .modal-email { font-size: 12px; color: #777; margin-bottom: 15px; }
+
+        .modal-preview-container {
+            width: 90px; height: 90px; border-radius: 50%;
+            margin: 0 auto 16px; overflow: hidden;
+            border: 3px solid #f2dede; background: #fff0f0;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        .feature-card:hover .card-action {
-            gap: 10px;
-            color: #d31010;
-        }
+        .modal-preview-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        .footer {
-            text-align: center;
-            margin-top: 45px;
-            color: #999;
-            font-size: 12px;
-        }
+        .modal-btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .btn-modal { padding: 12px; border-radius: 10px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .btn-primary-modal { background: #a80000; color: white; }
+        .btn-secondary-modal { background: #fff0f0; color: #d31010; border: 1px solid #fce8e8; }
+        .btn-logout-modal { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .btn-close-modal { position: absolute; top: 15px; right: 15px; background: transparent; border: none; font-size: 20px; color: #888; cursor: pointer; }
 
-        /* DARK MODE STYLES */
-        body.dark-mode {
-            background: #121212;
-            color: #f1f1f1;
-        }
+        /* ------------------------------------------------------------- */
+        /* DARK MODE */
+        /* ------------------------------------------------------------- */
+        body.dark-mode { background: #121212; color: #f1f1f1; }
+        body.dark-mode .sidebar-desktop, body.dark-mode .nav-drawer, body.dark-mode .feature-card, body.dark-mode .modal-card { background: #1e1e1e; border-color: #383838; }
+        body.dark-mode .sidebar-user-card { background: #2d1a1a; border-color: #493030; }
+        body.dark-mode .sidebar-user-name { color: #fff; }
+        body.dark-mode .sidebar-menu-item a, body.dark-mode .sidebar-menu-item button { color: #eee; }
+        body.dark-mode .sidebar-menu-item a:hover, body.dark-mode .sidebar-menu-item button:hover, body.dark-mode .sidebar-menu-item a.active-link { background: #382020; color: #ff7777; }
+        body.dark-mode .section-title, body.dark-mode .card-action { color: #ff6666; }
+        body.dark-mode .card-content h3 { color: #fff; }
+        body.dark-mode .mobile-header { background: rgba(18, 18, 18, 0.95); border-bottom-color: #383838; }
 
-        body.dark-mode .nav-drawer,
-        body.dark-mode .feature-card,
-        body.dark-mode .modal-card {
-            background: #1e1e1e;
-            border-color: #383838;
-        }
-
-        body.dark-mode .hero-banner {
-            background: linear-gradient(135deg, #4d0000 0%, #7a0000 60%, #9e0c0c 100%);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-        }
-
-        body.dark-mode .section-title,
-        body.dark-mode .nav-heading,
-        body.dark-mode .card-action,
-        body.dark-mode .modal-title {
-            color: #ff6666;
-        }
-
-        body.dark-mode .card-content h3 {
-            color: #ffffff;
-        }
-
-        body.dark-mode .section-subtitle,
-        body.dark-mode .card-content p,
-        body.dark-mode .footer,
-        body.dark-mode .btn-close-modal,
-        body.dark-mode .modal-email {
-            color: #aaa;
-        }
-
-        body.dark-mode .card-icon-wrapper,
-        body.dark-mode .modal-preview-container {
-            background: #2d1a1a;
-            border-color: #493030;
-            color: #ff7777;
-        }
-
-        body.dark-mode .feature-card:hover {
-            border-color: #ff5555;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-        }
-
-        body.dark-mode .nav-link {
-            color: #eee;
-        }
-
-        body.dark-mode .nav-link:hover,
-        body.dark-mode .nav-link.active-link {
-            background: #382020;
-            color: #ff7777;
-        }
-
-        body.dark-mode .nav-link.logout-link,
-        body.dark-mode .btn-secondary-modal {
-            background: #382020;
-            color: #ff7777;
-            border-color: #493030;
-        }
-
-        body.dark-mode .btn-logout-modal {
-            background: #5c1d1d;
-            color: #fca5a5;
-            border-color: #7f1d1d;
-        }
-
-        body.dark-mode .nav-divider {
-            background: #383838;
-        }
-
-        @media (max-width: 600px) {
-            body { padding-left: 12px; padding-right: 12px; padding-top: 70px; }
-            .hero-banner { padding: 25px 20px; border-radius: 18px; }
-            .hero-banner h1 { font-size: 20px; }
-            .profile-trigger { width: 50px; height: 50px; }
-            .features-grid { grid-template-columns: 1fr; }
+        /* ------------------------------------------------------------- */
+        /* ATURAN LAYOUT HP (RESPONSIF) */
+        /* ------------------------------------------------------------- */
+        @media (max-width: 850px) {
+            .sidebar-desktop { display: none !important; }
+            .main-wrapper { margin-left: 0 !important; padding-top: 80px; padding-left: 15px; padding-right: 15px; }
+            .mobile-header { display: flex !important; }
         }
     </style>
 </head>
 
 <body>
 
-<!-- INDIKATOR PEMERIKSAAN SESI (MUTER) -->
+<!-- INDIKATOR PEMERIKSAAN SESI -->
 <div id="authLoader">
     <div class="spinner"></div>
     <span>Memeriksa sesi akun...</span>
 </div>
 
-<!-- NAVBAR ATAS TETAP (FIXED HEADER DENGAN GARIS 3 & NAMA LOGO) -->
-<header class="top-navbar">
-    <!-- TOMBOL MENU DRAWER -->
-    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="navDrawer">
-        <span></span>
-        <span></span>
-        <span></span>
+<!-- SIDEBAR KIRI (TAMPILAN KHUSUS LAPTOP / DESKTOP ALAMAT UNGU.IN) -->
+<aside class="sidebar-desktop">
+    <div class="sidebar-logo">
+        <span>📊</span> Dashboard
+    </div>
+
+    <!-- PROFIL PENGGUNA DI SIDEBAR -->
+    <div class="sidebar-user-card" id="sidebarUserTrigger" title="Klik untuk edit profil">
+        <div class="sidebar-user-avatar">
+            <span id="sidebarUserAvatarIcon">👤</span>
+            <img id="sidebarUserAvatarImg" src="" alt="Avatar" style="display: none;">
+        </div>
+        <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebarUserName">User</div>
+            <div class="sidebar-user-role">Penyedia</div>
+        </div>
+    </div>
+
+    <!-- MENU VERTIKAL SIDEBAR -->
+    <ul class="sidebar-menu-list">
+        <li class="sidebar-menu-item">
+            <a href="/dashboard-user.html" class="active-link">
+                <span class="menu-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li class="sidebar-menu-item">
+            <a href="/">
+                <span class="menu-icon">🧮</span>
+                <span>Kalkulator</span>
+            </a>
+        </li>
+        <li class="sidebar-menu-item">
+            <a href="/gabung-foto.html">
+                <span class="menu-icon">🖼️</span>
+                <span>Foto ke PDF</span>
+            </a>
+        </li>
+        <li class="sidebar-menu-item">
+            <a href="/surat-pernyataan.html">
+                <span class="menu-icon">📄</span>
+                <span>Surat Pernyataan</span>
+            </a>
+        </li>
+
+        <li class="sidebar-menu-item" style="margin-top: 15px;">
+            <button id="desktopDarkModeToggle" type="button">
+                <span class="menu-icon" id="desktopDarkModeIcon">🌙</span>
+                <span id="desktopDarkModeText">Dark Mode</span>
+            </button>
+        </li>
+
+        <li class="sidebar-menu-item">
+            <button class="sidebar-logout btn-logout-action" type="button">
+                <span class="menu-icon">🚪</span>
+                <span>Keluar / Logout</span>
+            </button>
+        </li>
+    </ul>
+</aside>
+
+<!-- HEADER & DRAWER KHUSUS TAMPILAN HP -->
+<header class="mobile-header">
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu">
+        <span></span><span></span><span></span>
     </button>
-    <div class="navbar-brand">Dashboard Penyedia</div>
+    <div class="mobile-brand">Dashboard Penyedia</div>
 </header>
 
 <div class="nav-overlay" id="navOverlay"></div>
 
-<!-- NAVIGASI DRAWER KHUSUS MEMBER MEMBER SUDAH LOGIN -->
-<nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
+<nav class="nav-drawer" id="navDrawer">
     <div class="nav-drawer-content">
         <div class="nav-heading">MENU PENYEDIA</div>
-
-        <!-- LINK KEMBALI KE DASHBOARD PRIBADI -->
-        <a class="nav-link active-link" href="/dashboard-user.html">
-            <span class="nav-icon">📊</span>
-            <span>Dashboard Saya</span>
-        </a>
-
-        <a class="nav-link" href="/gabung-foto.html">
-            <span class="nav-icon">🖼️</span>
-            <span>Ubah Foto ke PDF</span>
-        </a>
-
-        <a class="nav-link" href="/">
-            <span class="nav-icon">🧮</span>
-            <span>Kalkulator Harga Tayang</span>
-        </a>
-
-        <a class="nav-link" href="/surat-pernyataan.html">
-            <span class="nav-icon">📄</span>
-            <span>Buat Surat Pernyataan</span>
-        </a>
-
-        <div class="nav-divider"></div>
-
-        <!-- TOMBOL DARK MODE -->
-        <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" aria-label="Ganti tema tampilan">
+        <a class="nav-link active-link" href="/dashboard-user.html"><span class="nav-icon">📊</span> Dashboard</a>
+        <a class="nav-link" href="/"><span class="nav-icon">🧮</span> Kalkulator</a>
+        <a class="nav-link" href="/gabung-foto.html"><span class="nav-icon">🖼️</span> Foto ke PDF</a>
+        <a class="nav-link" href="/surat-pernyataan.html"><span class="nav-icon">📄</span> Surat Pernyataan</a>
+        
+        <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" style="margin-top: 15px;">
             <span class="nav-icon" id="darkModeIcon">🌙</span>
             <span id="darkModeText">Dark Mode</span>
         </button>
     </div>
-
-    <!-- TOMBOL LOGOUT ATAS/DRAWER BAWAH -->
-    <a class="nav-link logout-link btn-logout-action">
-        <span class="nav-icon">🚪</span>
-        <span>Keluar / Logout</span>
-    </a>
+    <a class="nav-link logout-link btn-logout-action"><span class="nav-icon">🚪</span> Keluar / Logout</a>
 </nav>
 
-<div class="container">
+<!-- KONTEN UTAMA -->
+<div class="main-wrapper">
+    <div class="container">
 
-    <!-- BANNER KHUSUS PENYEDIA -->
-    <div class="hero-banner">
-        <div class="hero-content">
-            <span class="hero-badge">DASHBOARD PENYEDIA</span>
-            <h1 id="greetingTitle">Selamat datang!</h1>
-            <p>Kelola kebutuhan penawaran dan dokumen pekerjaanmu di sini.</p>
+        <!-- BANNER HERO -->
+        <div class="hero-banner">
+            <div class="hero-content">
+                <span class="hero-badge">DASHBOARD PENYEDIA</span>
+                <h1 id="greetingTitle">Selamat datang!</h1>
+                <p>Kelola kebutuhan penawaran dan dokumen pekerjaanmu di sini.</p>
+            </div>
+
+            <div class="profile-trigger" id="profileTrigger" title="Klik untuk kelola profil">
+                <span id="headerProfileIcon">👤</span>
+                <img id="headerProfileImg" src="" alt="Foto Profil" style="display: none;">
+            </div>
         </div>
 
-        <!-- FOTO PROFIL KANAN ATAS -->
-        <div class="profile-trigger" id="profileTrigger" title="Klik untuk kelola profil">
-            <span class="profile-default-icon" id="headerProfileIcon">👤</span>
-            <img id="headerProfileImg" src="" alt="Foto Profil" style="display: none;">
+        <!-- FITUR UTAMA -->
+        <div class="section-header">
+            <div class="section-title">Fitur Utama</div>
+            <div class="section-subtitle">Semua alat bantu kerja penyedia dalam satu tempat.</div>
         </div>
-    </div>
 
-    <!-- FITUR UTAMA -->
-    <div class="section-header">
-        <div class="section-title">Fitur Utama</div>
-        <div class="section-subtitle">Semua alat bantu kerja penyedia dalam satu tempat.</div>
-    </div>
-
-    <div class="features-grid">
-
-        <!-- FITUR 1: KALKULATOR -->
-        <a href="/" class="feature-card">
-            <div>
-                <div class="card-icon-wrapper">🧮</div>
-                <div class="card-content">
-                    <h3>Kalkulator Harga Tayang</h3>
-                    <p>Hitung estimasi dan rincian harga tayang secara otomatis dan cepat.</p>
+        <div class="features-grid">
+            <a href="/" class="feature-card">
+                <div>
+                    <div class="card-icon-wrapper">🧮</div>
+                    <div class="card-content">
+                        <h3>Kalkulator Harga Tayang</h3>
+                        <p>Hitung estimasi dan rincian harga tayang secara otomatis dan cepat.</p>
+                    </div>
                 </div>
-            </div>
-            <div class="card-action">
-                Buka fitur <span>&rarr;</span>
-            </div>
-        </a>
+                <div class="card-action">Buka fitur &rarr;</div>
+            </a>
 
-        <!-- FITUR 2: FOTO KE PDF -->
-        <a href="/gabung-foto.html" class="feature-card">
-            <div>
-                <div class="card-icon-wrapper">🖼️</div>
-                <div class="card-content">
-                    <h3>Foto ke PDF</h3>
-                    <p>Gabungkan foto kelengkapan dokumen menjadi file PDF siap kirim.</p>
+            <a href="/gabung-foto.html" class="feature-card">
+                <div>
+                    <div class="card-icon-wrapper">🖼️</div>
+                    <div class="card-content">
+                        <h3>Foto ke PDF</h3>
+                        <p>Gabungkan foto kelengkapan dokumen menjadi file PDF siap kirim.</p>
+                    </div>
                 </div>
-            </div>
-            <div class="card-action">
-                Buka fitur <span>&rarr;</span>
-            </div>
-        </a>
+                <div class="card-action">Buka fitur &rarr;</div>
+            </a>
 
-        <!-- FITUR 3: SURAT PERNYATAAN -->
-        <a href="/surat-pernyataan.html" class="feature-card">
-            <div>
-                <div class="card-icon-wrapper">📄</div>
-                <div class="card-content">
-                    <h3>Surat Pernyataan</h3>
-                    <p>Buat dokumen surat pernyataan resmi lengkap dengan tanda tangan otomatis.</p>
+            <a href="/surat-pernyataan.html" class="feature-card">
+                <div>
+                    <div class="card-icon-wrapper">📄</div>
+                    <div class="card-content">
+                        <h3>Surat Pernyataan</h3>
+                        <p>Buat dokumen surat pernyataan resmi lengkap dengan tanda tangan otomatis.</p>
+                    </div>
                 </div>
-            </div>
-            <div class="card-action">
-                Buka fitur <span>&rarr;</span>
-            </div>
-        </a>
+                <div class="card-action">Buka fitur &rarr;</div>
+            </a>
+        </div>
 
-    </div>
+        <div class="footer">
+            <p>Credit by <strong>eth production</strong></p>
+        </div>
 
-    <div class="footer">
-        <p>Credit by <strong>eth production</strong></p>
     </div>
 </div>
 
-<!-- MODAL POPUP EDIT PROFIL & LOGOUT -->
+<!-- MODAL EDIT PROFIL -->
 <div class="modal-overlay" id="profileModal">
     <div class="modal-card">
         <button class="btn-close-modal" id="closeModal">&times;</button>
@@ -839,28 +677,22 @@
         <div class="modal-email" id="modalUserEmail">user@example.com</div>
 
         <div class="modal-preview-container">
-            <span class="preview-default-icon" id="modalPreviewIcon">👤</span>
-            <img id="modalPreviewImg" src="" alt="Preview Foto" style="display: none;">
+            <span id="modalPreviewIcon" style="font-size: 40px;">👤</span>
+            <img id="modalPreviewImg" src="" alt="Preview" style="display: none;">
         </div>
 
         <input type="file" id="profileInput" accept="image/*" style="display: none;">
 
         <div class="modal-btn-group">
-            <button class="btn-modal btn-primary-modal" onclick="document.getElementById('profileInput').click()">
-                📷 Pilih Foto Baru
-            </button>
-            <button class="btn-modal btn-secondary-modal" id="btnDeletePhoto">
-                🗑️ Hapus Foto Profil
-            </button>
-            <button class="btn-modal btn-logout-modal btn-logout-action">
-                🚪 Keluar / Logout
-            </button>
+            <button class="btn-modal btn-primary-modal" onclick="document.getElementById('profileInput').click()">📷 Pilih Foto Baru</button>
+            <button class="btn-modal btn-secondary-modal" id="btnDeletePhoto">🗑️ Hapus Foto Profil</button>
+            <button class="btn-modal btn-logout-modal btn-logout-action">🚪 Keluar / Logout</button>
         </div>
     </div>
 </div>
 
 <script>
-/* SCRIPT NAVIGASI DRAWER & DARK MODE */
+/* SCRIPT NAVIGASI DRAWER MOBILE */
 const menuToggle = document.getElementById("menuToggle");
 const navDrawer = document.getElementById("navDrawer");
 const navOverlay = document.getElementById("navOverlay");
@@ -869,7 +701,6 @@ function bukaMenu() {
     menuToggle.classList.add("active");
     navDrawer.classList.add("show");
     navOverlay.classList.add("show");
-    menuToggle.setAttribute("aria-expanded", "true");
     document.body.style.overflow = "hidden";
 }
 
@@ -877,114 +708,69 @@ function tutupMenu() {
     menuToggle.classList.remove("active");
     navDrawer.classList.remove("show");
     navOverlay.classList.remove("show");
-    menuToggle.setAttribute("aria-expanded", "false");
     document.body.style.overflow = "";
 }
 
-menuToggle.addEventListener("click", function () {
-    if (navDrawer.classList.contains("show")) {
-        tutupMenu();
-    } else {
-        bukaMenu();
-    }
-});
-
-navOverlay.addEventListener("click", tutupMenu);
-
-document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-        tutupMenu();
-        tutupModal();
-    }
-});
-
-document.querySelectorAll(".nav-link").forEach(function (link) {
-    if (!link.classList.contains("btn-logout-action")) {
-        link.addEventListener("click", tutupMenu);
-    }
-});
+if (menuToggle) menuToggle.addEventListener("click", () => navDrawer.classList.contains("show") ? tutupMenu() : bukaMenu());
+if (navOverlay) navOverlay.addEventListener("click", tutupMenu);
 
 /* DARK MODE CONTROLLER */
 const darkModeToggle = document.getElementById("darkModeToggle");
+const desktopDarkModeToggle = document.getElementById("desktopDarkModeToggle");
 const darkModeIcon = document.getElementById("darkModeIcon");
+const desktopDarkModeIcon = document.getElementById("desktopDarkModeIcon");
 const darkModeText = document.getElementById("darkModeText");
+const desktopDarkModeText = document.getElementById("desktopDarkModeText");
 
 function aturDarkMode(aktif) {
     document.body.classList.toggle("dark-mode", aktif);
-    darkModeIcon.textContent = aktif ? "☀️" : "🌙";
-    darkModeText.textContent = aktif ? "Light Mode" : "Dark Mode";
+    const icon = aktif ? "☀️" : "🌙";
+    const text = aktif ? "Light Mode" : "Dark Mode";
 
-    try {
-        localStorage.setItem("kalkulatorDarkMode", aktif ? "aktif" : "nonaktif");
-    } catch (error) {
-        console.warn("Pilihan tema tidak dapat disimpan.", error);
-    }
+    if (darkModeIcon) darkModeIcon.textContent = icon;
+    if (desktopDarkModeIcon) desktopDarkModeIcon.textContent = icon;
+    if (darkModeText) darkModeText.textContent = text;
+    if (desktopDarkModeText) desktopDarkModeText.textContent = text;
+
+    try { localStorage.setItem("kalkulatorDarkMode", aktif ? "aktif" : "nonaktif"); } catch (e) {}
 }
 
 let darkModeTersimpan = false;
-try {
-    darkModeTersimpan = localStorage.getItem("kalkulatorDarkMode") === "aktif";
-} catch (error) {
-    console.warn("Pilihan tema tidak dapat dibaca.", error);
-}
-
+try { darkModeTersimpan = localStorage.getItem("kalkulatorDarkMode") === "aktif"; } catch (e) {}
 aturDarkMode(darkModeTersimpan);
 
-darkModeToggle.addEventListener("click", function () {
-    const aktif = !document.body.classList.contains("dark-mode");
-    aturDarkMode(aktif);
-    tutupMenu();
-});
+if (darkModeToggle) darkModeToggle.addEventListener("click", () => { aturDarkMode(!document.body.classList.contains("dark-mode")); tutupMenu(); });
+if (desktopDarkModeToggle) desktopDarkModeToggle.addEventListener("click", () => { aturDarkMode(!document.body.classList.contains("dark-mode")); });
 
-/* ------------------------------------------------------------- */
-/* MODAL EDIT FOTO PROFIL */
-/* ------------------------------------------------------------- */
+/* MODAL PROFIL */
 const profileTrigger = document.getElementById("profileTrigger");
+const sidebarUserTrigger = document.getElementById("sidebarUserTrigger");
 const profileModal = document.getElementById("profileModal");
 const closeModal = document.getElementById("closeModal");
 const profileInput = document.getElementById("profileInput");
 const btnDeletePhoto = document.getElementById("btnDeletePhoto");
 
-const headerProfileImg = document.getElementById("headerProfileImg");
-const headerProfileIcon = document.getElementById("headerProfileIcon");
-const modalPreviewImg = document.getElementById("modalPreviewImg");
-const modalPreviewIcon = document.getElementById("modalPreviewIcon");
-
-const greetingTitle = document.getElementById("greetingTitle");
-const modalUserName = document.getElementById("modalUserName");
-const modalUserEmail = document.getElementById("modalUserEmail");
-
 function bukaModal() { profileModal.classList.add("show"); }
 function tutupModal() { profileModal.classList.remove("show"); }
 
-profileTrigger.addEventListener("click", bukaModal);
-closeModal.addEventListener("click", tutupModal);
-
-profileModal.addEventListener("click", function(e) {
-    if (e.target === profileModal) tutupModal();
-});
+if (profileTrigger) profileTrigger.addEventListener("click", bukaModal);
+if (sidebarUserTrigger) sidebarUserTrigger.addEventListener("click", bukaModal);
+if (closeModal) closeModal.addEventListener("click", tutupModal);
 
 function pasangFotoProfil(photoUrl) {
+    const ids = ["headerProfileImg", "modalPreviewImg", "sidebarUserAvatarImg"];
+    const icons = ["headerProfileIcon", "modalPreviewIcon", "sidebarUserAvatarIcon"];
+
     if (photoUrl) {
-        headerProfileImg.src = photoUrl;
-        headerProfileImg.style.display = "block";
-        headerProfileIcon.style.display = "none";
-
-        modalPreviewImg.src = photoUrl;
-        modalPreviewImg.style.display = "block";
-        modalPreviewIcon.style.display = "none";
+        ids.forEach(id => { const el = document.getElementById(id); if (el) { el.src = photoUrl; el.style.display = "block"; } });
+        icons.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "none"; });
     } else {
-        headerProfileImg.style.display = "none";
-        headerProfileIcon.style.display = "block";
-
-        modalPreviewImg.style.display = "none";
-        modalPreviewIcon.style.display = "block";
+        ids.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "none"; });
+        icons.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "block"; });
     }
 }
 
-/* ------------------------------------------------------------- */
-/* VERIFIKASI SESI PENYEDIA VIA REDIS BACKEND + LOADER */
-/* ------------------------------------------------------------- */
+/* VERIFIKASI SESI BACKEND */
 async function muatDataUser() {
     const loader = document.getElementById("authLoader");
     try {
@@ -995,74 +781,70 @@ async function muatDataUser() {
             headers: { "Accept": "application/json" }
         });
 
-        if (!res.ok) {
-            window.location.replace("/login-user.html");
-            return;
-        }
-
+        if (!res.ok) { window.location.replace("/login-user.html"); return; }
         const data = await res.json();
 
-        // Jika belum login / sesi habis, tendang kembali ke halaman login-user.html
         if (!data.authenticated || !data.user) {
             window.location.replace("/login-user.html");
             return;
         }
 
-        // TAMPILKAN NAMA & EMAIL DARI BACKEND JIKA BERHASIL LOGIN
         if (data.user.name) {
-            if (greetingTitle) greetingTitle.textContent = `Selamat datang, ${data.user.name}!`;
-            if (modalUserName) modalUserName.textContent = data.user.name;
-        }
-        if (data.user.email && modalUserEmail) {
-            modalUserEmail.textContent = data.user.email;
+            const greeting = document.getElementById("greetingTitle");
+            const modalUser = document.getElementById("modalUserName");
+            const sidebarUser = document.getElementById("sidebarUserName");
+
+            if (greeting) greeting.textContent = `Selamat datang, ${data.user.name}!`;
+            if (modalUser) modalUser.textContent = data.user.name;
+            if (sidebarUser) sidebarUser.textContent = data.user.name;
         }
 
-        // Ambil Foto dari Redis, atau fallback ke localStorage jika pernah upload manual
+        if (data.user.email) {
+            const emailEl = document.getElementById("modalUserEmail");
+            if (emailEl) emailEl.textContent = data.user.email;
+        }
+
         const fotoProfil = data.user.picture || localStorage.getItem("userProfilePhoto") || "";
         pasangFotoProfil(fotoProfil);
 
-        // Hilangkan loader dengan mulus agar dashboard muncul
         if (loader) {
             loader.style.opacity = "0";
             setTimeout(() => loader.style.display = "none", 300);
         }
 
     } catch (err) {
-        console.error("Gagal memeriksa sesi user:", err);
+        console.error("Gagal verifikasi sesi:", err);
         window.location.replace("/login-user.html");
     }
 }
 
-/* UPLOAD FOTO PROFIL (LOKAL) */
-profileInput.addEventListener("change", function() {
-    const file = this.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const base64Image = e.target.result;
-            try {
-                localStorage.setItem("userProfilePhoto", base64Image);
-                pasangFotoProfil(base64Image);
-                tutupModal();
-            } catch (err) {
-                alert("Ukuran gambar terlalu besar, silakan pilih gambar yang lebih kecil.");
-            }
-        };
-        reader.readAsDataURL(file);
-    }
-});
+if (profileInput) {
+    profileInput.addEventListener("change", function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Image = e.target.result;
+                try {
+                    localStorage.setItem("userProfilePhoto", base64Image);
+                    pasangFotoProfil(base64Image);
+                    tutupModal();
+                } catch (err) { alert("Gambar terlalu besar."); }
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
 
-/* HAPUS FOTO PROFIL */
-btnDeletePhoto.addEventListener("click", function() {
-    localStorage.removeItem("userProfilePhoto");
-    profileInput.value = "";
-    pasangFotoProfil("");
-    tutupModal();
-});
+if (btnDeletePhoto) {
+    btnDeletePhoto.addEventListener("click", function() {
+        localStorage.removeItem("userProfilePhoto");
+        if (profileInput) profileInput.value = "";
+        pasangFotoProfil("");
+        tutupModal();
+    });
+}
 
-/* ------------------------------------------------------------- */
-/* FUNGSI LOGOUT PENYEDIA */
-/* ------------------------------------------------------------- */
 async function lakukanLogout() {
     try {
         await fetch("/api/user/login", {
@@ -1071,19 +853,15 @@ async function lakukanLogout() {
             body: JSON.stringify({ action: "logout" })
         });
     } catch (e) {
-        console.warn("Gagal request logout di server.");
+        console.warn("Gagal logout di server.");
     } finally {
         localStorage.removeItem("userProfilePhoto");
         window.location.replace("/login-user.html");
     }
 }
 
-// Pasang handler event ke semua tombol logout (di Drawer & Modal Pop-up)
-document.querySelectorAll(".btn-logout-action").forEach(btn => {
-    btn.addEventListener("click", lakukanLogout);
-});
+document.querySelectorAll(".btn-logout-action").forEach(btn => btn.addEventListener("click", lakukanLogout));
 
-// Jalankan pemeriksaan sesi saat pertama kali halaman dimuat
 muatDataUser();
 </script>
 
