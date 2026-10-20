@@ -83,14 +83,18 @@
         }
 
         .sidebar-logo {
-            font-size: 20px;
-            font-weight: 800;
-            color: #a80000;
             margin-bottom: 25px;
-            padding: 0 10px;
+            padding: 0 5px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+        }
+
+        .sidebar-logo img {
+            height: 58px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
         }
 
         /* BAR PROFIL USERS DI SIDEBAR */
@@ -233,7 +237,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 60px;
+            height: 65px;
             background: rgba(255, 245, 245, 0.95);
             backdrop-filter: blur(8px);
             border-bottom: 1px solid #f2dede;
@@ -272,9 +276,14 @@
         .menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
 
         .mobile-brand {
-            font-size: 15px;
-            font-weight: 800;
-            color: #a80000;
+            display: flex;
+            align-items: center;
+        }
+
+        .mobile-brand img {
+            height: 46px;
+            width: auto;
+            object-fit: contain;
         }
 
         /* DRAWER NAVIGATION MOBILE */
@@ -516,10 +525,10 @@
     <span>Memeriksa sesi akun...</span>
 </div>
 
-<!-- SIDEBAR KIRI (TAMPILAN KHUSUS LAPTOP / DESKTOP ALAMAT UNGU.IN) -->
+<!-- SIDEBAR KIRI (TAMPILAN KHUSUS LAPTOP / DESKTOP) -->
 <aside class="sidebar-desktop">
     <div class="sidebar-logo">
-        <span>📊</span> Dashboard
+        <img src="ykk.png" alt="YUK BERES">
     </div>
 
     <!-- PROFIL PENGGUNA DI SIDEBAR -->
@@ -582,7 +591,9 @@
     <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu">
         <span></span><span></span><span></span>
     </button>
-    <div class="mobile-brand">Dashboard Penyedia</div>
+    <div class="mobile-brand">
+        <img src="ykk.png" alt="YUK BERES">
+    </div>
 </header>
 
 <div class="nav-overlay" id="navOverlay"></div>
@@ -595,7 +606,7 @@
         <a class="nav-link" href="/gabung-foto.html"><span class="nav-icon">🖼️</span> Foto ke PDF</a>
         <a class="nav-link" href="/surat-pernyataan.html"><span class="nav-icon">📄</span> Surat Pernyataan</a>
         
-        <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" style="margin-top: 15px;">
+        <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" style="margin-top: 15px; border:none; background:transparent; width:100%; text-align:left; font-family:inherit;">
             <span class="nav-icon" id="darkModeIcon">🌙</span>
             <span id="darkModeText">Dark Mode</span>
         </button>
