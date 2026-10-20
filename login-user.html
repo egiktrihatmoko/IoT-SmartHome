@@ -949,7 +949,7 @@ async function sendRequest(endpoint, payload) {
 
        Backend harus memverifikasi kredensial dan membuat cookie
        sesi yang aman. Setelah berhasil, pengguna diarahkan ke
-       /user-dashboard.html.
+       /dashboard-user.html.
     ========================================================= */
 
     loginForm.addEventListener("submit", async (event) => {
@@ -982,7 +982,7 @@ async function sendRequest(endpoint, payload) {
         );
 
         // Arahkan user ke dashboard setelah API login berhasil.
-        window.location.replace("/user-dashboard.html");
+        window.location.replace("/dashboard-user.html");
 
       } catch (error) {
         showMessage(error.message || "Login gagal.");
@@ -1029,7 +1029,7 @@ async function sendRequest(endpoint, payload) {
           data.user &&
           data.user.role === "user"
         ) {
-          window.location.replace("/user-dashboard.html");
+          window.location.replace("/dashboard-user.html");
         }
 
       } catch (error) {
