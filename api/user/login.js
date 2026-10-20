@@ -1,3 +1,4 @@
+
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
@@ -10,6 +11,7 @@ KONFIGURASI REDIS
 const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL;
 const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 const SESSION_DURATION = 86400; // 24 jam
+const MAX_PHOTO_SIZE = 200 * 1024; // Maksimal 200 KB
 
 /*
 ==================================================
@@ -71,6 +73,22 @@ function getBody(req) {
   }
 
   return {};
+}
+
+/*
+==================================================
+FUNGSI BANTUAN: PARSE DATA REDIS
+==================================================
+*/
+
+function parseRedisJson(value) {
+  if (!value) return null;
+
+  try {
+    return typeof value === "string" ? JSON.parse(value) : value;
+  } catch {
+    return null;
+  }
 }
 
 /*
@@ -187,7 +205,7 @@ async function registerUser(req, res) {
 
 /*
 ==================================================
-API 2: LOGIN PENGGUNA (Lokal Email & Password)
+API 2: LOGIN EMAIL DAN PASSWORD
 ==================================================
 */
 
@@ -208,24 +226,12 @@ async function loginUser(req, res) {
     `user_account:${normalizedEmail}`
   );
 
-  if (!savedAccount) {
+  const account = parseRedisJson(savedAccount);
+
+  if (!account) {
     return sendJson(res, 401, {
       success: false,
       message: "Email atau password salah.",
-    });
-  }
-
-  let account;
-
-  try {
-    account =
-      typeof savedAccount === "string"
-        ? JSON.parse(savedAccount)
-        : savedAccount;
-  } catch {
-    return sendJson(res, 500, {
-      success: false,
-      message: "Data akun tidak dapat dibaca.",
     });
   }
 
@@ -236,7 +242,10 @@ async function loginUser(req, res) {
     });
   }
 
-  const passwordMatch = await bcrypt.compare(password, account.passwordHash);
+  const passwordMatch = await bcrypt.compare(
+    password,
+    account.passwordHash
+  );
 
   if (!passwordMatch) {
     return sendJson(res, 401, {
@@ -278,7 +287,7 @@ async function loginUser(req, res) {
 
 /*
 ==================================================
-API 3: CEK SESI (CHECK SESSION)
+API 3: CEK SESI PENGGUNA
 ==================================================
 */
 
@@ -308,24 +317,9 @@ async function checkUserSession(req, res) {
     });
   }
 
-  let session;
+  const session = parseRedisJson(savedSession);
 
-  try {
-    session =
-      typeof savedSession === "string"
-        ? JSON.parse(savedSession)
-        : savedSession;
-  } catch {
-    clearUserCookie(res);
-
-    return sendJson(res, 200, {
-      success: true,
-      authenticated: false,
-      message: "Sesi tidak valid.",
-    });
-  }
-
-  if (session.role !== "user" || !session.email) {
+  if (!session || session.role !== "user" || !session.email) {
     clearUserCookie(res);
 
     return sendJson(res, 200, {
@@ -370,7 +364,197 @@ async function logoutUser(req, res) {
 
 /*
 ==================================================
-API 5: GOOGLE OAUTH - START
+API 5: SIMPAN / HAPUS FOTO PROFIL
+==================================================
+
+Request simpan:
+{
+  "action": "profile-photo",
+  "pictureAction": "save",
+  "picture": "data:image/jpeg;base64,..."
+}
+
+Request hapus:
+{
+  "action": "profile-photo",
+  "pictureAction": "delete"
+}
+==================================================
+*/
+
+async function profilePhoto(req, res) {
+  const { pictureAction, picture } = getBody(req);
+
+  if (!["save", "delete"].includes(pictureAction)) {
+    return sendJson(res, 400, {
+      success: false,
+      message: "Aksi foto profil tidak valid.",
+    });
+  }
+
+  const token = getCookie(req, "user_session");
+
+  if (!token || !/^[a-f0-9]{64}$/.test(token)) {
+    clearUserCookie(res);
+
+    return sendJson(res, 401, {
+      success: false,
+      message: "Silakan login terlebih dahulu.",
+    });
+  }
+
+  const sessionKey = `user_session:${token}`;
+  const savedSession = await redisCommand("GET", sessionKey);
+  const session = parseRedisJson(savedSession);
+
+  if (!session || session.role !== "user" || !session.email) {
+    clearUserCookie(res);
+
+    return sendJson(res, 401, {
+      success: false,
+      message: "Sesi tidak valid. Silakan login kembali.",
+    });
+  }
+
+  const accountKey = `user_account:${session.email}`;
+  const savedAccount = await redisCommand("GET", accountKey);
+  const account = parseRedisJson(savedAccount);
+
+  if (!account || account.role !== "user") {
+    return sendJson(res, 404, {
+      success: false,
+      message: "Data akun pengguna tidak ditemukan.",
+    });
+  }
+
+  let newPicture = "";
+
+  if (pictureAction === "save") {
+    if (typeof picture !== "string") {
+      return sendJson(res, 400, {
+        success: false,
+        message: "Data foto tidak ditemukan.",
+      });
+    }
+
+    // Hanya menerima JPEG, PNG, atau WebP dalam format Base64.
+    const match = picture.match(
+      /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/]+={0,2})$/
+    );
+
+    if (!match) {
+      return sendJson(res, 400, {
+        success: false,
+        message: "Format foto harus JPG, PNG, atau WebP.",
+      });
+    }
+
+    const imageType = match[1];
+    const base64Data = match[2];
+
+    // Tolak Base64 yang tidak valid atau tidak kanonis.
+    const imageBuffer = Buffer.from(base64Data, "base64");
+
+    if (
+      imageBuffer.length === 0 ||
+      imageBuffer.toString("base64") !== base64Data
+    ) {
+      return sendJson(res, 400, {
+        success: false,
+        message: "Data foto tidak valid.",
+      });
+    }
+
+    if (imageBuffer.length > MAX_PHOTO_SIZE) {
+      return sendJson(res, 413, {
+        success: false,
+        message: "Ukuran foto maksimal 200 KB.",
+      });
+    }
+
+    // Validasi tanda tangan file untuk memastikan tipe gambar cocok.
+    const isJpeg =
+      imageBuffer.length >= 3 &&
+      imageBuffer[0] === 0xff &&
+      imageBuffer[1] === 0xd8 &&
+      imageBuffer[2] === 0xff;
+
+    const isPng =
+      imageBuffer.length >= 8 &&
+      imageBuffer.subarray(0, 8).equals(
+        Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])
+      );
+
+    const isWebp =
+      imageBuffer.length >= 12 &&
+      imageBuffer.toString("ascii", 0, 4) === "RIFF" &&
+      imageBuffer.toString("ascii", 8, 12) === "WEBP";
+
+    const validImage =
+      (imageType === "jpeg" && isJpeg) ||
+      (imageType === "png" && isPng) ||
+      (imageType === "webp" && isWebp);
+
+    if (!validImage) {
+      return sendJson(res, 400, {
+        success: false,
+        message: "Isi file tidak sesuai dengan format gambar.",
+      });
+    }
+
+    newPicture = picture;
+  }
+
+  // Perbarui data akun di Redis.
+  account.picture = newPicture;
+
+  await redisCommand(
+    "SET",
+    accountKey,
+    JSON.stringify(account)
+  );
+
+  // Perbarui foto pada sesi aktif agar langsung terbaca saat cek sesi.
+  session.picture = newPicture;
+
+  const ttl = Number(await redisCommand("TTL", sessionKey));
+
+  if (ttl === -2) {
+    return sendJson(res, 401, {
+      success: false,
+      message: "Sesi login sudah berakhir. Silakan login kembali.",
+    });
+  }
+
+  if (ttl > 0) {
+    await redisCommand(
+      "SET",
+      sessionKey,
+      JSON.stringify(session),
+      "EX",
+      ttl
+    );
+  } else {
+    await redisCommand(
+      "SET",
+      sessionKey,
+      JSON.stringify(session)
+    );
+  }
+
+  return sendJson(res, 200, {
+    success: true,
+    message:
+      pictureAction === "save"
+        ? "Foto profil berhasil disimpan."
+        : "Foto profil berhasil dihapus.",
+    picture: newPicture,
+  });
+}
+
+/*
+==================================================
+API 6: GOOGLE OAUTH - START
 ==================================================
 */
 
@@ -378,10 +562,14 @@ async function googleStart(req, res) {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const protocol = req.headers["x-forwarded-proto"] || "https";
   const host = req.headers.host;
-  const redirectUri = `${protocol}://${host}/api/user/google/callback`;
+  const redirectUri =
+    `${protocol}://${host}/api/user/google/callback`;
 
   if (!clientId) {
-    return sendJson(res, 500, { success: false, message: "GOOGLE_CLIENT_ID belum diatur." });
+    return sendJson(res, 500, {
+      success: false,
+      message: "GOOGLE_CLIENT_ID belum diatur.",
+    });
   }
 
   const state = crypto.randomBytes(16).toString("hex");
@@ -391,9 +579,10 @@ async function googleStart(req, res) {
     `google_auth_state=${state}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`
   );
 
-  const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(
-    redirectUri
-  )}&response_type=code&scope=email%20profile&state=${state}`;
+  const googleAuthUrl =
+    `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+    `&response_type=code&scope=email%20profile&state=${state}`;
 
   res.writeHead(302, { Location: googleAuthUrl });
   res.end();
@@ -401,92 +590,135 @@ async function googleStart(req, res) {
 
 /*
 ==================================================
-API 6: GOOGLE OAUTH - CALLBACK
+API 7: GOOGLE OAUTH - CALLBACK
 ==================================================
 */
 
 async function googleCallback(req, res) {
   try {
-    const { code, state } = req.query;
+    const { code, state } = req.query || {};
     const savedState = getCookie(req, "google_auth_state");
 
     if (!state || state !== savedState) {
-      return res.status(400).send("Sesi verifikasi Google tidak valid atau kedaluwarsa.");
+      return res
+        .status(400)
+        .send("Sesi verifikasi Google tidak valid atau kedaluwarsa.");
     }
 
     if (!code) {
-      return res.status(400).send("Kode otorisasi Google tidak ditemukan.");
+      return res
+        .status(400)
+        .send("Kode otorisasi Google tidak ditemukan.");
+    }
+
+    if (
+      !process.env.GOOGLE_CLIENT_ID ||
+      !process.env.GOOGLE_CLIENT_SECRET
+    ) {
+      return res
+        .status(500)
+        .send("Konfigurasi Google OAuth belum lengkap.");
     }
 
     const protocol = req.headers["x-forwarded-proto"] || "https";
     const host = req.headers.host;
-    const redirectUri = `${protocol}://${host}/api/user/google/callback`;
+    const redirectUri =
+      `${protocol}://${host}/api/user/google/callback`;
 
-    // 1. Tukar code dengan token Google
-    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        code,
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: redirectUri,
-        grant_type: "authorization_code",
-      }),
-    });
+    // Tukar kode otorisasi dengan token Google.
+    const tokenResponse = await fetch(
+      "https://oauth2.googleapis.com/token",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          code,
+          client_id: process.env.GOOGLE_CLIENT_ID,
+          client_secret: process.env.GOOGLE_CLIENT_SECRET,
+          redirect_uri: redirectUri,
+          grant_type: "authorization_code",
+        }),
+      }
+    );
 
     const tokenData = await tokenResponse.json();
+
     if (!tokenResponse.ok || !tokenData.access_token) {
-      return res.status(400).send("Gagal mendapatkan token akses dari Google.");
+      return res
+        .status(400)
+        .send("Gagal mendapatkan token akses dari Google.");
     }
 
-    // 2. Ambil profil Google (Nama, Email, Foto Profil)
-    const userResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
-      headers: { Authorization: `Bearer ${tokenData.access_token}` },
-    });
+    // Ambil profil Google.
+    const userResponse = await fetch(
+      "https://www.googleapis.com/oauth2/v2/userinfo",
+      {
+        headers: {
+          Authorization: `Bearer ${tokenData.access_token}`,
+        },
+      }
+    );
 
     const googleUser = await userResponse.json();
-    if (!userResponse.ok || !googleUser.email) {
-      return res.status(400).send("Gagal mengambil informasi profil dari Google.");
+
+    if (
+      !userResponse.ok ||
+      !googleUser.email ||
+      googleUser.verified_email === false
+    ) {
+      return res
+        .status(400)
+        .send("Gagal memverifikasi informasi profil dari Google.");
     }
 
-    const normalizedEmail = googleUser.email.toLowerCase();
-    const name = googleUser.name || "User Google";
-    const picture = googleUser.picture || "";
+    const normalizedEmail = googleUser.email.trim().toLowerCase();
+    const googleName = googleUser.name || "User Google";
+    const googlePicture = googleUser.picture || "";
 
-    // 3. Simpan atau perbarui akun di Redis beserta foto profilnya
-    const existingAccountStr = await redisCommand("GET", `user_account:${normalizedEmail}`);
+    const existingAccountValue = await redisCommand(
+      "GET",
+      `user_account:${normalizedEmail}`
+    );
 
-    let account;
-    if (existingAccountStr) {
-      try {
-        account = typeof existingAccountStr === "string" ? JSON.parse(existingAccountStr) : existingAccountStr;
-        account.picture = picture || account.picture;
-        account.name = name || account.name;
-        await redisCommand("SET", `user_account:${normalizedEmail}`, JSON.stringify(account));
-      } catch {
-        account = null;
-      }
-    }
+    let account = parseRedisJson(existingAccountValue);
 
-    if (!account) {
+    if (account) {
+      // Pertahankan foto kustom pengguna jika sudah ada.
+      account.name = googleName || account.name;
+      account.picture = account.picture || googlePicture;
+      account.role = "user";
+
+      await redisCommand(
+        "SET",
+        `user_account:${normalizedEmail}`,
+        JSON.stringify(account)
+      );
+    } else {
       account = {
-        name: name,
+        name: googleName,
         email: normalizedEmail,
         passwordHash: "",
-        picture: picture, // Foto profil tersimpan di sini!
+        picture: googlePicture,
         role: "user",
         createdAt: new Date().toISOString(),
       };
-      await redisCommand("SET", `user_account:${normalizedEmail}`, JSON.stringify(account));
+
+      await redisCommand(
+        "SET",
+        `user_account:${normalizedEmail}`,
+        JSON.stringify(account)
+      );
     }
 
-    // 4. Buat sesi login
+    // Buat sesi pengguna.
     const sessionToken = crypto.randomBytes(32).toString("hex");
+
     const session = {
       email: normalizedEmail,
       name: account.name,
-      picture: account.picture, // Foto profil ikut masuk ke sesi
+      picture: account.picture || "",
       role: "user",
       createdAt: new Date().toISOString(),
     };
@@ -501,16 +733,19 @@ async function googleCallback(req, res) {
 
     res.setHeader("Set-Cookie", [
       `user_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${SESSION_DURATION}`,
-      `google_auth_state=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`
+      "google_auth_state=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0",
     ]);
 
-    // 5. Redirect ke halaman tujuan setelah berhasil login
-    res.writeHead(302, { Location: "/gabung-foto.html" });
+    res.writeHead(302, {
+      Location: "/gabung-foto.html",
+    });
     res.end();
-
   } catch (error) {
     console.error("Google Callback Error:", error);
-    res.status(500).send("Terjadi kesalahan pada server saat memproses login Google.");
+
+    return res
+      .status(500)
+      .send("Terjadi kesalahan server saat memproses login Google.");
   }
 }
 
@@ -522,34 +757,83 @@ ROUTER UTAMA
 
 module.exports = async function handler(req, res) {
   try {
+    const requestUrl = req.url || "";
+
     const action =
       req.method === "GET"
         ? req.query?.action
         : getBody(req).action;
 
-    // Cek sesi menggunakan GET
+    // Cek sesi.
     if (action === "check") {
       if (req.method !== "GET") {
         res.setHeader("Allow", "GET");
-        return sendJson(res, 405, { success: false, message: "Gunakan metode GET untuk cek sesi." });
+
+        return sendJson(res, 405, {
+          success: false,
+          message: "Gunakan metode GET untuk cek sesi.",
+        });
       }
+
       return await checkUserSession(req, res);
     }
 
-    // Google Start route (bisa diakses via GET ?action=google-start atau langsung)
-    if (action === "google-start" || req.url.includes("/google/start")) {
+    // Simpan atau hapus foto profil.
+    if (action === "profile-photo") {
+      if (req.method !== "POST") {
+        res.setHeader("Allow", "POST");
+
+        return sendJson(res, 405, {
+          success: false,
+          message: "Gunakan metode POST untuk mengubah foto profil.",
+        });
+      }
+
+      return await profilePhoto(req, res);
+    }
+
+    // Google OAuth start.
+    if (
+      action === "google-start" ||
+      requestUrl.includes("/google/start")
+    ) {
+      if (req.method !== "GET") {
+        res.setHeader("Allow", "GET");
+
+        return sendJson(res, 405, {
+          success: false,
+          message: "Gunakan metode GET untuk memulai login Google.",
+        });
+      }
+
       return await googleStart(req, res);
     }
 
-    // Google Callback route (diakses otomatis oleh Google)
-    if (action === "google-callback" || req.url.includes("/google/callback")) {
+    // Google OAuth callback.
+    if (
+      action === "google-callback" ||
+      requestUrl.includes("/google/callback")
+    ) {
+      if (req.method !== "GET") {
+        res.setHeader("Allow", "GET");
+
+        return sendJson(res, 405, {
+          success: false,
+          message: "Callback Google harus menggunakan GET.",
+        });
+      }
+
       return await googleCallback(req, res);
     }
 
-    // Aksi lainnya menggunakan POST
+    // Aksi selain di atas harus menggunakan POST.
     if (req.method !== "POST") {
       res.setHeader("Allow", "POST, GET");
-      return sendJson(res, 405, { success: false, message: "Metode request tidak didukung." });
+
+      return sendJson(res, 405, {
+        success: false,
+        message: "Metode request tidak didukung.",
+      });
     }
 
     switch (action) {
@@ -563,10 +847,18 @@ module.exports = async function handler(req, res) {
         return await logoutUser(req, res);
 
       default:
-        return sendJson(res, 400, { success: false, message: "Aksi API tidak dikenal." });
+        return sendJson(res, 400, {
+          success: false,
+          message: "Aksi API tidak dikenal.",
+        });
     }
   } catch (error) {
     console.error("User API error:", error);
-    return sendJson(res, 500, { success: false, message: "Terjadi kesalahan server. Silakan coba lagi." });
+
+    return sendJson(res, 500, {
+      success: false,
+      message:
+        "Terjadi kesalahan server. Silakan coba lagi.",
+    });
   }
 };
