@@ -1561,6 +1561,33 @@ body.dark-mode .mobile-header {
       }
   }
 
+  /* ========================================================================== */
+  /* FUNGSI MEMUAT & MENAMBAH TOTAL SURAT DARI API (/api/surat)                 */
+  /* ========================================================================== */
+  async function muatTotalSurat(tambahBaru = false) {
+      const elemen = document.getElementById("totalsurat");
+      if (!elemen) return;
+
+      try {
+          const method = tambahBaru ? "POST" : "GET";
+          const response = await fetch("/api/surat", {
+              method: method,
+              cache: "no-store"
+          });
+
+          const data = await response.json().catch(() => ({}));
+
+          if (response.ok && data.success === true && typeof data.total === "number") {
+              elemen.textContent = data.total.toLocaleString("id-ID");
+          } else {
+              elemen.textContent = "0";
+          }
+      } catch (error) {
+          elemen.textContent = "0";
+          console.error("Gagal memuat total surat:", error);
+      }
+  }
+
   if (profileInput) {
       profileInput.addEventListener("change", function() {
           const file = this.files[0];
@@ -1857,6 +1884,10 @@ body.dark-mode .mobile-header {
     html2pdf().from(element).set(opt).save().then(() => {
       btn.disabled = false;
       btn.textContent = '↓ Download PDF';
+      
+      // ⚡ TAMBAHKAN INI: Menambah counter total surat di Redis setelah PDF berhasil diunduh
+      muatTotalSurat(true);
+
     }).catch(err => {
       console.error(err);
       alert('Gagal mengunduh PDF.');
@@ -1867,6 +1898,9 @@ body.dark-mode .mobile-header {
 
   updatePreview();
   muatDataUser();
+  
+  // ⚡ PANGGIL TOTAL SURAT SAAT HALAMAN PERTAMA KALI DIBUKA
+  muatTotalSurat(false);
 </script>
 
 </body>
