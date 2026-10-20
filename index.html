@@ -896,8 +896,8 @@
         </a>
     </div>
 
-    <!-- PROFIL PENGGUNA DI SIDEBAR -->
-    <div class="sidebar-user-card" id="sidebarUserTrigger" title="Klik untuk edit profil">
+    <!-- PROFIL PENGGUNA DI SIDEBAR (Hanya tampil jika login) -->
+    <div class="sidebar-user-card" id="sidebarUserTrigger" title="Klik untuk edit profil" style="display: none;">
         <div class="sidebar-user-avatar">
             <span id="sidebarUserAvatarIcon">👤</span>
             <img id="sidebarUserAvatarImg" src="" alt="Avatar" style="display: none;">
@@ -910,6 +910,20 @@
 
     <!-- MENU VERTIKAL SIDEBAR -->
     <ul class="sidebar-menu-list">
+        <!-- BERUBAH OTOMATIS (LOGIN / DASHBOARD) -->
+        <li class="sidebar-menu-item">
+            <a href="/login-user.html" id="sidebarAuthMenu">
+                <span class="menu-icon" id="sidebarAuthIcon">👤</span>
+                <span id="sidebarAuthText">Login User</span>
+            </a>
+        </li>
+        <li class="sidebar-menu-item">
+            <a href="/dashboard-user.html" id="sidebarDashboardMenu" style="display: none;">
+                <span class="menu-icon">📊</span>
+                <span>Dashboard Saya</span>
+            </a>
+        </li>
+
         <li class="sidebar-menu-item">
             <a href="/dashboard-user.html">
                 <span class="menu-icon">🏠</span>
@@ -945,7 +959,8 @@
             </button>
         </li>
 
-        <li class="sidebar-menu-item">
+        <!-- TOMBOL LOGOUT DESKTOP (Hanya muncul jika login) -->
+        <li class="sidebar-menu-item" id="sidebarLogoutItem" style="display: none;">
             <button class="sidebar-logout btn-logout-action" type="button">
                 <span class="menu-icon">🚪</span>
                 <span>Keluar / Logout</span>
@@ -971,6 +986,17 @@
 <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
     <div class="nav-drawer-content">
         <div class="nav-heading">MENU UTAMA</div>
+        
+        <!-- BERUBAH OTOMATIS DI MOBILE (LOGIN / DASHBOARD) -->
+        <a class="nav-link login-link" href="/login-user.html" id="mobileAuthMenu">
+            <span class="nav-icon" id="mobileAuthIcon">👤</span>
+            <span id="mobileAuthText">Login User</span>
+        </a>
+        <a class="nav-link" href="/dashboard-user.html" id="mobileDashboardMenu" style="display: none;">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard Saya</span>
+        </a>
+
         <a class="nav-link" href="/dashboard-user.html"><span class="nav-icon">🏠</span> Beranda Utama</a>
         <a class="nav-link active-link" href="/"><span class="nav-icon">🧮</span> Kalkulator Harga Tayang</a>
         <a class="nav-link" href="/gabung-foto.html"><span class="nav-icon">🖼️</span> Foto ke PDF</a>
@@ -984,7 +1010,8 @@
             <span id="darkModeText">Dark Mode</span>
         </button>
     </div>
-    <a class="nav-link logout-link btn-logout-action"><span class="nav-icon">🚪</span> Keluar / Logout</a>
+    <!-- TOMBOL LOGOUT MOBILE (Hanya muncul jika login) -->
+    <a class="nav-link logout-link btn-logout-action" id="mobileLogoutBtn" style="display: none;"><span class="nav-icon">🚪</span> Keluar / Logout</a>
 </nav>
 
 <!-- KONTEN UTAMA (KALKULATOR) -->
@@ -1435,7 +1462,7 @@ function pasangFotoProfil(photoUrl) {
     }
 }
 
-/* VERIFIKASI SESI BACKEND & DATA USER */
+/* CEK STATUS SESI SECARA FLEKSIBEL (MENYESUAIKAN LOGIN/BELUM) */
 async function muatDataUser() {
     const loader = document.getElementById("authLoader");
     try {
@@ -1446,29 +1473,54 @@ async function muatDataUser() {
             headers: { "Accept": "application/json" }
         });
 
-        if (!res.ok) { window.location.replace("/login-user.html"); return; }
-        const data = await res.json();
-
-        if (!data.authenticated || !data.user) {
-            window.location.replace("/login-user.html");
+        // Jika belum login, biarkan sebagai tamu (guest) tanpa redirect
+        if (!res.ok) {
+            if (loader) {
+                loader.style.opacity = "0";
+                setTimeout(() => loader.style.display = "none", 300);
+            }
             return;
         }
 
-        if (data.user.name) {
-            const modalUser = document.getElementById("modalUserName");
-            const sidebarUser = document.getElementById("sidebarUserName");
+        const data = await res.json();
 
-            if (modalUser) modalUser.textContent = data.user.name;
-            if (sidebarUser) sidebarUser.textContent = data.user.name;
+        // Jika terdeteksi SUDAH LOGIN
+        if (data.authenticated && data.user) {
+            if (data.user.name) {
+                const modalUser = document.getElementById("modalUserName");
+                const sidebarUser = document.getElementById("sidebarUserName");
+
+                if (modalUser) modalUser.textContent = data.user.name;
+                if (sidebarUser) sidebarUser.textContent = data.user.name;
+            }
+
+            if (data.user.email) {
+                const emailEl = document.getElementById("modalUserEmail");
+                if (emailEl) emailEl.textContent = data.user.email;
+            }
+
+            const fotoProfil = data.user.picture || localStorage.getItem("userProfilePhoto") || "";
+            pasangFotoProfil(fotoProfil);
+
+            // Tampilkan kartu profil di sidebar & ubah tombol "Login User" menjadi "Dashboard Saya"
+            if (sidebarUserTrigger) sidebarUserTrigger.style.display = "flex";
+            
+            const sidebarAuthMenu = document.getElementById("sidebarAuthMenu");
+            const sidebarDashboardMenu = document.getElementById("sidebarDashboardMenu");
+            const sidebarLogoutItem = document.getElementById("sidebarLogoutItem");
+
+            if (sidebarAuthMenu) sidebarAuthMenu.style.display = "none";
+            if (sidebarDashboardMenu) sidebarDashboardMenu.style.display = "block";
+            if (sidebarLogoutItem) sidebarLogoutItem.style.display = "block";
+
+            const mobileAuthMenu = document.getElementById("mobileAuthMenu");
+            const mobileDashboardMenu = document.getElementById("mobileDashboardMenu");
+            const mobileLogoutBtn = document.getElementById("mobileLogoutBtn");
+
+            if (mobileAuthMenu) mobileAuthMenu.style.display = "none";
+            if (mobileDashboardMenu) mobileDashboardMenu.style.display = "flex";
+            if (mobileLogoutBtn) mobileLogoutBtn.style.display = "flex";
         }
-
-        if (data.user.email) {
-            const emailEl = document.getElementById("modalUserEmail");
-            if (emailEl) emailEl.textContent = data.user.email;
-        }
-
-        const fotoProfil = data.user.picture || localStorage.getItem("userProfilePhoto") || "";
-        pasangFotoProfil(fotoProfil);
 
         if (loader) {
             loader.style.opacity = "0";
@@ -1476,8 +1528,11 @@ async function muatDataUser() {
         }
 
     } catch (err) {
-        console.error("Gagal verifikasi sesi:", err);
-        window.location.replace("/login-user.html");
+        console.warn("Belum login atau gagal cek sesi.");
+        if (loader) {
+            loader.style.opacity = "0";
+            setTimeout(() => loader.style.display = "none", 300);
+        }
     }
 }
 
@@ -1519,7 +1574,7 @@ async function lakukanLogout() {
         console.warn("Gagal logout di server.");
     } finally {
         localStorage.removeItem("userProfilePhoto");
-        window.location.replace("/login-user.html");
+        window.location.reload(); // Muat ulang halaman jadi status tamu
     }
 }
 
