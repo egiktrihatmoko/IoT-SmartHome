@@ -846,7 +846,7 @@ body.dark-mode .mobile-header {
 <body>
 <div class="topbar"></div>
 
-<!-- SIDEBAR KIRI (DESKTOP) -->
+<!-- SIDEBAR KIRI (UNTUK DESKTOP / LAPTOP) -->
 <aside class="sidebar-desktop">
     <div class="sidebar-logo">
         <a href="/beranda.html">
@@ -866,7 +866,7 @@ body.dark-mode .mobile-header {
         </div>
     </div>
 
-    <!-- MENU VERTIKAL SIDEBAR DESKTOP -->
+    <!-- MENU VERTIKAL SIDEBAR -->
     <ul class="sidebar-menu-list">
         <!-- TOMBOL LOGIN / DASHBOARD DI PALING ATAS -->
         <li class="sidebar-menu-item" id="sidebarAuthItem">
@@ -881,7 +881,6 @@ body.dark-mode .mobile-header {
                 <span>Dashboard Saya</span>
             </a>
         </li>
-
         <li class="sidebar-menu-item">
             <a href="/beranda.html">
                 <span class="menu-icon">🏠</span>
@@ -917,10 +916,10 @@ body.dark-mode .mobile-header {
             </button>
         </li>
 
-        <!-- TOMBOL LOGIN ADMIN (DIHILANGKAN JIKA SUDAH LOGIN USER) -->
+        <!-- TOMBOL LOGIN ADMIN DI BAWAH DARK MODE -->
         <li class="sidebar-menu-item" id="sidebarAdminItem">
             <a href="/admin.html">
-                <span class="menu-icon">🔑</span>
+                <span class="menu-icon">👤 🔑</span>
                 <span>Login Admin</span>
             </a>
         </li>
@@ -934,9 +933,9 @@ body.dark-mode .mobile-header {
     </ul>
 </aside>
 
-<!-- HEADER & DRAWER KHUSUS HP -->
+<!-- HEADER & DRAWER KHUSUS TAMPILAN HP -->
 <header class="mobile-header">
-    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu navigasi">
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu">
         <span></span><span></span><span></span>
     </button>
     <div class="mobile-brand">
@@ -948,12 +947,11 @@ body.dark-mode .mobile-header {
 
 <div class="nav-overlay" id="navOverlay"></div>
 
-<!-- MENU DRAWER MOBILE -->
 <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
     <div class="nav-drawer-content">
         <div class="nav-heading">MENU UTAMA</div>
-
-        <!-- LOGIN / DASHBOARD MOBILE -->
+        
+        <!-- TOMBOL LOGIN / DASHBOARD DI PALING ATAS (MOBILE) -->
         <a class="nav-link login-link" href="/login-user.html" id="mobileAuthMenu"><span class="nav-icon">🔑</span> Login User</a>
         <a class="nav-link" href="/dashboard-user.html" id="mobileDashboardMenu" style="display: none;"><span class="nav-icon">📊</span> Dashboard Saya</a>
 
@@ -961,17 +959,18 @@ body.dark-mode .mobile-header {
         <a class="nav-link" href="/"><span class="nav-icon">🧮</span> Kalkulator Harga Tayang</a>
         <a class="nav-link" href="/gabung-foto.html"><span class="nav-icon">🖼️</span> Foto ke PDF</a>
         <a class="nav-link active-link" href="/surat-pernyataan.html"><span class="nav-icon">📄</span> Surat Pernyataan</a>
-
+        
+        <!-- GARIS PEMBATAS DRAWER MOBILE -->
         <div style="height: 1px; background: #f2dede; margin: 12px 10px;"></div>
 
-        <button class="nav-link dark-mode-button" id="darkModeToggle" type="button">
+        <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" style="border:none; background:transparent; width:100%; text-align:left; font-family:inherit;">
             <span class="nav-icon" id="darkModeIcon">🌙</span>
             <span id="darkModeText">Dark Mode</span>
         </button>
 
-        <!-- TOMBOL LOGIN ADMIN MOBILE (DIHILANGKAN JIKA SUDAH LOGIN USER) -->
-        <a class="nav-link admin-link" href="/admin.html" id="mobileAdminMenu" style="margin-top: 5px;">
-            <span class="nav-icon">🔑</span>
+        <!-- TOMBOL LOGIN ADMIN DI BAWAH DARK MODE MOBILE -->
+        <a class="nav-link" href="/admin.html" id="mobileAdminMenu" style="margin-top: 5px;">
+            <span class="nav-icon">👤 🔑</span>
             <span>Login Admin</span>
         </a>
     </div>
@@ -1399,7 +1398,7 @@ body.dark-mode .mobile-header {
       }
   }
 
-  /* VERIFIKASI SESI BACKEND (SILENT / TANPA SPINNER) */
+  /* VERIFIKASI SESI BACKEND & DATA USER */
   async function muatDataUser() {
       try {
           const res = await fetch("/api/user/login?action=check", {
@@ -1432,7 +1431,7 @@ body.dark-mode .mobile-header {
 
               if (sidebarUserTrigger) sidebarUserTrigger.style.display = "flex";
 
-              // Sembunyikan Login User & Login Admin jika sudah login
+              // Jika sudah login, sembunyikan tombol Login di atas dan tampilkan Dashboard serta Logout
               const sidebarAuthItem = document.getElementById("sidebarAuthItem");
               const sidebarAdminItem = document.getElementById("sidebarAdminItem");
               const sidebarDashboardItem = document.getElementById("sidebarDashboardItem");
@@ -1657,3 +1656,111 @@ body.dark-mode .mobile-header {
     ctx.fill();
 
     ctx.beginPath();
+    ctx.moveTo(point.x, point.y);
+  }
+
+  function draw(event) {
+    if (!isDrawing) return;
+
+    event.preventDefault();
+
+    const point = getCanvasPoint(event);
+
+    ctx.lineTo(point.x, point.y);
+    ctx.stroke();
+  }
+
+  function stopDrawing(event) {
+    if (!isDrawing) return;
+
+    event.preventDefault();
+
+    isDrawing = false;
+
+    try {
+      canvas.releasePointerCapture(event.pointerId);
+    } catch (error) {}
+  }
+
+  canvas.addEventListener('pointerdown', startDrawing);
+  canvas.addEventListener('pointermove', draw);
+  canvas.addEventListener('pointerup', stopDrawing);
+  canvas.addEventListener('pointercancel', stopDrawing);
+
+  $('clearTtdBtn').addEventListener('click', () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hasDrawing = false;
+    $('outTtdImage').hidden = true;
+    $('outTtdImage').src = '';
+    $('outTtd').hidden = true;
+    $('outTtd').textContent = '';
+    $('ttdStatus').textContent = 'Tanda tangan dihapus.';
+  });
+
+  $('useTtdBtn').addEventListener('click', () => {
+    if (!hasDrawing) {
+      alert('Silakan gambar tanda tangan terlebih dahulu.');
+      return;
+    }
+
+    const dataUrl = canvas.toDataURL('image/png');
+    $('outTtdImage').src = dataUrl;
+    $('outTtdImage').hidden = false;
+    $('outTtd').hidden = true;
+    $('ttdStatus').textContent = '✔ Tanda tangan berhasil digunakan pada pratinjau & PDF.';
+  });
+
+  $('resetBtn').addEventListener('click', () => {
+    if (confirm('Yakin ingin mereset formulir?')) {
+      fieldIds.forEach(id => {
+        if (id !== 'tanggalSurat') $(id).value = '';
+      });
+      $('tanggalSurat').value = getTodayLocal();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      hasDrawing = false;
+      $('outTtdImage').hidden = true;
+      $('outTtdImage').src = '';
+      $('outTtd').hidden = true;
+      $('ttdStatus').textContent = 'Belum ada tanda tangan yang digunakan.';
+      updatePreview();
+    }
+  });
+
+  $('downloadBtn').addEventListener('click', () => {
+    const nama = $('nama').value.trim();
+    if (!nama) {
+      alert('Mohon isi Nama lengkap terlebih dahulu.');
+      $('nama').focus();
+      return;
+    }
+
+    const btn = $('downloadBtn');
+    btn.disabled = true;
+    btn.textContent = 'Memproses PDF...';
+
+    const element = $('paper');
+    const opt = {
+      margin: [10, 10, 10, 10],
+      filename: `Surat_Pernyataan_${nama.replace(/\s+/g, '_')}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().from(element).set(opt).save().then(() => {
+      btn.disabled = false;
+      btn.textContent = '↓ Download PDF';
+    }).catch(err => {
+      console.error(err);
+      alert('Gagal mengunduh PDF.');
+      btn.disabled = false;
+      btn.textContent = '↓ Download PDF';
+    });
+  });
+
+  updatePreview();
+  muatDataUser();
+</script>
+
+</body>
+</html>
