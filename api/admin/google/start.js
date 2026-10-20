@@ -6,23 +6,29 @@ module.exports = async function handler(req, res) {
 
     if (req.method !== "GET") {
         res.setHeader("Allow", "GET");
-        return res.status(405).send("Method tidak diizinkan.");
+        return res.status(405).send(
+            "Method tidak diizinkan."
+        );
     }
 
     const clientId = process.env.GOOGLE_CLIENT_ID;
-    const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+    const redirectUri =
+        process.env.GOOGLE_USER_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {
+        console.error("USER_GOOGLE_START_CONFIG_MISSING");
+
         return res.status(500).send(
-            "Konfigurasi Google OAuth belum lengkap."
+            "Konfigurasi Google OAuth user belum lengkap."
         );
     }
 
     try {
         const state = crypto.randomBytes(32).toString("hex");
 
-        res.setHeader("Set-Cookie",
-            `google_oauth_state=${state}; Path=/api/admin/google; HttpOnly; Secure; SameSite=Lax; Max-Age=600`
+        res.setHeader(
+            "Set-Cookie",
+            `google_user_oauth_state=${state}; Path=/api/user/google; HttpOnly; Secure; SameSite=Lax; Max-Age=600`
         );
 
         const googleUrl = new URL(
@@ -40,10 +46,15 @@ module.exports = async function handler(req, res) {
         googleUrl.searchParams.set("prompt", "select_account");
 
         return res.redirect(302, googleUrl.toString());
+
     } catch (error) {
-        console.error("GOOGLE_START_ERROR:", error);
+        console.error(
+            "USER_GOOGLE_START_ERROR:",
+            error.message
+        );
+
         return res.status(500).send(
-            "Gagal memulai login Google."
+            "Gagal memulai login Google user."
         );
     }
 };
