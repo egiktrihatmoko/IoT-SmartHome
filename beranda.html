@@ -22,6 +22,49 @@
         }
 
         /* ------------------------------------------------------------- */
+        /* LAPISAN LOADING / PEMERIKSAAN SESI */
+        /* ------------------------------------------------------------- */
+        #authLoader {
+            position: fixed;
+            inset: 0;
+            background: #fff5f5;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #a80000;
+            font-weight: 600;
+            transition: opacity 0.3s ease;
+        }
+
+        .spinner {
+            width: 45px;
+            height: 45px;
+            border: 4px solid #f2dede;
+            border-top: 4px solid #a80000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        body.dark-mode #authLoader {
+            background: #121212;
+            color: #ff7777;
+        }
+
+        body.dark-mode .spinner {
+            border-color: #383838;
+            border-top-color: #ff5555;
+        }
+
+        /* ------------------------------------------------------------- */
         /* SIDEBAR KIRI (UNTUK DESKTOP / LAPTOP) */
         /* ------------------------------------------------------------- */
         .sidebar-desktop {
@@ -379,6 +422,12 @@
 
 <body>
 
+<!-- INDIKATOR PEMERIKSAAN SESI -->
+<div id="authLoader">
+    <div class="spinner"></div>
+    <span>Memeriksa sesi akun...</span>
+</div>
+
 <!-- SIDEBAR KIRI (TAMPILAN LAPTOP / DESKTOP) -->
 <aside class="sidebar-desktop">
     <div class="sidebar-logo">
@@ -433,7 +482,7 @@
         <!-- TOMBOL LOGIN ADMIN DI BAWAH DARK MODE -->
         <li class="sidebar-menu-item">
             <a href="/admin.html">
-                <span class="menu-icon">🛡️</span>
+                <span class="menu-icon">⚙️</span>
                 <span>Login Admin</span>
             </a>
         </li>
@@ -477,7 +526,7 @@
 
         <!-- TOMBOL LOGIN ADMIN DI BAWAH DARK MODE MOBILE -->
         <a class="nav-link" href="/admin.html" style="margin-top: 5px;">
-            <span class="nav-icon">🛡️</span>
+            <span class="nav-icon">⚙️</span>
             <span>Login Admin</span>
         </a>
     </div>
@@ -599,8 +648,9 @@ aturDarkMode(darkModeTersimpan);
 if (darkModeToggle) darkModeToggle.addEventListener("click", () => { aturDarkMode(!document.body.classList.contains("dark-mode")); tutupMenu(); });
 if (desktopDarkModeToggle) desktopDarkModeToggle.addEventListener("click", () => { aturDarkMode(!document.body.classList.contains("dark-mode")); });
 
-/* PENGAMAN: JIKA SUDAH LOGIN, LEMPAR KE DASHBOARD */
-async function cegahAksesJikaSudahLogin() {
+/* PENGAMAN & PEMERIKSAAN SESI (JIKA SUDAH LOGIN, LEMPAR KE DASHBOARD) */
+async function cekSesiDanCegahAkses() {
+    const loader = document.getElementById("authLoader");
     try {
         const res = await fetch("/api/user/login?action=check", {
             method: "GET",
@@ -612,18 +662,28 @@ async function cegahAksesJikaSudahLogin() {
         if (res.ok) {
             const data = await res.json();
             if (data.authenticated && data.user) {
-                // Jika terdeteksi sudah login, langsung alihkan ke dashboard
+                // Jika sudah login, langsung alihkan ke dashboard tanpa menampilkan halaman beranda
                 window.location.replace("/dashboard-user.html");
                 return;
             }
         }
+
+        // Jika belum login, hilangkan loader dan tampilkan halaman beranda publik
+        if (loader) {
+            loader.style.opacity = "0";
+            setTimeout(() => loader.style.display = "none", 300);
+        }
     } catch (err) {
-        // Belum login atau gagal cek sesi, biarkan halaman terbuka normal
+        // Jika terjadi kendala koneksi/gagal cek sesi, biarkan halaman terbuka untuk tamu
+        if (loader) {
+            loader.style.opacity = "0";
+            setTimeout(() => loader.style.display = "none", 300);
+        }
     }
 }
 
-// Jalankan pemeriksaan akses login
-cegahAksesJikaSudahLogin();
+// Jalankan pemeriksaan saat halaman dimuat
+cekSesiDanCegahAkses();
 </script>
 
 </body>
