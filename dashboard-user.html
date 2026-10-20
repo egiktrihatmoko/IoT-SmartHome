@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#a80000">
-    <title>Dashboard Penyedia - Aplikasi Utama</title>
+    <title>Kalkulator Harga Tayang - Aplikasi Utama</title>
 
     <style>
         * {
@@ -227,14 +227,6 @@
             margin: auto;
         }
 
-        a.feature-card {
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
         /* ------------------------------------------------------------- */
         /* NAVBAR HEADER MOBILE (HANYA UNTUK HP) */
         /* ------------------------------------------------------------- */
@@ -370,105 +362,6 @@
         }
 
         /* ------------------------------------------------------------- */
-        /* BANNER & KARTU FITUR */
-        /* ------------------------------------------------------------- */
-        .hero-banner {
-            position: relative;
-            background: linear-gradient(135deg, #8a0000 0%, #a80000 50%, #d31010 100%);
-            border-radius: 22px;
-            padding: 35px 30px;
-            color: white;
-            box-shadow: 0 10px 30px rgba(168, 0, 0, 0.18);
-            margin-bottom: 30px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-        }
-
-        .hero-content { position: relative; z-index: 2; }
-
-        .hero-badge {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.18);
-            backdrop-filter: blur(6px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #fff;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-
-        .hero-banner h1 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
-        .hero-banner p { font-size: 14px; color: rgba(255, 255, 255, 0.88); }
-
-        .profile-trigger {
-            position: relative;
-            z-index: 2;
-            width: 58px;
-            height: 58px;
-            border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            background: rgba(255, 255, 255, 0.2);
-            cursor: pointer;
-            overflow: hidden;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .profile-trigger img { width: 100%; height: 100%; object-fit: cover; }
-
-        .section-header { margin-bottom: 18px; }
-        .section-title { color: #a80000; font-size: 18px; font-weight: 800; margin-bottom: 4px; }
-        .section-subtitle { font-size: 13px; color: #777; }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .feature-card {
-            background: #ffffff;
-            border: 1px solid #f2dede;
-            border-radius: 18px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 20px;
-            box-shadow: 0 6px 20px rgba(150, 0, 0, 0.05);
-            transition: all 0.25s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-4px);
-            border-color: #e00000;
-            box-shadow: 0 12px 28px rgba(168, 0, 0, 0.12);
-        }
-
-        .card-icon-wrapper {
-            width: 48px; height: 48px;
-            border-radius: 14px; background: #fff0f0;
-            border: 1px solid #fce8e8;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px; color: #a80000; margin-bottom: 14px;
-        }
-
-        .card-content h3 { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 6px; }
-        .card-content p { font-size: 13px; color: #666; line-height: 1.45; }
-        .card-action { color: #a80000; font-size: 13px; font-weight: 700; }
-
-        .footer { text-align: center; margin-top: 45px; color: #999; font-size: 12px; }
-
-        /* ------------------------------------------------------------- */
         /* MODAL POPUP EDIT FOTO PROFIL */
         /* ------------------------------------------------------------- */
         .modal-overlay {
@@ -510,13 +403,11 @@
         /* DARK MODE */
         /* ------------------------------------------------------------- */
         body.dark-mode { background: #121212; color: #f1f1f1; }
-        body.dark-mode .sidebar-desktop, body.dark-mode .nav-drawer, body.dark-mode .feature-card, body.dark-mode .modal-card { background: #1e1e1e; border-color: #383838; }
+        body.dark-mode .sidebar-desktop, body.dark-mode .nav-drawer, body.dark-mode .modal-card { background: #1e1e1e; border-color: #383838; }
         body.dark-mode .sidebar-user-card { background: #2d1a1a; border-color: #493030; }
         body.dark-mode .sidebar-user-name { color: #fff; }
         body.dark-mode .sidebar-menu-item a, body.dark-mode .sidebar-menu-item button { color: #eee; }
         body.dark-mode .sidebar-menu-item a:hover, body.dark-mode .sidebar-menu-item button:hover, body.dark-mode .sidebar-menu-item a.active-link { background: #382020; color: #ff7777; }
-        body.dark-mode .section-title, body.dark-mode .card-action { color: #ff6666; }
-        body.dark-mode .card-content h3 { color: #fff; }
         body.dark-mode .mobile-header { background: rgba(18, 18, 18, 0.95); border-bottom-color: #383838; }
 
         /* ------------------------------------------------------------- */
@@ -561,13 +452,13 @@
     <!-- MENU VERTIKAL SIDEBAR -->
     <ul class="sidebar-menu-list">
         <li class="sidebar-menu-item">
-            <a href="/dashboard-user.html" class="active-link">
+            <a href="/dashboard-user.html">
                 <span class="menu-icon">🏠</span>
                 <span>Beranda Utama</span>
             </a>
         </li>
         <li class="sidebar-menu-item">
-            <a href="/">
+            <a href="/" class="active-link">
                 <span class="menu-icon">🧮</span>
                 <span>Kalkulator Harga Tayang</span>
             </a>
@@ -621,8 +512,8 @@
 <nav class="nav-drawer" id="navDrawer">
     <div class="nav-drawer-content">
         <div class="nav-heading">MENU UTAMA</div>
-        <a class="nav-link active-link" href="/dashboard-user.html"><span class="nav-icon">🏠</span> Beranda Utama</a>
-        <a class="nav-link" href="/"><span class="nav-icon">🧮</span> Kalkulator</a>
+        <a class="nav-link" href="/dashboard-user.html"><span class="nav-icon">🏠</span> Beranda Utama</a>
+        <a class="nav-link active-link" href="/"><span class="nav-icon">🧮</span> Kalkulator</a>
         <a class="nav-link" href="/gabung-foto.html"><span class="nav-icon">🖼️</span> Foto ke PDF</a>
         <a class="nav-link" href="/surat-pernyataan.html"><span class="nav-icon">📄</span> Surat Pernyataan</a>
         
@@ -637,68 +528,13 @@
     <a class="nav-link logout-link btn-logout-action"><span class="nav-icon">🚪</span> Keluar / Logout</a>
 </nav>
 
-<!-- KONTEN UTAMA -->
+<!-- KONTEN UTAMA (KALKULATOR KAMU DITARO DI SINI) -->
 <div class="main-wrapper">
     <div class="container">
-
-        <!-- BANNER HERO -->
-        <div class="hero-banner">
-            <div class="hero-content">
-                <span class="hero-badge">YUK BERES</span>
-                <h1 id="greetingTitle">Selamat datang!</h1>
-                <p>Pilih fitur yang kamu perlukan untuk mulai bekerja secara efisien.</p>
-            </div>
-
-            <div class="profile-trigger" id="profileTrigger" title="Klik untuk kelola profil">
-                <span id="headerProfileIcon">👤</span>
-                <img id="headerProfileImg" src="" alt="Foto Profil" style="display: none;">
-            </div>
-        </div>
-
-        <!-- FITUR UTAMA -->
-        <div class="section-header">
-            <div class="section-title">Fitur Utama</div>
-            <div class="section-subtitle">Semua kebutuhanmu dalam satu tempat.</div>
-        </div>
-
-        <div class="features-grid">
-            <a href="/" class="feature-card">
-                <div>
-                    <div class="card-icon-wrapper">🧮</div>
-                    <div class="card-content">
-                        <h3>Kalkulator Harga Tayang</h3>
-                        <p>Hitung harga tayang dengan cepat, terstruktur, dan praktis.</p>
-                    </div>
-                </div>
-                <div class="card-action">Buka fitur &rarr;</div>
-            </a>
-
-            <a href="/gabung-foto.html" class="feature-card">
-                <div>
-                    <div class="card-icon-wrapper">🖼️</div>
-                    <div class="card-content">
-                        <h3>Foto ke PDF</h3>
-                        <p>Gabungkan atau ubah foto dokumen menjadi file PDF siap kirim.</p>
-                    </div>
-                </div>
-                <div class="card-action">Buka fitur &rarr;</div>
-            </a>
-
-            <a href="/surat-pernyataan.html" class="feature-card">
-                <div>
-                    <div class="card-icon-wrapper">📄</div>
-                    <div class="card-content">
-                        <h3>Surat Pernyataan</h3>
-                        <p>Buat surat pernyataan resmi dan tambahkan tanda tangan secara otomatis.</p>
-                    </div>
-                </div>
-                <div class="card-action">Buka fitur &rarr;</div>
-            </a>
-        </div>
-
-        <div class="footer">
-            <p>Credit by <strong>eth production</strong></p>
-        </div>
+        
+        <!-- [ MASUKKAN KONTEN / ELEMEN HTML KALKULATOR ANDA DI SINI ] -->
+        <h2>Kalkulator Harga Tayang</h2>
+        <p>Silakan masukkan perhitungan kalkulator Anda di area ini.</p>
 
     </div>
 </div>
@@ -777,7 +613,7 @@ if (darkModeToggle) darkModeToggle.addEventListener("click", () => { aturDarkMod
 if (desktopDarkModeToggle) desktopDarkModeToggle.addEventListener("click", () => { aturDarkMode(!document.body.classList.contains("dark-mode")); });
 
 /* MODAL PROFIL */
-const profileTrigger = document.getElementById("profileTrigger");
+const profileTrigger = document.getElementById("profileTrigger"); // Jika ada di kalkulator
 const sidebarUserTrigger = document.getElementById("sidebarUserTrigger");
 const profileModal = document.getElementById("profileModal");
 const closeModal = document.getElementById("closeModal");
@@ -824,11 +660,9 @@ async function muatDataUser() {
         }
 
         if (data.user.name) {
-            const greeting = document.getElementById("greetingTitle");
             const modalUser = document.getElementById("modalUserName");
             const sidebarUser = document.getElementById("sidebarUserName");
 
-            if (greeting) greeting.textContent = `Selamat datang, ${data.user.name}!`;
             if (modalUser) modalUser.textContent = data.user.name;
             if (sidebarUser) sidebarUser.textContent = data.user.name;
         }
