@@ -187,6 +187,7 @@
             cursor: pointer;
             text-align: left;
             font-family: inherit;
+            white-space: nowrap; /* Mencegah teks ter-enter / turun baris */
         }
 
         .sidebar-menu-item a:hover, 
@@ -200,6 +201,7 @@
             font-size: 18px;
             width: 22px;
             text-align: center;
+            flex-shrink: 0;
         }
 
         .sidebar-logout {
@@ -347,6 +349,7 @@
             font-weight: 600;
             transition: 0.2s;
             cursor: pointer;
+            white-space: nowrap;
         }
 
         .nav-link:hover, .nav-link.active-link {
@@ -908,22 +911,8 @@
         </div>
     </div>
 
-    <!-- MENU VERTIKAL SIDEBAR -->
+    <!-- URUTAN MENU DISAMAKAN PERSIS DENGAN BERANDA -->
     <ul class="sidebar-menu-list">
-        <!-- BERUBAH OTOMATIS (LOGIN / DASHBOARD) -->
-        <li class="sidebar-menu-item">
-            <a href="/login-user.html" id="sidebarAuthMenu">
-                <span class="menu-icon" id="sidebarAuthIcon">👤</span>
-                <span id="sidebarAuthText">Login User</span>
-            </a>
-        </li>
-        <li class="sidebar-menu-item">
-            <a href="/dashboard-user.html" id="sidebarDashboardMenu" style="display: none;">
-                <span class="menu-icon">📊</span>
-                <span>Dashboard Saya</span>
-            </a>
-        </li>
-
         <li class="sidebar-menu-item">
             <a href="/dashboard-user.html">
                 <span class="menu-icon">🏠</span>
@@ -959,8 +948,7 @@
             </button>
         </li>
 
-        <!-- TOMBOL LOGOUT DESKTOP (Hanya muncul jika login) -->
-        <li class="sidebar-menu-item" id="sidebarLogoutItem" style="display: none;">
+        <li class="sidebar-menu-item">
             <button class="sidebar-logout btn-logout-action" type="button">
                 <span class="menu-icon">🚪</span>
                 <span>Keluar / Logout</span>
@@ -987,16 +975,6 @@
     <div class="nav-drawer-content">
         <div class="nav-heading">MENU UTAMA</div>
         
-        <!-- BERUBAH OTOMATIS DI MOBILE (LOGIN / DASHBOARD) -->
-        <a class="nav-link" href="/login-user.html" id="mobileAuthMenu">
-            <span class="nav-icon" id="mobileAuthIcon">👤</span>
-            <span id="mobileAuthText">Login User</span>
-        </a>
-        <a class="nav-link" href="/dashboard-user.html" id="mobileDashboardMenu" style="display: none;">
-            <span class="nav-icon">📊</span>
-            <span>Dashboard Saya</span>
-        </a>
-
         <a class="nav-link" href="/dashboard-user.html"><span class="nav-icon">🏠</span> Beranda Utama</a>
         <a class="nav-link active-link" href="/"><span class="nav-icon">🧮</span> Kalkulator Harga Tayang</a>
         <a class="nav-link" href="/gabung-foto.html"><span class="nav-icon">🖼️</span> Foto ke PDF</a>
@@ -1010,8 +988,7 @@
             <span id="darkModeText">Dark Mode</span>
         </button>
     </div>
-    <!-- TOMBOL LOGOUT MOBILE (Hanya muncul jika login) -->
-    <a class="nav-link logout-link btn-logout-action" id="mobileLogoutBtn" style="display: none;"><span class="nav-icon">🚪</span> Keluar / Logout</a>
+    <a class="nav-link logout-link btn-logout-action"><span class="nav-icon">🚪</span> Keluar / Logout</a>
 </nav>
 
 <!-- KONTEN UTAMA (KALKULATOR) -->
@@ -1465,22 +1442,6 @@ async function muatDataUser() {
             pasangFotoProfil(fotoProfil);
 
             if (sidebarUserTrigger) sidebarUserTrigger.style.display = "flex";
-            
-            const sidebarAuthMenu = document.getElementById("sidebarAuthMenu");
-            const sidebarDashboardMenu = document.getElementById("sidebarDashboardMenu");
-            const sidebarLogoutItem = document.getElementById("sidebarLogoutItem");
-
-            if (sidebarAuthMenu) sidebarAuthMenu.style.display = "none";
-            if (sidebarDashboardMenu) sidebarDashboardMenu.style.display = "block";
-            if (sidebarLogoutItem) sidebarLogoutItem.style.display = "block";
-
-            const mobileAuthMenu = document.getElementById("mobileAuthMenu");
-            const mobileDashboardMenu = document.getElementById("mobileDashboardMenu");
-            const mobileLogoutBtn = document.getElementById("mobileLogoutBtn");
-
-            if (mobileAuthMenu) mobileAuthMenu.style.display = "none";
-            if (mobileDashboardMenu) mobileDashboardMenu.style.display = "flex";
-            if (mobileLogoutBtn) mobileLogoutBtn.style.display = "flex";
         }
 
         if (loader) {
