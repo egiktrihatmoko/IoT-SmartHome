@@ -250,7 +250,7 @@ body.dark-mode .spinner {
 /* TOTAL KUNJUNGAN */
 .visit-counter {
   position: absolute;
-  top: 10px;
+  top: -15px;
   right: 0;
   display: inline-flex;
   align-items: center;
@@ -718,10 +718,9 @@ input:focus, textarea:focus {
 }
 
 .nav-link.logout-link {
-    color: #d31010;
-    background: #fff0f0;
-    border: 1px solid #f2dede;
-    margin-top: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+    flex-shrink: 0;
 }
 
 .nav-divider {
@@ -729,7 +728,23 @@ input:focus, textarea:focus {
     background: #eee;
     margin: 15px 0;
 }
+@media (max-width: 850px) {
+    .nav-drawer {
+        height: 100vh;
+        height: 100dvh;
+        padding-bottom: max(25px, env(safe-area-inset-bottom));
+    }
 
+    .nav-drawer-content {
+        flex: 0 0 auto;
+    }
+
+    .nav-link.logout-link {
+        margin-top: 0;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+}
 /* TOMBOL DARK MODE */
 .dark-mode-button {
     width: 100%;
@@ -998,7 +1013,6 @@ body.dark-mode .mobile-header {
         
         <!-- TOMBOL LOGIN / DASHBOARD DI PALING ATAS (MOBILE) -->
         <a class="nav-link login-link" href="/login-user.html" id="mobileAuthMenu"><span class="nav-icon">🔑</span> Login User</a>
-        <a class="nav-link" href="/dashboard-user.html" id="mobileDashboardMenu" style="display: none;"><span class="nav-icon">📊</span> Dashboard Saya</a>
 
         <a class="nav-link" href="/beranda.html"><span class="nav-icon">🏠</span> Beranda Utama</a>
         <a class="nav-link" href="/"><span class="nav-icon">🧮</span> Kalkulator Harga Tayang</a>
