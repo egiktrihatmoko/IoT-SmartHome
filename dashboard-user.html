@@ -892,11 +892,7 @@
 <script>
 "use strict";
 
-/* =========================================================
-   PENGATURAN
-   Foto akan dikirim ke API dan disimpan di Redis.
-   Maksimal ukuran file: 200 KB.
-========================================================= */
+/* PENGATURAN */
 const MAX_PHOTO_SIZE = 200 * 1024;
 const PHOTO_API_URL = "/api/user/login";
 
@@ -1016,6 +1012,7 @@ function pasangFotoProfil(photoUrl) {
     if (photoUrl) {
         ids.forEach(id => {
             const el = document.getElementById(id);
+
             if (el) {
                 el.src = photoUrl;
                 el.style.display = "block";
@@ -1029,6 +1026,7 @@ function pasangFotoProfil(photoUrl) {
     } else {
         ids.forEach(id => {
             const el = document.getElementById(id);
+
             if (el) {
                 el.removeAttribute("src");
                 el.style.display = "none";
@@ -1042,9 +1040,17 @@ function pasangFotoProfil(photoUrl) {
     }
 }
 
-/* REQUEST KE API USER */
-async function requestAPI(options = {}) {
-    const res = await fetch(PHOTO_API_URL, {
+/*
+REQUEST KE API USER
+
+Parameter query digunakan agar pengecekan sesi mengarah ke:
+GET /api/user/login?action=check
+
+Request lainnya tetap menggunakan:
+POST /api/user/login
+*/
+async function requestAPI(options = {}, query = "") {
+    const res = await fetch(PHOTO_API_URL + query, {
         credentials: "same-origin",
         cache: "no-store",
         ...options,
@@ -1063,24 +1069,26 @@ async function requestAPI(options = {}) {
     }
 
     if (!res.ok || data.success === false || data.error) {
-        throw new Error(data.message || data.error || "Permintaan gagal diproses.");
+        throw new Error(
+            data.message || data.error || "Permintaan gagal diproses."
+        );
     }
 
     return data;
 }
 
-/* CEK LOGIN DAN AMBIL FOTO DARI REDIS MELALUI API */
+/* CEK LOGIN DAN AMBIL DATA USER */
 async function muatDataUser() {
     const loader = document.getElementById("authLoader");
     const loaderText = document.getElementById("authLoaderText");
 
     try {
-        const data = await requestAPI({
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        });
+        const data = await requestAPI(
+            {
+                method: "GET"
+            },
+            "?action=check"
+        );
 
         if (!data.authenticated || !data.user) {
             window.location.replace("/login-user.html");
@@ -1093,20 +1101,23 @@ async function muatDataUser() {
             document.getElementById("greetingTitle").textContent =
                 `Selamat datang, ${user.name}!`;
 
-            document.getElementById("modalUserName").textContent = user.name;
-            document.getElementById("sidebarUserName").textContent = user.name;
+            document.getElementById("modalUserName").textContent =
+                user.name;
+
+            document.getElementById("sidebarUserName").textContent =
+                user.name;
         }
 
         if (user.email) {
-            document.getElementById("modalUserEmail").textContent = user.email;
+            document.getElementById("modalUserEmail").textContent =
+                user.email;
         }
 
-        // Foto diambil dari data akun yang dikirim oleh API.
-        // Tidak menggunakan localStorage untuk menyimpan foto.
         pasangFotoProfil(user.picture || "");
 
         if (loader) {
             loader.style.opacity = "0";
+
             setTimeout(() => {
                 loader.style.display = "none";
             }, 300);
@@ -1115,10 +1126,14 @@ async function muatDataUser() {
         console.error("Gagal memuat sesi user:", err);
 
         if (loaderText) {
-            loaderText.textContent = "Sesi tidak valid. Mengalihkan ke halaman login...";
+            loaderText.textContent =
+                "Gagal memeriksa sesi. Silakan coba muat ulang halaman.";
         }
 
-        window.location.replace("/login-user.html");
+        /*
+        Jangan langsung redirect ke login saat server atau jaringan error.
+        Loader tetap menampilkan pesan agar penyebabnya tidak tersembunyi.
+        */
     }
 }
 
@@ -1128,7 +1143,11 @@ async function siapkanFoto(file) {
         throw new Error("Pilih foto terlebih dahulu.");
     }
 
-    const tipeDiizinkan = ["image/jpeg", "image/png", "image/webp"];
+    const tipeDiizinkan = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ];
 
     if (!tipeDiizinkan.includes(file.type)) {
         throw new Error("Format foto harus JPG, PNG, atau WebP.");
@@ -1145,19 +1164,32 @@ async function siapkanFoto(file) {
 
         await new Promise((resolve, reject) => {
             gambar.onload = resolve;
-            gambar.onerror = () => reject(new Error("Foto tidak dapat dibaca."));
+            gambar.onerror = () => reject(
+                new Error("Foto tidak dapat dibaca.")
+            );
             gambar.src = objectUrl;
         });
 
         const canvas = document.createElement("canvas");
         const batasDimensi = 900;
+
         const skala = Math.min(
             1,
-            batasDimensi / Math.max(gambar.naturalWidth, gambar.naturalHeight)
+            batasDimensi / Math.max(
+                gambar.naturalWidth,
+                gambar.naturalHeight
+            )
         );
 
-        canvas.width = Math.max(1, Math.round(gambar.naturalWidth * skala));
-        canvas.height = Math.max(1, Math.round(gambar.naturalHeight * skala));
+        canvas.width = Math.max(
+            1,
+            Math.round(gambar.naturalWidth * skala)
+        );
+
+        canvas.height = Math.max(
+            1,
+            Math.round(gambar.naturalHeight * skala)
+        );
 
         const context = canvas.getContext("2d");
 
@@ -1165,19 +1197,29 @@ async function siapkanFoto(file) {
             throw new Error("Browser tidak mendukung pemrosesan foto.");
         }
 
-        context.drawImage(gambar, 0, 0, canvas.width, canvas.height);
+        context.drawImage(
+            gambar,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
 
         let kualitas = 0.85;
         let hasil = canvas.toDataURL("image/jpeg", kualitas);
 
-        while (hasil.length * 0.75 > MAX_PHOTO_SIZE && kualitas > 0.25) {
+        while (
+            hasil.length * 0.75 > MAX_PHOTO_SIZE &&
+            kualitas > 0.25
+        ) {
             kualitas -= 0.1;
             hasil = canvas.toDataURL("image/jpeg", kualitas);
         }
 
         if (hasil.length * 0.75 > MAX_PHOTO_SIZE) {
             throw new Error(
-                "Foto belum bisa diperkecil hingga 200 KB. Coba gunakan foto lain."
+                "Foto belum bisa diperkecil hingga 200 KB. " +
+                "Coba gunakan foto lain."
             );
         }
 
@@ -1197,6 +1239,7 @@ if (profileInput) {
         if (!file || sedangUploadFoto) return;
 
         sedangUploadFoto = true;
+
         btnChoosePhoto.disabled = true;
         btnChoosePhoto.textContent = "Mengunggah foto...";
 
@@ -1215,7 +1258,6 @@ if (profileInput) {
                 })
             });
 
-            // Perbarui tampilan setelah server menyatakan berhasil.
             const fotoTersimpan =
                 data.user?.picture ||
                 data.picture ||
@@ -1227,6 +1269,7 @@ if (profileInput) {
             alert("Foto profil berhasil disimpan.");
         } catch (err) {
             console.error("Upload foto gagal:", err);
+
             alert(err.message || "Gagal menyimpan foto profil.");
         } finally {
             sedangUploadFoto = false;
@@ -1263,12 +1306,16 @@ btnDeletePhoto?.addEventListener("click", async function() {
 
         pasangFotoProfil("");
 
-        if (profileInput) profileInput.value = "";
+        if (profileInput) {
+            profileInput.value = "";
+        }
 
         tutupModal();
+
         alert("Foto profil berhasil dihapus.");
     } catch (err) {
         console.error("Hapus foto gagal:", err);
+
         alert(err.message || "Gagal menghapus foto profil.");
     } finally {
         sedangHapusFoto = false;
@@ -1277,7 +1324,7 @@ btnDeletePhoto?.addEventListener("click", async function() {
     }
 });
 
-/* LOGOUT — TIDAK MENGHAPUS FOTO PROFIL YANG TERSIMPAN */
+/* LOGOUT — FOTO PROFIL TETAP TERSIMPAN */
 let sedangLogout = false;
 
 async function lakukanLogout(event) {
