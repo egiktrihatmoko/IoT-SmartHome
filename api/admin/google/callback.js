@@ -21,7 +21,8 @@ module.exports = async function handler(req, res) {
 
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-    const redirectUri = process.env.GOOGLE_USER_REDIRECT_URI;
+    const redirectUri =
+        process.env.GOOGLE_USER_REDIRECT_URI;
     const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
     const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
 
@@ -51,7 +52,7 @@ module.exports = async function handler(req, res) {
             : "";
 
     const clearStateCookie =
-        "google_user_oauth_state=; Path=/api/user/google; HttpOnly; Secure; SameSite=Lax; Max-Age=0";
+        "google_user_oauth_state=; Path=/api/admin/google; HttpOnly; Secure; SameSite=Lax; Max-Age=0";
 
     const normalizedRedisUrl = redisUrl.replace(/\/+$/, "");
 
@@ -98,7 +99,7 @@ module.exports = async function handler(req, res) {
 
         res.setHeader("Set-Cookie", clearStateCookie);
 
-        // 2. Pastikan Google mengembalikan authorization code.
+        // 2. Validasi respons Google.
         if (
             req.query.error ||
             typeof req.query.code !== "string"
@@ -106,7 +107,7 @@ module.exports = async function handler(req, res) {
             return redirectError("google_login_failed");
         }
 
-        // 3. Tukarkan authorization code dengan token Google.
+        // 3. Tukarkan authorization code dengan token.
         const tokenResponse = await fetch(
             "https://oauth2.googleapis.com/token",
             {
@@ -135,7 +136,7 @@ module.exports = async function handler(req, res) {
             throw new Error("Google token exchange gagal");
         }
 
-        // 4. Ambil profil dari Google.
+        // 4. Ambil profil Google.
         const profileResponse = await fetch(
             "https://openidconnect.googleapis.com/v1/userinfo",
             {
@@ -177,7 +178,7 @@ module.exports = async function handler(req, res) {
                 : null;
 
         // 5. Cari akun user di Redis.
-        // Pastikan prefix ini sesuai dengan API registrasi user.
+        // Sesuaikan prefix dengan API registrasi user kamu.
         const userKey = `user:${email}`;
 
         const existingData = await redisCommand([
@@ -206,13 +207,12 @@ module.exports = async function handler(req, res) {
                 throw new Error("Data akun tidak cocok");
             }
 
-            // Jangan izinkan callback user masuk sebagai admin.
+            // Jangan izinkan akun admin masuk lewat callback user.
             if (user.role === "admin") {
                 return redirectError("account_conflict");
             }
 
-            // Jangan menautkan akun Google berbeda secara
-            // otomatis ke akun yang sudah tertaut.
+            // Tolak jika akun sudah terhubung ke Google berbeda.
             if (
                 user.googleSub &&
                 user.googleSub !== profile.sub
@@ -226,19 +226,15 @@ module.exports = async function handler(req, res) {
             user.googleSub = profile.sub;
             user.authProvider = "google";
 
-            // Simpan foto terbaru jika Google menyediakan foto.
             if (foto) {
                 user.foto = foto;
                 user.picture = foto;
-            } else if (
-                typeof user.foto !== "string" ||
-                !user.foto
-            ) {
-                user.foto = null;
-                user.picture = null;
+            } else {
+                user.foto = user.foto || null;
+                user.picture = user.picture || user.foto;
             }
 
-            // Jangan mengganti password akun lama.
+            // Jangan mengubah password akun lama.
             if (typeof user.passwordHash !== "string") {
                 user.passwordHash = await bcrypt.hash(
                     crypto.randomBytes(48).toString("hex"),
@@ -271,14 +267,14 @@ module.exports = async function handler(req, res) {
             };
         }
 
-        // 7. Simpan data akun ke Redis.
+        // 7. Simpan akun ke Redis.
         await redisCommand([
             "SET",
             userKey,
             JSON.stringify(user)
         ]);
 
-        // 8. Buat sesi khusus user selama 24 jam.
+        // 8. Buat sesi user selama 24 jam.
         const sessionToken = crypto
             .randomBytes(32)
             .toString("hex");
@@ -297,14 +293,17 @@ module.exports = async function handler(req, res) {
             "86400"
         ]);
 
-        // 9. Pasang cookie sesi user.
+        // 9. Pasang cookie sesi khusus user.
         res.setHeader("Set-Cookie", [
             clearStateCookie,
             `user_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`
         ]);
 
-        // 10. Arahkan user ke dashboard.
-        return res.redirect(302, "/user-dashboard.html");
+        // 10. Arahkan ke dashboard user.
+        return res.redirect(
+            302,
+            "/dashboard-user.html"
+        );
 
     } catch (error) {
         console.error(
