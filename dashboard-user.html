@@ -106,7 +106,7 @@
             background: #fff0f0;
             border-radius: 12px;
             border: 1px solid #fce8e8;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             cursor: pointer;
             transition: 0.2s;
         }
@@ -547,8 +547,8 @@
     <ul class="sidebar-menu-list">
         <li class="sidebar-menu-item">
             <a href="/dashboard-user.html" class="active-link">
-                <span class="menu-icon">📊</span>
-                <span>Dashboard</span>
+                <span class="menu-icon">🏠</span>
+                <span>Beranda Utama</span>
             </a>
         </li>
         <li class="sidebar-menu-item">
@@ -570,7 +570,10 @@
             </a>
         </li>
 
-        <li class="sidebar-menu-item" style="margin-top: 15px;">
+        <!-- GARIS PEMBATAS SIDEBAR DESKTOP -->
+        <div style="height: 1px; background: #f2dede; margin: 12px 10px;"></div>
+
+        <li class="sidebar-menu-item">
             <button id="desktopDarkModeToggle" type="button">
                 <span class="menu-icon" id="desktopDarkModeIcon">🌙</span>
                 <span id="desktopDarkModeText">Dark Mode</span>
@@ -600,13 +603,16 @@
 
 <nav class="nav-drawer" id="navDrawer">
     <div class="nav-drawer-content">
-        <div class="nav-heading">MENU PENYEDIA</div>
-        <a class="nav-link active-link" href="/dashboard-user.html"><span class="nav-icon">📊</span> Dashboard</a>
+        <div class="nav-heading">MENU UTAMA</div>
+        <a class="nav-link active-link" href="/dashboard-user.html"><span class="nav-icon">🏠</span> Beranda Utama</a>
         <a class="nav-link" href="/"><span class="nav-icon">🧮</span> Kalkulator</a>
         <a class="nav-link" href="/gabung-foto.html"><span class="nav-icon">🖼️</span> Foto ke PDF</a>
         <a class="nav-link" href="/surat-pernyataan.html"><span class="nav-icon">📄</span> Surat Pernyataan</a>
         
-        <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" style="margin-top: 15px; border:none; background:transparent; width:100%; text-align:left; font-family:inherit;">
+        <!-- GARIS PEMBATAS DRAWER MOBILE -->
+        <div style="height: 1px; background: #f2dede; margin: 12px 10px;"></div>
+
+        <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" style="border:none; background:transparent; width:100%; text-align:left; font-family:inherit;">
             <span class="nav-icon" id="darkModeIcon">🌙</span>
             <span id="darkModeText">Dark Mode</span>
         </button>
@@ -621,9 +627,9 @@
         <!-- BANNER HERO -->
         <div class="hero-banner">
             <div class="hero-content">
-                <span class="hero-badge">DASHBOARD PENYEDIA</span>
+                <span class="hero-badge">YUK BERES</span>
                 <h1 id="greetingTitle">Selamat datang!</h1>
-                <p>Kelola kebutuhan penawaran dan dokumen pekerjaanmu di sini.</p>
+                <p>Pilih fitur yang kamu perlukan untuk mulai bekerja secara efisien.</p>
             </div>
 
             <div class="profile-trigger" id="profileTrigger" title="Klik untuk kelola profil">
@@ -635,7 +641,7 @@
         <!-- FITUR UTAMA -->
         <div class="section-header">
             <div class="section-title">Fitur Utama</div>
-            <div class="section-subtitle">Semua alat bantu kerja penyedia dalam satu tempat.</div>
+            <div class="section-subtitle">Semua kebutuhanmu dalam satu tempat.</div>
         </div>
 
         <div class="features-grid">
@@ -644,7 +650,7 @@
                     <div class="card-icon-wrapper">🧮</div>
                     <div class="card-content">
                         <h3>Kalkulator Harga Tayang</h3>
-                        <p>Hitung estimasi dan rincian harga tayang secara otomatis dan cepat.</p>
+                        <p>Hitung harga tayang dengan cepat, terstruktur, dan praktis.</p>
                     </div>
                 </div>
                 <div class="card-action">Buka fitur &rarr;</div>
@@ -655,7 +661,7 @@
                     <div class="card-icon-wrapper">🖼️</div>
                     <div class="card-content">
                         <h3>Foto ke PDF</h3>
-                        <p>Gabungkan foto kelengkapan dokumen menjadi file PDF siap kirim.</p>
+                        <p>Gabungkan atau ubah foto dokumen menjadi file PDF siap kirim.</p>
                     </div>
                 </div>
                 <div class="card-action">Buka fitur &rarr;</div>
@@ -666,7 +672,7 @@
                     <div class="card-icon-wrapper">📄</div>
                     <div class="card-content">
                         <h3>Surat Pernyataan</h3>
-                        <p>Buat dokumen surat pernyataan resmi lengkap dengan tanda tangan otomatis.</p>
+                        <p>Buat surat pernyataan resmi dan tambahkan tanda tangan secara otomatis.</p>
                     </div>
                 </div>
                 <div class="card-action">Buka fitur &rarr;</div>
