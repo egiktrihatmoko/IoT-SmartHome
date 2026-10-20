@@ -15,8 +15,8 @@
 
   <style>
     /* =========================================================
-       1. PENGATURAN DASAR
-       Menghapus margin bawaan dan menyamakan perhitungan ukuran.
+        1. PENGATURAN DASAR
+        Menghapus margin bawaan dan menyamakan perhitungan ukuran.
     ========================================================= */
 
     * {
@@ -40,8 +40,8 @@
 
 
     /* =========================================================
-       2. KARTU LOGIN DAN PENDAFTARAN
-       Membuat kotak utama putih dengan sudut membulat.
+        2. KARTU LOGIN DAN PENDAFTARAN
+        Membuat kotak utama putih dengan sudut membulat.
     ========================================================= */
 
     .container {
@@ -98,8 +98,8 @@
 
 
     /* =========================================================
-       3. TOMBOL TAB MASUK DAN MENDAFTAR
-       Tab digunakan untuk berpindah antara dua formulir.
+        3. TOMBOL TAB MASUK DAN MENDAFTAR
+        Tab digunakan untuk berpindah antara dua formulir.
     ========================================================= */
 
     .tabs {
@@ -140,7 +140,7 @@
 
 
     /* =========================================================
-       4. JUDUL DAN KETERANGAN FORMULIR
+        4. JUDUL DAN KETERANGAN FORMULIR
     ========================================================= */
 
     .form-title {
@@ -158,7 +158,7 @@
 
 
     /* =========================================================
-       5. INPUT EMAIL, NAMA, DAN PASSWORD
+        5. INPUT EMAIL, NAMA, DAN PASSWORD
     ========================================================= */
 
     .form-group {
@@ -194,8 +194,8 @@
 
 
     /* =========================================================
-       6. TOMBOL UTAMA
-       Tombol Masuk dan Daftar menggunakan gaya yang sama.
+        6. TOMBOL UTAMA
+        Tombol Masuk dan Daftar menggunakan gaya yang sama.
     ========================================================= */
 
     .submit-btn {
@@ -228,9 +228,9 @@
 
 
     /* =========================================================
-       7. PEMISAH DAN TOMBOL GOOGLE
-       Tombol ini hanya bekerja jika endpoint OAuth Google
-       di backend sudah dibuat dan dikonfigurasi.
+        7. PEMISAH DAN TOMBOL GOOGLE
+        Tombol ini hanya bekerja jika endpoint OAuth Google
+        di backend sudah dibuat dan dikonfigurasi.
     ========================================================= */
 
     .google-divider {
@@ -287,8 +287,8 @@
 
 
     /* =========================================================
-       8. PESAN SUKSES ATAU ERROR
-       Pesan ini digunakan untuk memberi tahu hasil permintaan.
+        8. PESAN SUKSES ATAU ERROR
+        Pesan ini digunakan untuk memberi tahu hasil permintaan.
     ========================================================= */
 
     .message {
@@ -885,6 +885,14 @@
           password
         });
 
+        // ⚡ SIMPAN STATUS KE LOCALSTORAGE AGAR HALAMAN UTAMA INSTAN TANPA KEDIP
+        localStorage.setItem("isLoggedIn", "true");
+        if (data.user) {
+          if (data.user.name) localStorage.setItem("userName", data.user.name);
+          if (data.user.email) localStorage.setItem("userEmail", data.user.email);
+          if (data.user.picture) localStorage.setItem("userProfilePhoto", data.user.picture);
+        }
+
         showMessage(data.message || "Login berhasil. Mengalihkan...", true);
 
         // Arahkan user ke dashboard khusus penyedia
@@ -915,8 +923,13 @@
 
         const data = await response.json();
 
-        // Jika sesi valid dan role user adalah "user", langsung arahkan ke dashboard-user.html
+        // Jika sesi valid dan role user adalah "user", simpan lokal lalu arahkan ke dashboard-user.html
         if (data.success === true && data.authenticated === true && data.user && data.user.role === "user") {
+          localStorage.setItem("isLoggedIn", "true");
+          if (data.user.name) localStorage.setItem("userName", data.user.name);
+          if (data.user.email) localStorage.setItem("userEmail", data.user.email);
+          if (data.user.picture) localStorage.setItem("userProfilePhoto", data.user.picture);
+
           window.location.replace("/dashboard-user.html");
         }
 
