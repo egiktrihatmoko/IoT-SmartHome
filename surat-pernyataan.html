@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -24,6 +23,8 @@ body {
   font-family: system-ui, sans-serif;
   background: linear-gradient(#fff4f4, #fff);
   color: var(--text);
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
 }
 
 button, input, textarea { font: inherit; }
@@ -32,34 +33,203 @@ button, input, textarea { font: inherit; }
   height: 6px;
   background: var(--red);
 }
-/* TOTAL KUNJUNGAN */
-  .visit-counter {
-    position: absolute;
-    top: 10px; /* Turun 10px */
-    right: 0;
-    display: inline-flex;
+
+/* ------------------------------------------------------------- */
+/* SIDEBAR KIRI (UNTUK DESKTOP / LAPTOP) */
+/* ------------------------------------------------------------- */
+.sidebar-desktop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background: #ffffff;
+    border-right: 1px solid #f2dede;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    z-index: 100;
+    overflow-y: auto;
+}
+
+.sidebar-logo {
+    margin-bottom: 25px;
+    padding: 0 5px;
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    color: #a80000;
-    font-size: 13px;
-    font-weight: 600;
-    background: #fff;
-    border: 1px solid #f2dede;
-    border-radius: 20px;
-    padding: 6px 10px;
+}
+
+.sidebar-logo a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.sidebar-logo img {
+    height: 58px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+/* BAR PROFIL USERS DI SIDEBAR */
+.sidebar-user-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: #fff0f0;
+    border-radius: 12px;
+    border: 1px solid #fce8e8;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.sidebar-user-card:hover {
+    background: #ffe0e0;
+}
+
+.sidebar-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #a80000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.sidebar-user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sidebar-user-info {
+    overflow: hidden;
+    flex: 1;
+}
+
+.sidebar-user-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #222;
     white-space: nowrap;
-  }
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
-        .visit-counter svg {
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
-        }
+.sidebar-user-role {
+    font-size: 11px;
+    color: #777;
+}
 
-        #totalsurat {
-            font-weight: bold;
-  }
+.sidebar-menu-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.sidebar-menu-item a, .sidebar-menu-item button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    color: #444;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.2s;
+    width: 100%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.sidebar-menu-item a:hover, 
+.sidebar-menu-item button:hover, 
+.sidebar-menu-item a.active-link {
+    background: #fff0f0;
+    color: #a80000;
+}
+
+.sidebar-menu-item .menu-icon {
+    font-size: 18px;
+    width: 22px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.sidebar-login-btn {
+    color: #a80000 !important;
+    background: #fff0f0;
+    border: 1px solid #f2dede;
+}
+
+.sidebar-login-btn:hover {
+    background: #ffe0e0 !important;
+}
+
+.sidebar-logout {
+    margin-top: auto;
+    color: #d31010 !important;
+    background: #fff0f0;
+    border: 1px solid #f2dede;
+}
+
+.sidebar-logout:hover {
+    background: #ffe0e0 !important;
+}
+
+/* AREA KONTEN UTAMA (DI SEBELAH KANAN SIDEBAR DESKTOP) */
+.main-wrapper {
+    margin-left: 260px;
+    min-height: 100vh;
+}
+
+/* TOTAL KUNJUNGAN */
+.visit-counter {
+  position: absolute;
+  top: 10px;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: #a80000;
+  font-size: 13px;
+  font-weight: 600;
+  background: #fff;
+  border: 1px solid #f2dede;
+  border-radius: 20px;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.visit-counter svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+#totalsurat {
+  font-weight: bold;
+}
+
 .container {
   max-width: 1100px;
   margin: auto;
@@ -67,57 +237,16 @@ button, input, textarea { font: inherit; }
 }
 
 .header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo {
-  width: 46px;
-  height: 46px;
-  background: var(--red);
-  color: white;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  font-size: 24px;
-}
-
-.brand-name { font-size: 17px; font-weight: 800; }
-.brand-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
-
-.back {
-  color: var(--red);
-  background: white;
-  border: 1px solid #efcdd0;
-  border-radius: 30px;
-  padding: 10px 14px;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 700;
-}
-
 .hero {
   text-align: center;
   margin: 34px auto 28px;
-}
-
-.badge {
-  display: inline-block;
-  color: var(--red);
-  background: var(--soft-red);
-  border: 1px solid #f5d5d8;
-  padding: 7px 12px;
-  border-radius: 30px;
-  font-size: 11px;
-  font-weight: 800;
 }
 
 h1 {
@@ -397,162 +526,210 @@ input:focus, textarea:focus {
   line-height: 1.5;
 }
 
-.note {
-  padding: 14px 19px;
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.6;
+/* ------------------------------------------------------------- */
+/* NAVBAR HEADER MOBILE (HANYA UNTUK HP) & DRAWER */
+/* ------------------------------------------------------------- */
+.mobile-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 65px;
+    background: rgba(255, 245, 245, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #f2dede;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    z-index: 99;
 }
-/* MENU NAVIGASI */
-        .menu-toggle {
-            position: fixed;
-            top: 18px;
-            left: 18px;
-            z-index: 1002;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            background: #a80000;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            box-shadow: 0 3px 10px rgba(150, 0, 0, 0.18);
-        }
 
-        .menu-toggle span {
-            display: block;
-            width: 22px;
-            height: 2.5px;
-            border-radius: 3px;
-            background: #fff;
-            transition: 0.25s;
-        }
+.menu-toggle {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: #a80000;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(168, 0, 0, 0.2);
+}
 
-        .menu-toggle.active span:nth-child(1) {
-            transform: translateY(7.5px) rotate(45deg);
-        }
+.menu-toggle span {
+    display: block;
+    width: 20px;
+    height: 2.5px;
+    border-radius: 3px;
+    background: #fff;
+    transition: 0.25s;
+}
 
-        .menu-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
+.menu-toggle.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+.menu-toggle.active span:nth-child(2) { opacity: 0; }
+.menu-toggle.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
 
-        .menu-toggle.active span:nth-child(3) {
-            transform: translateY(-7.5px) rotate(-45deg);
-        }
+.mobile-brand {
+    display: flex;
+    align-items: center;
+}
 
-        .nav-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: 0.25s;
-        }
+.mobile-brand a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
 
-        .nav-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
+.mobile-brand img {
+    height: 46px;
+    width: auto;
+    object-fit: contain;
+}
 
-        .nav-drawer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 290px;
-            max-width: 85%;
-            height: 100vh;
-            height: 100dvh;
-            background: #fff;
-            z-index: 1001;
-            padding: 85px 18px 25px;
-            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.12);
-            transform: translateX(-105%);
-            transition: transform 0.25s ease;
-            overflow-y: auto;
-        }
+.nav-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.25s;
+}
 
-        .nav-drawer.show {
-            transform: translateX(0);
-        }
+.nav-overlay.show { opacity: 1; visibility: visible; }
 
-        .nav-heading {
-            color: #a80000;
-            font-size: 12px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            margin: 0 12px 15px;
-        }
+.nav-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 290px;
+    max-width: 85%;
+    height: 100vh;
+    height: 100dvh;
+    background: #fff;
+    z-index: 1001;
+    padding: 85px 18px 25px;
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.12);
+    transform: translateX(-105%);
+    transition: transform 0.25s ease;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
 
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 13px;
-            margin-bottom: 7px;
-            border-radius: 10px;
-            color: #333;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            transition: 0.2s;
-        }
+.nav-drawer.show { transform: translateX(0); }
+.nav-drawer-content { flex: 1; }
 
-        .nav-link:hover {
-            background: #fff0f0;
-            color: #a80000;
-        }
+.nav-heading {
+    color: #a80000;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin: 0 12px 15px;
+}
 
-        .nav-link .nav-icon {
-            width: 22px;
-            text-align: center;
-            font-size: 19px;
-            flex-shrink: 0;
-        }
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 13px;
+    margin-bottom: 7px;
+    border-radius: 10px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.2s;
+    cursor: pointer;
+    white-space: nowrap;
+}
 
-/* 1. Tambahan untuk Login User */
-        .nav-link.login-link {
-            color: #a80000;
-            background: #fff0f0;
-            border: 1px solid #f2dede;
-        }
+.nav-link:hover, .nav-link.active-link {
+    background: #fff0f0;
+    color: #a80000;
+}
 
-        .nav-link.login-link:hover {
-            background: #ffe0e0;
-        }
+.nav-link .nav-icon {
+    width: 22px;
+    text-align: center;
+    font-size: 19px;
+    flex-shrink: 0;
+}
 
-        /* 2. Tetap dipertahankan untuk Login Admin */
-        .nav-link.admin-link {
-            color: #a80000;
-            background: #fff0f0;
-            border: 1px solid #f2dede;
-        }
+.nav-link.login-link {
+    color: #a80000;
+    background: #fff0f0;
+    border: 1px solid #f2dede;
+}
 
-        .nav-link.admin-link:hover {
-            background: #ffe0e0;
-        }
+.nav-link.login-link:hover {
+    background: #ffe0e0;
+}
 
-        .nav-divider {
-            height: 1px;
-            background: #eee;
-            margin: 15px 0;
-        }
+.nav-link.logout-link {
+    color: #d31010;
+    background: #fff0f0;
+    border: 1px solid #f2dede;
+    margin-top: auto;
+}
 
-        /* TOMBOL DARK MODE */
-        .dark-mode-button {
-            width: 100%;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            text-align: left;
-            font-family: inherit;
-        }
+.nav-divider {
+    height: 1px;
+    background: #eee;
+    margin: 15px 0;
+}
 
-  
+/* TOMBOL DARK MODE */
+.dark-mode-button {
+    width: 100%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+}
+
+/* MODAL POPUP EDIT FOTO PROFIL */
+.modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px);
+    z-index: 2000; display: flex; align-items: center; justify-content: center;
+    padding: 20px; opacity: 0; visibility: hidden; transition: 0.25s ease;
+}
+
+.modal-overlay.show { opacity: 1; visibility: visible; }
+
+.modal-card {
+    background: #ffffff; border-radius: 20px;
+    width: 100%; max-width: 380px; padding: 25px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    text-align: center; position: relative;
+}
+
+.modal-title { font-size: 18px; font-weight: 700; color: #a80000; }
+.modal-email { font-size: 12px; color: #777; margin-bottom: 15px; }
+
+.modal-preview-container {
+    width: 90px; height: 90px; border-radius: 50%;
+    margin: 0 auto 16px; overflow: hidden;
+    border: 3px solid #f2dede; background: #fff0f0;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.modal-preview-container img { width: 100%; height: 100%; object-fit: cover; }
+
+.modal-btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+.btn-modal { padding: 12px; border-radius: 10px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; }
+.btn-primary-modal { background: #a80000; color: white; }
+.btn-secondary-modal { background: #fff0f0; color: #d31010; border: 1px solid #fce8e8; }
+.btn-logout-modal { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.btn-close-modal { position: absolute; top: 15px; right: 15px; background: transparent; border: none; font-size: 20px; color: #888; cursor: pointer; }
+
 .footer {
   text-align: center;
   color: #8c7b7d;
@@ -562,7 +739,85 @@ input:focus, textarea:focus {
 
 .footer strong { color: var(--red); }
 
-@media(max-width: 800px) {
+/* ------------------------------------------------------------- */
+/* DARK MODE STYLES */
+/* ------------------------------------------------------------- */
+body.dark-mode {
+  background: #121212;
+  color: #eee;
+}
+
+body.dark-mode .sidebar-desktop,
+body.dark-mode .nav-drawer,
+body.dark-mode .card,
+body.dark-mode .modal-card {
+  background: #1e1e1e;
+  border-color: #383838;
+}
+
+body.dark-mode .sidebar-user-card {
+  background: #2d1a1a;
+  border-color: #493030;
+}
+
+body.dark-mode .sidebar-user-name {
+  color: #fff;
+}
+
+body.dark-mode .sidebar-menu-item a, 
+body.dark-mode .sidebar-menu-item button,
+body.dark-mode .nav-link {
+  color: #eee;
+}
+
+body.dark-mode .sidebar-menu-item a:hover, 
+body.dark-mode .sidebar-menu-item button:hover, 
+body.dark-mode .sidebar-menu-item a.active-link,
+body.dark-mode .nav-link:hover,
+body.dark-mode .nav-link.admin-link,
+body.dark-mode .nav-link.login-link {
+  background: #382020;
+  color: #ff7777;
+  border-color: #493030;
+}
+
+body.dark-mode .visit-counter,
+body.dark-mode .paper {
+  background: #1e1e1e;
+  color: #f1f1f1;
+  border-color: #383838;
+}
+
+body.dark-mode input,
+body.dark-mode textarea {
+  background: #292929;
+  border-color: #444;
+  color: #fff;
+}
+
+body.dark-mode .paper-wrap {
+  background: #161616;
+}
+
+body.dark-mode .signature-drawing {
+  background: #242020;
+  border-color: #493030;
+}
+
+body.dark-mode .canvas-wrap {
+  background: #1e1e1e;
+  border-color: #694040;
+}
+
+body.dark-mode .mobile-header {
+  background: rgba(18, 18, 18, 0.95);
+  border-bottom-color: #383838;
+}
+
+@media(max-width: 850px) {
+  .sidebar-desktop { display: none !important; }
+  .main-wrapper { margin-left: 0 !important; padding-top: 80px; }
+  .mobile-header { display: flex !important; }
   .container { padding: 18px 13px 32px; }
   .layout { grid-template-columns: 1fr; }
   .preview { position: static; }
@@ -573,9 +828,6 @@ input:focus, textarea:focus {
 }
 
 @media(max-width: 420px) {
-  .brand-sub { display: none; }
-  .brand-name { font-size: 14px; }
-  .back { padding: 9px 10px; }
   .paper { padding: 23px 15px; font-size: 12px; }
   .identity, .bank-identity {
     grid-template-columns: 125px 1fr;
@@ -591,68 +843,162 @@ input:focus, textarea:focus {
 <body>
 <div class="topbar"></div>
 
+<!-- SIDEBAR KIRI (DESKTOP) -->
+<aside class="sidebar-desktop">
+    <div class="sidebar-logo">
+        <a href="/beranda.html">
+            <img src="ykk.png" alt="YUK BERES">
+        </a>
+    </div>
+
+    <!-- PROFIL PENGGUNA DI SIDEBAR (Hanya tampil jika login) -->
+    <div class="sidebar-user-card" id="sidebarUserTrigger" title="Klik untuk edit profil" style="display: none;">
+        <div class="sidebar-user-avatar">
+            <span id="sidebarUserAvatarIcon">👤</span>
+            <img id="sidebarUserAvatarImg" src="" alt="Avatar" style="display: none;">
+        </div>
+        <div class="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebarUserName">User</div>
+            <div class="sidebar-user-role">Penyedia</div>
+        </div>
+    </div>
+
+    <!-- MENU VERTIKAL SIDEBAR DESKTOP -->
+    <ul class="sidebar-menu-list">
+        <!-- TOMBOL LOGIN / DASHBOARD DI PALING ATAS -->
+        <li class="sidebar-menu-item" id="sidebarAuthItem">
+            <a href="/login-user.html" class="sidebar-login-btn">
+                <span class="menu-icon">🔑</span>
+                <span>Login User</span>
+            </a>
+        </li>
+        <li class="sidebar-menu-item" id="sidebarDashboardItem" style="display: none;">
+            <a href="/dashboard-user.html">
+                <span class="menu-icon">📊</span>
+                <span>Dashboard Saya</span>
+            </a>
+        </li>
+
+        <li class="sidebar-menu-item">
+            <a href="/beranda.html">
+                <span class="menu-icon">🏠</span>
+                <span>Beranda Utama</span>
+            </a>
+        </li>
+        <li class="sidebar-menu-item">
+            <a href="/">
+                <span class="menu-icon">🧮</span>
+                <span>Kalkulator Harga Tayang</span>
+            </a>
+        </li>
+        <li class="sidebar-menu-item">
+            <a href="/gabung-foto.html">
+                <span class="menu-icon">🖼️</span>
+                <span>Foto ke PDF</span>
+            </a>
+        </li>
+        <li class="sidebar-menu-item">
+            <a href="/surat-pernyataan.html" class="active-link">
+                <span class="menu-icon">📄</span>
+                <span>Surat Pernyataan</span>
+            </a>
+        </li>
+
+        <!-- GARIS PEMBATAS SIDEBAR DESKTOP -->
+        <div style="height: 1px; background: #f2dede; margin: 12px 10px;"></div>
+
+        <li class="sidebar-menu-item">
+            <button id="desktopDarkModeToggle" type="button">
+                <span class="menu-icon" id="desktopDarkModeIcon">🌙</span>
+                <span id="desktopDarkModeText">Dark Mode</span>
+            </button>
+        </li>
+
+        <!-- TOMBOL LOGIN ADMIN DI BAWAH DARK MODE -->
+        <li class="sidebar-menu-item">
+            <a href="/admin.html">
+                <span class="menu-icon">👤 🔑</span>
+                <span>Login Admin</span>
+            </a>
+        </li>
+
+        <li class="sidebar-menu-item" id="sidebarLogoutItem" style="display: none;">
+            <button class="sidebar-logout btn-logout-action" type="button">
+                <span class="menu-icon">🚪</span>
+                <span>Keluar / Logout</span>
+            </button>
+        </li>
+    </ul>
+</aside>
+
+<!-- HEADER & DRAWER KHUSUS HP -->
+<header class="mobile-header">
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu navigasi">
+        <span></span><span></span><span></span>
+    </button>
+    <div class="mobile-brand">
+        <a href="/beranda.html">
+            <img src="ykk.png" alt="YUK BERES">
+        </a>
+    </div>
+</header>
+
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- MENU DRAWER MOBILE -->
+<nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
+    <div class="nav-drawer-content">
+        <div class="nav-heading">MENU UTAMA</div>
+
+        <!-- LOGIN / DASHBOARD MOBILE -->
+        <a class="nav-link login-link" href="/login-user.html" id="mobileAuthMenu"><span class="nav-icon">🔑</span> Login User</a>
+        <a class="nav-link" href="/dashboard-user.html" id="mobileDashboardMenu" style="display: none;"><span class="nav-icon">📊</span> Dashboard Saya</a>
+
+        <a class="nav-link" href="/beranda.html"><span class="nav-icon">🏠</span> Beranda Utama</a>
+        <a class="nav-link" href="/"><span class="nav-icon">🧮</span> Kalkulator Harga Tayang</a>
+        <a class="nav-link" href="/gabung-foto.html"><span class="nav-icon">🖼️</span> Foto ke PDF</a>
+        <a class="nav-link active-link" href="/surat-pernyataan.html"><span class="nav-icon">📄</span> Surat Pernyataan</a>
+
+        <div style="height: 1px; background: #f2dede; margin: 12px 10px;"></div>
+
+        <button class="nav-link dark-mode-button" id="darkModeToggle" type="button">
+            <span class="nav-icon" id="darkModeIcon">🌙</span>
+            <span id="darkModeText">Dark Mode</span>
+        </button>
+
+        <a class="nav-link admin-link" href="/admin.html" style="margin-top: 5px;">
+            <span class="nav-icon">👤 🔑</span>
+            <span>Login Admin</span>
+        </a>
+    </div>
+    <a class="nav-link logout-link btn-logout-action" id="mobileLogoutBtn" style="display: none;"><span class="nav-icon">🚪</span> Keluar / Logout</a>
+</nav>
+
+<div class="main-wrapper">
 <main class="container">
 
   <header class="header">
+      <div style="visibility: hidden; width: 40px;"></div>
+      
+      <!-- TOTAL KUNJUNGAN -->
+      <div class="visit-counter" title="Total surat dibuat">
+          <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+          >
+              <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
+              <circle cx="12" cy="12" r="3"/>
+          </svg>
 
-      <!-- TOMBOL MENU GARIS TIGA -->
-    <button
-        class="menu-toggle"
-        id="menuToggle"
-        type="button"
-        aria-label="Buka menu navigasi"
-        aria-expanded="false"
-        aria-controls="navDrawer"
-    >
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-
-    <!-- LAPISAN GELAP -->
-    <div class="nav-overlay" id="navOverlay"></div>
-
-    <!-- MENU NAVIGASI -->
-<!-- NAVIGASI DRAWER -->
-<nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
-    <div class="nav-heading">MENU NAVIGASI</div>
-
-    <!-- 1. LOGIN USER (DITAMBAHKEUN DI LUHUR) -->
-    <a class="nav-link login-link" href="/login-user.html">
-        <span class="nav-icon">👤</span>
-        <span>Login User</span>
-    </a>
-
-    <!-- 2. FITUR FITUR UTAMA -->
-    <a class="nav-link" href="/gabung-foto.html">
-        <span class="nav-icon">🖼️</span>
-        <span>Ubah Foto ke PDF</span>
-    </a>
-
-    <a class="nav-link" href="/">
-        <span class="nav-icon">🧮</span>
-        <span>Kalkulator Harga Tayang</span>
-    </a>
-
-    <a class="nav-link" href="/surat-pernyataan.html">
-        <span class="nav-icon">📄</span>
-        <span>Buat Surat Pernyataan</span>
-    </a>
-
-    <div class="nav-divider"></div>
-
-    <!-- 3. LOGIN ADMIN (DIPINDAHKEUN KA PANGHANDAPNA) -->
-    <a class="nav-link admin-link" href="/admin.html">
-        <span class="nav-icon">🔐</span>
-        <span>Login Admin</span>
-    </a>
-
-    <!-- 4. TOMBOL DARK MODE -->
-    <button class="nav-link dark-mode-button" id="darkModeToggle" type="button" aria-label="Ganti tema tampilan">
-        <span class="nav-icon" id="darkModeIcon">🌙</span>
-        <span id="darkModeText">Dark Mode</span>
-    </button>
-</nav>
+          <span>Total Surat dibuat </span>
+          <span id="totalsurat">...</span>
+      </div>
   </header>
 
   <section class="hero">
@@ -662,25 +1008,6 @@ input:focus, textarea:focus {
 
   <div class="layout">
 
-        <!-- TOTAL KUNJUNGAN -->
-        <div class="visit-counter" title="Total surat dibuat">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-            >
-                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>
-                <circle cx="12" cy="12" r="3"/>
-            </svg>
-
-            <span>Total Surat dibuat </span>
-            <span id="totalsurat">...</span>
-        </div>
     <!-- FORM DATA -->
     <section class="card form-card">
       <div class="card-head">
@@ -886,571 +1213,697 @@ input:focus, textarea:focus {
 
   </div>
 
-<!-- FOOTER -->
-    <div class="footer">
-        <p
-            class="contact-question"
-            style="font-weight: bold; color: #a80000; margin-bottom: 8px;"
-        >
-            Ada saran atau pertanyaan?
-        </p>
+  <!-- FOOTER -->
+  <div class="footer">
+      <p
+          class="contact-question"
+          style="font-weight: bold; color: #a80000; margin-bottom: 8px;"
+      >
+          Ada saran atau pertanyaan?
+      </p>
 
-        <p class="contact-instruction" style="margin-bottom: 8px;">
-            Silakan hubungi nomor di bawah ini:
-        </p>
+      <p class="contact-instruction" style="margin-bottom: 8px;">
+          Silakan hubungi nomor di bawah ini:
+      </p>
 
-        <p>
-            <a
-                class="contact-link"
-                href="https://wa.me/6281125213879"
-                target="_blank"
-                rel="noopener noreferrer"
-                style="color: #25D366; text-decoration: none; font-weight: bold;"
-            >
-                ☎ 081125213879 (Egik)
-            </a>
-        </p>
+      <p>
+          <a
+              class="contact-link"
+              href="https://wa.me/6281125213879"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="color: #25D366; text-decoration: none; font-weight: bold;"
+          >
+              ☎ 081125213879 (Egik)
+          </a>
+      </p>
 
-        <p style="margin-top: 10px;">
-            Credit by <strong>eth production</strong>
-        </p>
-    </div>
+      <p style="margin-top: 10px;">
+          Credit by <strong>eth production</strong>
+      </p>
+  </div>
 
 </main>
+</div>
+
+<!-- MODAL EDIT PROFIL -->
+<div class="modal-overlay" id="profileModal">
+    <div class="modal-card">
+        <button class="btn-close-modal" id="closeModal">&times;</button>
+        <div class="modal-title" id="modalUserName">Akun Penyedia</div>
+        <div class="modal-email" id="modalUserEmail">user@example.com</div>
+
+        <div class="modal-preview-container">
+            <span id="modalPreviewIcon" style="font-size: 40px;">👤</span>
+            <img id="modalPreviewImg" src="" alt="Preview" style="display: none;">
+        </div>
+
+        <input type="file" id="profileInput" accept="image/*" style="display: none;">
+
+        <div class="modal-btn-group">
+            <button class="btn-modal btn-primary-modal" onclick="document.getElementById('profileInput').click()">📷 Pilih Foto Baru</button>
+            <button class="btn-modal btn-secondary-modal" id="btnDeletePhoto">🗑️ Hapus Foto Profil</button>
+            <button class="btn-modal btn-logout-modal btn-logout-action">🚪 Keluar / Logout</button>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
-  /* MENU NAVIGASI */
-        const menuToggle = document.getElementById("menuToggle");
-        const navDrawer = document.getElementById("navDrawer");
-        const navOverlay = document.getElementById("navOverlay");
-
-        function bukaMenu() {
-            menuToggle.classList.add("active");
-            navDrawer.classList.add("show");
-            navOverlay.classList.add("show");
-            menuToggle.setAttribute("aria-expanded", "true");
-            document.body.style.overflow = "hidden";
-        }
-
-        function tutupMenu() {
-            menuToggle.classList.remove("active");
-            navDrawer.classList.remove("show");
-            navOverlay.classList.remove("show");
-            menuToggle.setAttribute("aria-expanded", "false");
-            document.body.style.overflow = "";
-        }
-
-        menuToggle.addEventListener("click", function () {
-            if (navDrawer.classList.contains("show")) {
-                tutupMenu();
-            } else {
-                bukaMenu();
-            }
-        });
-
-        navOverlay.addEventListener("click", tutupMenu);
-
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape") {
-                tutupMenu();
-            }
-        });
-
-        document.querySelectorAll("#navDrawer .nav-link").forEach(function (link) {
-            link.addEventListener("click", tutupMenu);
-        });
-
-        /* DARK MODE */
-        const darkModeToggle = document.getElementById("darkModeToggle");
-        const darkModeIcon = document.getElementById("darkModeIcon");
-        const darkModeText = document.getElementById("darkModeText");
-
-        function aturDarkMode(aktif) {
-            document.body.classList.toggle("dark-mode", aktif);
-
-            darkModeIcon.textContent = aktif ? "☀️" : "🌙";
-            darkModeText.textContent = aktif ? "Light Mode" : "Dark Mode";
-
-            try {
-                localStorage.setItem(
-                    "kalkulatorDarkMode",
-                    aktif ? "aktif" : "nonaktif"
-                );
-            } catch (error) {
-                console.warn("Pilihan tema tidak dapat disimpan.", error);
-            }
-        }
-
-        let darkModeTersimpan = false;
-
-        try {
-            darkModeTersimpan =
-                localStorage.getItem("kalkulatorDarkMode") === "aktif";
-        } catch (error) {
-            console.warn("Pilihan tema tidak dapat dibaca.", error);
-        }
-
-        aturDarkMode(darkModeTersimpan);
-
-        darkModeToggle.addEventListener("click", function () {
-            const aktif = !document.body.classList.contains("dark-mode");
-            aturDarkMode(aktif);
-            tutupMenu();
-        });
-const $ = id => document.getElementById(id);
-
-const fieldIds = [
-  'nama',
-  'ttl',
-  'alamat',
-  'pemilik',
-  'bank',
-  'rekening',
-  'kota',
-  'tanggalSurat'
-];
-
-// =======================================
-// TANGGAL SURAT OTOMATIS HARI INI
-// Menggunakan tanggal lokal perangkat.
-// =======================================
-
-// Isi tanggal surat otomatis sesuai tanggal hari ini
-function getTodayLocal() {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-
-  return `${year}-${month}-${day}`;
-}
-
-// Tanggal otomatis dan tidak bisa diubah
-$('tanggalSurat').value = getTodayLocal();
-$('tanggalSurat').readOnly = true;
-
-  
-// Isi tanggal surat ketika halaman dibuka.
-$('tanggalSurat').value = getTodayLocal();
-
-function safeText(
-  value,
-  fallback = '........................................................'
-) {
-  return (value || '').trim() || fallback;
-}
-
-function formatDate(value) {
-  if (!value) return '';
-
-  const [year, month, day] = value.split('-').map(Number);
-
-  const months = [
-    'Januari', 'Februari', 'Maret', 'April',
-    'Mei', 'Juni', 'Juli', 'Agustus',
-    'September', 'Oktober', 'November', 'Desember'
-  ];
-
-  return `${day} ${months[month - 1]} ${year}`;
-}
-
-// =======================================
-// UPDATE PRATINJAU SURAT
-// =======================================
-
-function updatePreview() {
-  $('outNama').textContent = safeText($('nama').value);
-
-  // TTL diketik manual dalam satu kolom.
-  // Contoh: Klaten, 18 Desember 1999.
-  $('outTTL').textContent = safeText(
-    $('ttl').value,
-    '........................................................'
-  );
-
-  $('outAlamat').textContent = safeText(
-    $('alamat').value,
-    '................................................................................'
-  );
-
-  $('outPemilik').textContent = safeText($('pemilik').value);
-  $('outBank').textContent = safeText($('bank').value);
-  $('outRekening').textContent = safeText($('rekening').value);
-
-  const kota = $('kota').value.trim() || '............................';
-  const tanggal = formatDate($('tanggalSurat').value);
-
-  $('outTanggal').textContent = tanggal
-    ? `${kota}, ${tanggal}`
-    : `${kota}, .... ......... 20....`;
-
-  $('outNamaTtd').textContent = $('nama').value.trim();
-}
-
-fieldIds.forEach(id => {
-  $(id).addEventListener('input', updatePreview);
-  $(id).addEventListener('change', updatePreview);
-});
-
-// =======================================
-// GAMBAR TANDA TANGAN
-// =======================================
-
-const canvas = $('signatureCanvas');
-const ctx = canvas.getContext('2d');
-
-let isDrawing = false;
-let hasDrawing = false;
-
-function setupCanvas() {
-  const rect = canvas.getBoundingClientRect();
-
-  if (!rect.width || !rect.height) return;
-
-  const oldData = hasDrawing
-    ? canvas.toDataURL('image/png')
-    : null;
-
-  const dpr = Math.max(1, window.devicePixelRatio || 1);
-
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.strokeStyle = '#111111';
-  ctx.fillStyle = '#111111';
-  ctx.lineWidth = 2.5;
-
-  if (oldData) {
-    const img = new Image();
-
-    img.onload = () => {
-      ctx.drawImage(img, 0, 0, rect.width, rect.height);
-    };
-
-    img.src = oldData;
-  }
-}
-
-setupCanvas();
-
-let resizeTimeout;
-
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(setupCanvas, 150);
-});
-
-function getCanvasPoint(event) {
-  const rect = canvas.getBoundingClientRect();
-
-  return {
-    x: event.clientX - rect.left,
-    y: event.clientY - rect.top
-  };
-}
-
-function startDrawing(event) {
-  if (event.button !== undefined && event.button !== 0) return;
-
-  event.preventDefault();
-
-  const point = getCanvasPoint(event);
-
-  isDrawing = true;
-  hasDrawing = true;
-
-  try {
-    canvas.setPointerCapture(event.pointerId);
-  } catch (error) {}
-
-  ctx.beginPath();
-  ctx.arc(point.x, point.y, ctx.lineWidth / 2, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.moveTo(point.x, point.y);
-
-  $('ttdStatus').textContent =
-    'Sedang menggambar. Setelah selesai, tekan Gunakan TTD.';
-}
-
-function drawSignature(event) {
-  if (!isDrawing) return;
-
-  event.preventDefault();
-
-  const point = getCanvasPoint(event);
-
-  ctx.lineTo(point.x, point.y);
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(point.x, point.y);
-}
-
-function stopDrawing(event) {
-  if (!isDrawing) return;
-
-  isDrawing = false;
-
-  if (event && event.pointerId !== undefined) {
-    try {
-      if (canvas.hasPointerCapture(event.pointerId)) {
-        canvas.releasePointerCapture(event.pointerId);
-      }
-    } catch (error) {}
+  /* MENU NAVIGASI DRAWER MOBILE */
+  const menuToggle = document.getElementById("menuToggle");
+  const navDrawer = document.getElementById("navDrawer");
+  const navOverlay = document.getElementById("navOverlay");
+
+  function bukaMenu() {
+      menuToggle.classList.add("active");
+      navDrawer.classList.add("show");
+      navOverlay.classList.add("show");
+      menuToggle.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
   }
 
-  ctx.beginPath();
-}
-
-canvas.addEventListener('pointerdown', startDrawing);
-canvas.addEventListener('pointermove', drawSignature);
-canvas.addEventListener('pointerup', stopDrawing);
-canvas.addEventListener('pointercancel', stopDrawing);
-
-canvas.addEventListener('lostpointercapture', () => {
-  isDrawing = false;
-  ctx.beginPath();
-});
-
-function useSignature() {
-  if (isDrawing) {
-    alert('Selesaikan gambar tanda tangan terlebih dahulu.');
-    return;
+  function tutupMenu() {
+      menuToggle.classList.remove("active");
+      navDrawer.classList.remove("show");
+      navOverlay.classList.remove("show");
+      menuToggle.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
   }
 
-  if (!hasDrawing) {
-    alert('Silakan gambar tanda tangan terlebih dahulu.');
-    return;
-  }
-
-  try {
-    $('outTtdImage').src = canvas.toDataURL('image/png');
-    $('outTtdImage').hidden = false;
-
-    // Pastikan tidak ada titik-titik di bawah tanda tangan.
-    $('outTtd').hidden = true;
-
-    $('ttdStatus').textContent =
-      '✓ Tanda tangan berhasil digunakan pada pratinjau surat.';
-  } catch (error) {
-    console.error(error);
-    alert('Tanda tangan gagal digunakan. Silakan coba lagi.');
-  }
-}
-
-$('useTtdBtn').addEventListener('click', useSignature);
-
-function clearSignature() {
-  isDrawing = false;
-  hasDrawing = false;
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.beginPath();
-
-  $('outTtdImage').removeAttribute('src');
-  $('outTtdImage').hidden = true;
-  $('outTtd').hidden = true;
-
-  $('ttdStatus').textContent =
-    'Belum ada tanda tangan yang digunakan.';
-}
-
-$('clearTtdBtn').addEventListener('click', clearSignature);
-
-// =======================================
-
- // DOWNLOAD PDF + TOTAL SURAT
-// =======================================
-
-$('downloadBtn').addEventListener('click', async () => {
-  const required = [
-    ['nama', 'Nama lengkap'],
-    ['ttl', 'Tempat dan tanggal lahir'],
-    ['alamat', 'Alamat lengkap'],
-    ['pemilik', 'Nama pemilik rekening'],
-    ['bank', 'Nama bank'],
-    ['rekening', 'Nomor rekening'],
-    ['kota', 'Kota/kabupaten'],
-    ['tanggalSurat', 'Tanggal surat']
-  ];
-
-  for (const [id, label] of required) {
-    if (!$(id).value.trim()) {
-      alert(`Silakan isi ${label} terlebih dahulu.`);
-      $(id).focus();
-      return;
-    }
-  }
-
-  if (typeof html2pdf === 'undefined') {
-    alert(
-      'Library PDF gagal dimuat. Periksa koneksi internet lalu coba lagi.'
-    );
-    return;
-  }
-
-  if (isDrawing) {
-    alert('Selesaikan gambar tanda tangan terlebih dahulu.');
-    return;
-  }
-
-  const tombol = $('downloadBtn');
-  const teksAwal = tombol.innerHTML;
-
-  try {
-    updatePreview();
-
-    tombol.disabled = true;
-    tombol.textContent = 'Menyiapkan PDF...';
-
-    const namaFile = $('nama').value
-      .trim()
-      .replace(/[<>:"/\\|?*\x00-\x1F]/g, '')
-      .replace(/\s+/g, '-')
-      .slice(0, 70) || 'Pengguna';
-
-    const opsi = {
-      margin: [12, 12, 12, 12],
-
-      filename: `Surat-Pernyataan-Rekening-${namaFile}.pdf`,
-
-      image: {
-        type: 'jpeg',
-        quality: 0.98
-      },
-
-      html2canvas: {
-        scale: 2,
-        backgroundColor: '#ffffff',
-        scrollY: 0,
-        useCORS: true
-      },
-
-      jsPDF: {
-        unit: 'mm',
-        format: 'a4',
-        orientation: 'portrait'
-      },
-
-      pagebreak: {
-        mode: ['css', 'legacy'],
-        avoid: ['.signature']
-      }
-    };
-
-    // Buat dan unduh PDF terlebih dahulu.
-    await html2pdf()
-      .set(opsi)
-      .from($('paper'))
-      .save();
-
-    // Setelah proses PDF selesai, tambah total surat di server.
-    try {
-      const response = await fetch('/api/surat', {
-        method: 'POST',
-        cache: 'no-store'
+  if (menuToggle) {
+      menuToggle.addEventListener("click", function () {
+          if (navDrawer.classList.contains("show")) {
+              tutupMenu();
+          } else {
+              bukaMenu();
+          }
       });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || 'Gagal menambah total surat.');
-      }
-
-      // Perbarui angka di pojok kanan atas.
-      const elemenTotal = $('totalsurat');
-
-      if (elemenTotal) {
-        elemenTotal.textContent =
-          Number(data.total).toLocaleString('id-ID');
-      }
-
-    } catch (error) {
-      console.error('Gagal memperbarui total surat:', error);
-
-      alert(
-        'PDF sudah diproses, tetapi total surat gagal diperbarui. ' +
-        'Periksa koneksi atau API surat.'
-      );
-    }
-
-  } catch (error) {
-    console.error('Gagal membuat PDF:', error);
-    alert('PDF gagal dibuat. Silakan coba lagi.');
-  } finally {
-    tombol.disabled = false;
-    tombol.innerHTML = teksAwal;
   }
-});
-  
 
-// =======================================
-// RESET FORMULIR
-// =======================================
+  if (navOverlay) navOverlay.addEventListener("click", tutupMenu);
 
-$('resetBtn').addEventListener('click', () => {
-  if (!confirm('Yakin ingin mengosongkan semua data dan tanda tangan?')) {
-    return;
+  document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+          tutupMenu();
+      }
+  });
+
+  document.querySelectorAll("#navDrawer .nav-link").forEach(function (link) {
+      if (!link.classList.contains("dark-mode-button")) {
+          link.addEventListener("click", tutupMenu);
+      }
+  });
+
+  /* DARK MODE CONTROLLER */
+  const darkModeToggle = document.getElementById("darkModeToggle");
+  const desktopDarkModeToggle = document.getElementById("desktopDarkModeToggle");
+  const darkModeIcon = document.getElementById("darkModeIcon");
+  const desktopDarkModeIcon = document.getElementById("desktopDarkModeIcon");
+  const darkModeText = document.getElementById("darkModeText");
+  const desktopDarkModeText = document.getElementById("desktopDarkModeText");
+
+  function aturDarkMode(aktif) {
+      document.body.classList.toggle("dark-mode", aktif);
+      const icon = aktif ? "☀️" : "🌙";
+      const text = aktif ? "Light Mode" : "Dark Mode";
+
+      if (darkModeIcon) darkModeIcon.textContent = icon;
+      if (desktopDarkModeIcon) desktopDarkModeIcon.textContent = icon;
+      if (darkModeText) darkModeText.textContent = text;
+      if (desktopDarkModeText) desktopDarkModeText.textContent = text;
+
+      try {
+          localStorage.setItem(
+              "kalkulatorDarkMode",
+              aktif ? "aktif" : "nonaktif"
+          );
+      } catch (error) {
+          console.warn("Pilihan tema tidak dapat disimpan.", error);
+      }
+  }
+
+  let darkModeTersimpan = false;
+
+  try {
+      darkModeTersimpan =
+          localStorage.getItem("kalkulatorDarkMode") === "aktif";
+  } catch (error) {
+      console.warn("Pilihan tema tidak dapat dibaca.", error);
+  }
+
+  aturDarkMode(darkModeTersimpan);
+
+  if (darkModeToggle) {
+      darkModeToggle.addEventListener("click", function () {
+          const aktif = !document.body.classList.contains("dark-mode");
+          aturDarkMode(aktif);
+          tutupMenu();
+      });
+  }
+
+  if (desktopDarkModeToggle) {
+      desktopDarkModeToggle.addEventListener("click", function () {
+          aturDarkMode(!document.body.classList.contains("dark-mode"));
+      });
+  }
+
+  /* MODAL PROFIL */
+  const sidebarUserTrigger = document.getElementById("sidebarUserTrigger");
+  const profileModal = document.getElementById("profileModal");
+  const closeModal = document.getElementById("closeModal");
+  const profileInput = document.getElementById("profileInput");
+  const btnDeletePhoto = document.getElementById("btnDeletePhoto");
+
+  function bukaModal() { profileModal.classList.add("show"); }
+  function tutupModal() { profileModal.classList.remove("show"); }
+
+  if (sidebarUserTrigger) sidebarUserTrigger.addEventListener("click", bukaModal);
+  if (closeModal) closeModal.addEventListener("click", tutupModal);
+
+  function pasangFotoProfil(photoUrl) {
+      const ids = ["modalPreviewImg", "sidebarUserAvatarImg"];
+      const icons = ["modalPreviewIcon", "sidebarUserAvatarIcon"];
+
+      if (photoUrl) {
+          ids.forEach(id => { const el = document.getElementById(id); if (el) { el.src = photoUrl; el.style.display = "block"; } });
+          icons.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "none"; });
+      } else {
+          ids.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "none"; });
+          icons.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "block"; });
+      }
+  }
+
+  /* VERIFIKASI SESI BACKEND (SILENT / TANPA SPINNER) */
+  async function muatDataUser() {
+      try {
+          const res = await fetch("/api/user/login?action=check", {
+              method: "GET",
+              credentials: "same-origin",
+              cache: "no-store",
+              headers: { "Accept": "application/json" }
+          });
+
+          if (!res.ok) return;
+
+          const data = await res.json();
+
+          if (data.authenticated && data.user) {
+              if (data.user.name) {
+                  const modalUser = document.getElementById("modalUserName");
+                  const sidebarUser = document.getElementById("sidebarUserName");
+
+                  if (modalUser) modalUser.textContent = data.user.name;
+                  if (sidebarUser) sidebarUser.textContent = data.user.name;
+              }
+
+              if (data.user.email) {
+                  const emailEl = document.getElementById("modalUserEmail");
+                  if (emailEl) emailEl.textContent = data.user.email;
+              }
+
+              const fotoProfil = data.user.picture || localStorage.getItem("userProfilePhoto") || "";
+              pasangFotoProfil(fotoProfil);
+
+              if (sidebarUserTrigger) sidebarUserTrigger.style.display = "flex";
+
+              // Sesuaikan menu Login / Dashboard di Sidebar & Mobile
+              const sidebarAuthItem = document.getElementById("sidebarAuthItem");
+              const sidebarDashboardItem = document.getElementById("sidebarDashboardItem");
+              const sidebarLogoutItem = document.getElementById("sidebarLogoutItem");
+
+              if (sidebarAuthItem) sidebarAuthItem.style.display = "none";
+              if (sidebarDashboardItem) sidebarDashboardItem.style.display = "block";
+              if (sidebarLogoutItem) sidebarLogoutItem.style.display = "block";
+
+              const mobileAuthMenu = document.getElementById("mobileAuthMenu");
+              const mobileDashboardMenu = document.getElementById("mobileDashboardMenu");
+              const mobileLogoutBtn = document.getElementById("mobileLogoutBtn");
+
+              if (mobileAuthMenu) mobileAuthMenu.style.display = "none";
+              if (mobileDashboardMenu) mobileDashboardMenu.style.display = "flex";
+              if (mobileLogoutBtn) mobileLogoutBtn.style.display = "flex";
+          }
+      } catch (err) {
+          console.warn("Belum login atau gagal cek sesi.");
+      }
+  }
+
+  if (profileInput) {
+      profileInput.addEventListener("change", function() {
+          const file = this.files[0];
+          if (file) {
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                  const base64Image = e.target.result;
+                  try {
+                      localStorage.setItem("userProfilePhoto", base64Image);
+                      pasangFotoProfil(base64Image);
+                      tutupModal();
+                  } catch (err) { alert("Gambar terlalu besar."); }
+              };
+              reader.readAsDataURL(file);
+          }
+      });
+  }
+
+  if (btnDeletePhoto) {
+      btnDeletePhoto.addEventListener("click", function() {
+          localStorage.removeItem("userProfilePhoto");
+          if (profileInput) profileInput.value = "";
+          pasangFotoProfil("");
+          tutupModal();
+      });
+  }
+
+  async function lakukanLogout() {
+      try {
+          await fetch("/api/user/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ action: "logout" })
+          });
+      } catch (e) {
+          console.warn("Gagal logout di server.");
+      } finally {
+          localStorage.removeItem("userProfilePhoto");
+          window.location.reload();
+      }
+  }
+
+  document.querySelectorAll(".btn-logout-action").forEach(btn => {
+      btn.addEventListener("click", lakukanLogout);
+  });
+
+  const $ = id => document.getElementById(id);
+
+  const fieldIds = [
+    'nama',
+    'ttl',
+    'alamat',
+    'pemilik',
+    'bank',
+    'rekening',
+    'kota',
+    'tanggalSurat'
+  ];
+
+  function getTodayLocal() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
+  $('tanggalSurat').value = getTodayLocal();
+  $('tanggalSurat').readOnly = true;
+
+  function safeText(
+    value,
+    fallback = '........................................................'
+  ) {
+    return (value || '').trim() || fallback;
+  }
+
+  function formatDate(value) {
+    if (!value) return '';
+
+    const [year, month, day] = value.split('-').map(Number);
+
+    const months = [
+      'Januari', 'Februari', 'Maret', 'April',
+      'Mei', 'Juni', 'Juli', 'Agustus',
+      'September', 'Oktober', 'November', 'Desember'
+    ];
+
+    return `${day} ${months[month - 1]} ${year}`;
+  }
+
+  function updatePreview() {
+    $('outNama').textContent = safeText($('nama').value);
+
+    $('outTTL').textContent = safeText(
+      $('ttl').value,
+      '........................................................'
+    );
+
+    $('outAlamat').textContent = safeText(
+      $('alamat').value,
+      '................................................................................'
+    );
+
+    $('outPemilik').textContent = safeText($('pemilik').value);
+    $('outBank').textContent = safeText($('bank').value);
+    $('outRekening').textContent = safeText($('rekening').value);
+
+    const kota = $('kota').value.trim() || '............................';
+    const tanggal = formatDate($('tanggalSurat').value);
+
+    $('outTanggal').textContent = tanggal
+      ? `${kota}, ${tanggal}`
+      : `${kota}, .... ......... 20....`;
+
+    $('outNamaTtd').textContent = $('nama').value.trim();
   }
 
   fieldIds.forEach(id => {
-    $(id).value = '';
+    $(id).addEventListener('input', updatePreview);
+    $(id).addEventListener('change', updatePreview);
   });
 
-  // Tanggal surat otomatis kembali ke tanggal hari ini.
-  $('tanggalSurat').value = getTodayLocal();
+  const canvas = $('signatureCanvas');
+  const ctx = canvas.getContext('2d');
 
-  clearSignature();
-  updatePreview();
-});
+  let isDrawing = false;
+  let hasDrawing = false;
 
-// Tampilkan pratinjau saat halaman pertama dibuka.
-updatePreview();
-  
+  function setupCanvas() {
+    const rect = canvas.getBoundingClientRect();
 
-/* TOTAL SURAT DIBUAT DARI UPSTASH REDIS */
-async function muatTotalSurat() {
-    const elemen = document.getElementById("totalsurat");
+    if (!rect.width || !rect.height) return;
 
-    if (!elemen) return;
+    const oldData = hasDrawing
+      ? canvas.toDataURL('image/png')
+      : null;
+
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#111111';
+    ctx.fillStyle = '#111111';
+    ctx.lineWidth = 2.5;
+
+    if (oldData) {
+      const img = new Image();
+
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, rect.width, rect.height);
+      };
+
+      img.src = oldData;
+    }
+  }
+
+  setupCanvas();
+
+  let resizeTimeout;
+
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(setupCanvas, 150);
+  });
+
+  function getCanvasPoint(event) {
+    const rect = canvas.getBoundingClientRect();
+
+    return {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
+    };
+  }
+
+  function startDrawing(event) {
+    if (event.button !== undefined && event.button !== 0) return;
+
+    event.preventDefault();
+
+    const point = getCanvasPoint(event);
+
+    isDrawing = true;
+    hasDrawing = true;
 
     try {
-        const response = await fetch("/api/surat", {
-            method: "GET",
-            cache: "no-store"
+      canvas.setPointerCapture(event.pointerId);
+    } catch (error) {}
+
+    ctx.beginPath();
+    ctx.arc(point.x, point.y, ctx.lineWidth / 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(point.x, point.y);
+
+    $('ttdStatus').textContent =
+      'Sedang menggambar. Setelah selesai, tekan Gunakan TTD.';
+  }
+
+  function drawSignature(event) {
+    if (!isDrawing) return;
+
+    event.preventDefault();
+
+    const point = getCanvasPoint(event);
+
+    ctx.lineTo(point.x, point.y);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(point.x, point.y);
+  }
+
+  function stopDrawing(event) {
+    if (!isDrawing) return;
+
+    isDrawing = false;
+
+    if (event && event.pointerId !== undefined) {
+      try {
+        if (canvas.hasPointerCapture(event.pointerId)) {
+          canvas.releasePointerCapture(event.pointerId);
+        }
+      } catch (error) {}
+    }
+
+    ctx.beginPath();
+  }
+
+  canvas.addEventListener('pointerdown', startDrawing);
+  canvas.addEventListener('pointermove', drawSignature);
+  canvas.addEventListener('pointerup', stopDrawing);
+  canvas.addEventListener('pointercancel', stopDrawing);
+
+  canvas.addEventListener('lostpointercapture', () => {
+    isDrawing = false;
+    ctx.beginPath();
+  });
+
+  function useSignature() {
+    if (isDrawing) {
+      alert('Selesaikan gambar tanda tangan terlebih dahulu.');
+      return;
+    }
+
+    if (!hasDrawing) {
+      alert('Silakan gambar tanda tangan terlebih dahulu.');
+      return;
+    }
+
+    try {
+      $('outTtdImage').src = canvas.toDataURL('image/png');
+      $('outTtdImage').hidden = false;
+
+      $('outTtd').hidden = true;
+
+      $('ttdStatus').textContent =
+        '✓ Tanda tangan berhasil digunakan pada pratinjau surat.';
+    } catch (error) {
+      console.error(error);
+      alert('Tanda tangan gagal digunakan. Silakan coba lagi.');
+    }
+  }
+
+  $('useTtdBtn').addEventListener('click', useSignature);
+
+  function clearSignature() {
+    isDrawing = false;
+    hasDrawing = false;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+
+    $('outTtdImage').removeAttribute('src');
+    $('outTtdImage').hidden = true;
+    $('outTtd').hidden = true;
+
+    $('ttdStatus').textContent =
+      'Belum ada tanda tangan yang digunakan.';
+  }
+
+  $('clearTtdBtn').addEventListener('click', clearSignature);
+
+  $('downloadBtn').addEventListener('click', async () => {
+    const required = [
+      ['nama', 'Nama lengkap'],
+      ['ttl', 'Tempat dan tanggal lahir'],
+      ['alamat', 'Alamat lengkap'],
+      ['pemilik', 'Nama pemilik rekening'],
+      ['bank', 'Nama bank'],
+      ['rekening', 'Nomor rekening'],
+      ['kota', 'Kota/kabupaten'],
+      ['tanggalSurat', 'Tanggal surat']
+    ];
+
+    for (const [id, label] of required) {
+      if (!$(id).value.trim()) {
+        alert(`Silakan isi ${label} terlebih dahulu.`);
+        $(id).focus();
+        return;
+      }
+    }
+
+    if (typeof html2pdf === 'undefined') {
+      alert(
+        'Library PDF gagal dimuat. Periksa koneksi internet lalu coba lagi.'
+      );
+      return;
+    }
+
+    if (isDrawing) {
+      alert('Selesaikan gambar tanda tangan terlebih dahulu.');
+      return;
+    }
+
+    const tombol = $('downloadBtn');
+    const teksAwal = tombol.innerHTML;
+
+    try {
+      updatePreview();
+
+      tombol.disabled = true;
+      tombol.textContent = 'Menyiapkan PDF...';
+
+      const namaFile = $('nama').value
+        .trim()
+        .replace(/[<>:"/\\|?*\x00-\x1F]/g, '')
+        .replace(/\s+/g, '-')
+        .slice(0, 70) || 'Pengguna';
+
+      const opsi = {
+        margin: [12, 12, 12, 12],
+
+        filename: `Surat-Pernyataan-Rekening-${namaFile}.pdf`,
+
+        image: {
+          type: 'jpeg',
+          quality: 0.98
+        },
+
+        html2canvas: {
+          scale: 2,
+          backgroundColor: '#ffffff',
+          scrollY: 0,
+          useCORS: true
+        },
+
+        jsPDF: {
+          unit: 'mm',
+          format: 'a4',
+          orientation: 'portrait'
+        },
+
+        pagebreak: {
+          mode: ['css', 'legacy'],
+          avoid: ['.signature']
+        }
+      };
+
+      await html2pdf()
+        .set(opsi)
+        .from($('paper'))
+        .save();
+
+      try {
+        const response = await fetch('/api/surat', {
+          method: 'POST',
+          cache: 'no-store'
         });
 
-        const data = await response.json().catch(() => ({}));
+        const data = await response.json();
 
         if (!response.ok || !data.success) {
-            throw new Error(
-                data.detail || data.error || `HTTP ${response.status}`
-            );
+          throw new Error(data.error || 'Gagal menambah total surat.');
         }
 
-        const total = Number(data.total);
+        const elemenTotal = $('totalsurat');
 
-        if (!Number.isSafeInteger(total) || total < 0) {
-            throw new Error("Data total surat tidak valid");
+        if (elemenTotal) {
+          elemenTotal.textContent =
+            Number(data.total).toLocaleString('id-ID');
         }
 
-        elemen.textContent = total.toLocaleString("id-ID");
+      } catch (error) {
+        console.error('Gagal memperbarui total surat:', error);
+      }
 
     } catch (error) {
-        elemen.textContent = "-";
-        console.error("Penghitung total surat:", error);
+      console.error('Gagal membuat PDF:', error);
+      alert('PDF gagal dibuat. Silakan coba lagi.');
+    } finally {
+      tombol.disabled = false;
+      tombol.innerHTML = teksAwal;
     }
-}
+  });
 
-muatTotalSurat();
+  $('resetBtn').addEventListener('click', () => {
+    if (!confirm('Yakin ingin mengosongkan semua data dan tanda tangan?')) {
+      return;
+    }
 
+    fieldIds.forEach(id => {
+      $(id).value = '';
+    });
+
+    $('tanggalSurat').value = getTodayLocal();
+
+    clearSignature();
+    updatePreview();
+  });
+
+  updatePreview();
+
+  async function muatTotalSurat() {
+      const elemen = document.getElementById("totalsurat");
+
+      if (!elemen) return;
+
+      try {
+          const response = await fetch("/api/surat", {
+              method: "GET",
+              cache: "no-store"
+          });
+
+          const data = await response.json().catch(() => ({}));
+
+          if (!response.ok || !data.success) {
+              throw new Error(
+                  data.detail || data.error || `HTTP ${response.status}`
+              );
+          }
+
+          const total = Number(data.total);
+
+          if (!Number.isSafeInteger(total) || total < 0) {
+              throw new Error("Data total surat tidak valid");
+          }
+
+          elemen.textContent = total.toLocaleString("id-ID");
+
+      } catch (error) {
+          elemen.textContent = "-";
+          console.error("Penghitung total surat:", error);
+      }
+  }
+
+  muatTotalSurat();
+  muatDataUser();
 </script>
 
 </body>
