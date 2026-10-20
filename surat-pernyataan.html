@@ -35,6 +35,49 @@ button, input, textarea { font: inherit; }
 }
 
 /* ------------------------------------------------------------- */
+/* LAPISAN LOADING / PEMERIKSAAN SESI */
+/* ------------------------------------------------------------- */
+#authLoader {
+    position: fixed;
+    inset: 0;
+    background: #fff5f5;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #a80000;
+    font-weight: 600;
+    transition: opacity 0.3s ease;
+}
+
+.spinner {
+    width: 45px;
+    height: 45px;
+    border: 4px solid #f2dede;
+    border-top: 4px solid #a80000;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+body.dark-mode #authLoader {
+    background: #121212;
+    color: #ff7777;
+}
+
+body.dark-mode .spinner {
+    border-color: #383838;
+    border-top-color: #ff5555;
+}
+
+/* ------------------------------------------------------------- */
 /* SIDEBAR KIRI (UNTUK DESKTOP / LAPTOP) */
 /* ------------------------------------------------------------- */
 .sidebar-desktop {
@@ -844,6 +887,13 @@ body.dark-mode .mobile-header {
 </head>
 
 <body>
+
+<!-- INDIKATOR PEMERIKSAAN SESI -->
+<div id="authLoader">
+    <div class="spinner"></div>
+    <span>Memeriksa sesi akun...</span>
+</div>
+
 <div class="topbar"></div>
 
 <!-- SIDEBAR KIRI (UNTUK DESKTOP / LAPTOP) -->
@@ -1398,8 +1448,59 @@ body.dark-mode .mobile-header {
       }
   }
 
-  /* VERIFIKASI SESI BACKEND & DATA USER */
+  /* ========================================================================== */
+  /* OPTIMISTIC UI: TERAPKAN STATUS LOGIN INSTAN DARI LOCALSTORAGE              */
+  /* ========================================================================== */
+  function terapkanStatusLoginInstan() {
+      const statusLogin = localStorage.getItem("isLoggedIn");
+      const namaUser = localStorage.getItem("userName") || "User";
+      const emailUser = localStorage.getItem("userEmail") || "";
+      const fotoProfil = localStorage.getItem("userProfilePhoto") || "";
+
+      if (statusLogin === "true") {
+          const modalUser = document.getElementById("modalUserName");
+          const sidebarUser = document.getElementById("sidebarUserName");
+          const modalEmail = document.getElementById("modalUserEmail");
+
+          if (modalUser) modalUser.textContent = namaUser;
+          if (sidebarUser) sidebarUser.textContent = namaUser;
+          if (modalEmail && emailUser) modalEmail.textContent = emailUser;
+
+          pasangFotoProfil(fotoProfil);
+
+          if (sidebarUserTrigger) sidebarUserTrigger.style.display = "flex";
+
+          const sidebarAuthItem = document.getElementById("sidebarAuthItem");
+          const sidebarAdminItem = document.getElementById("sidebarAdminItem");
+          const sidebarDashboardItem = document.getElementById("sidebarDashboardItem");
+          const sidebarLogoutItem = document.getElementById("sidebarLogoutItem");
+
+          if (sidebarAuthItem) sidebarAuthItem.style.display = "none";
+          if (sidebarAdminItem) sidebarAdminItem.style.display = "none";
+          if (sidebarDashboardItem) sidebarDashboardItem.style.display = "block";
+          if (sidebarLogoutItem) sidebarLogoutItem.style.display = "block";
+
+          const mobileAuthMenu = document.getElementById("mobileAuthMenu");
+          const mobileAdminMenu = document.getElementById("mobileAdminMenu");
+          const mobileDashboardMenu = document.getElementById("mobileDashboardMenu");
+          const mobileLogoutBtn = document.getElementById("mobileLogoutBtn");
+
+          if (mobileAuthMenu) mobileAuthMenu.style.display = "none";
+          if (mobileAdminMenu) mobileAdminMenu.style.display = "none";
+          if (mobileDashboardMenu) mobileDashboardMenu.style.display = "flex";
+          if (mobileLogoutBtn) mobileLogoutBtn.style.display = "flex";
+      }
+  }
+
+  // Jalankan instan tanpa kedip
+  terapkanStatusLoginInstan();
+
+
+  /* ========================================================================== */
+  /* VERIFIKASI SESI BACKEND DENGAN AUTH LOADER                                 */
+  /* ========================================================================== */
   async function muatDataUser() {
+      const loader = document.getElementById("authLoader");
       try {
           const res = await fetch("/api/user/login?action=check", {
               method: "GET",
@@ -1408,52 +1509,55 @@ body.dark-mode .mobile-header {
               headers: { "Accept": "application/json" }
           });
 
-          if (!res.ok) return;
+          if (!res.ok) {
+              localStorage.removeItem("isLoggedIn");
+              localStorage.removeItem("userName");
+              localStorage.removeItem("userEmail");
+              localStorage.removeItem("userProfilePhoto");
+              if (loader) {
+                  loader.style.opacity = "0";
+                  setTimeout(() => loader.style.display = "none", 300);
+              }
+              return;
+          }
 
           const data = await res.json();
 
           if (data.authenticated && data.user) {
+              localStorage.setItem("isLoggedIn", "true");
               if (data.user.name) {
+                  localStorage.setItem("userName", data.user.name);
                   const modalUser = document.getElementById("modalUserName");
                   const sidebarUser = document.getElementById("sidebarUserName");
-
                   if (modalUser) modalUser.textContent = data.user.name;
                   if (sidebarUser) sidebarUser.textContent = data.user.name;
               }
-
               if (data.user.email) {
+                  localStorage.setItem("userEmail", data.user.email);
                   const emailEl = document.getElementById("modalUserEmail");
                   if (emailEl) emailEl.textContent = data.user.email;
               }
-
-              const fotoProfil = data.user.picture || localStorage.getItem("userProfilePhoto") || "";
-              pasangFotoProfil(fotoProfil);
-
-              if (sidebarUserTrigger) sidebarUserTrigger.style.display = "flex";
-
-              // Jika sudah login, sembunyikan tombol Login di atas dan tampilkan Dashboard serta Logout
-              const sidebarAuthItem = document.getElementById("sidebarAuthItem");
-              const sidebarAdminItem = document.getElementById("sidebarAdminItem");
-              const sidebarDashboardItem = document.getElementById("sidebarDashboardItem");
-              const sidebarLogoutItem = document.getElementById("sidebarLogoutItem");
-
-              if (sidebarAuthItem) sidebarAuthItem.style.display = "none";
-              if (sidebarAdminItem) sidebarAdminItem.style.display = "none";
-              if (sidebarDashboardItem) sidebarDashboardItem.style.display = "block";
-              if (sidebarLogoutItem) sidebarLogoutItem.style.display = "block";
-
-              const mobileAuthMenu = document.getElementById("mobileAuthMenu");
-              const mobileAdminMenu = document.getElementById("mobileAdminMenu");
-              const mobileDashboardMenu = document.getElementById("mobileDashboardMenu");
-              const mobileLogoutBtn = document.getElementById("mobileLogoutBtn");
-
-              if (mobileAuthMenu) mobileAuthMenu.style.display = "none";
-              if (mobileAdminMenu) mobileAdminMenu.style.display = "none";
-              if (mobileDashboardMenu) mobileDashboardMenu.style.display = "flex";
-              if (mobileLogoutBtn) mobileLogoutBtn.style.display = "flex";
+              if (data.user.picture) {
+                  localStorage.setItem("userProfilePhoto", data.user.picture);
+                  pasangFotoProfil(data.user.picture);
+              }
+          } else {
+              localStorage.removeItem("isLoggedIn");
+              localStorage.removeItem("userName");
+              localStorage.removeItem("userEmail");
           }
+
+          if (loader) {
+              loader.style.opacity = "0";
+              setTimeout(() => loader.style.display = "none", 300);
+          }
+
       } catch (err) {
           console.warn("Belum login atau gagal cek sesi.");
+          if (loader) {
+              loader.style.opacity = "0";
+              setTimeout(() => loader.style.display = "none", 300);
+          }
       }
   }
 
@@ -1494,6 +1598,9 @@ body.dark-mode .mobile-header {
       } catch (e) {
           console.warn("Gagal logout di server.");
       } finally {
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("userName");
+          localStorage.removeItem("userEmail");
           localStorage.removeItem("userProfilePhoto");
           window.location.reload();
       }
