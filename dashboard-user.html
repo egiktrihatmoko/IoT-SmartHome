@@ -40,6 +40,49 @@
         }
 
         /* ------------------------------------------------------------- */
+        /* LAPISAN LOADING / PEMERIKSAAN SESI (MUTER) */
+        /* ------------------------------------------------------------- */
+        #authLoader {
+            position: fixed;
+            inset: 0;
+            background: #fff5f5;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #a80000;
+            font-weight: 600;
+            transition: opacity 0.3s ease;
+        }
+
+        .spinner {
+            width: 45px;
+            height: 45px;
+            border: 4px solid #f2dede;
+            border-top: 4px solid #a80000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        body.dark-mode #authLoader {
+            background: #121212;
+            color: #ff7777;
+        }
+
+        body.dark-mode .spinner {
+            border-color: #383838;
+            border-top-color: #ff5555;
+        }
+
+        /* ------------------------------------------------------------- */
         /* MENU NAVIGASI DRAWER (KHUSUS MEMBER SUDAH LOGIN) */
         /* ------------------------------------------------------------- */
         .menu-toggle {
@@ -618,6 +661,12 @@
 
 <body>
 
+<!-- INDIKATOR PEMERIKSAAN SESI (MUTER) -->
+<div id="authLoader">
+    <div class="spinner"></div>
+    <span>Memeriksa sesi akun...</span>
+</div>
+
 <!-- TOMBOL MENU DRAWER -->
 <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="navDrawer">
     <span></span>
@@ -895,9 +944,10 @@ function pasangFotoProfil(photoUrl) {
 }
 
 /* ------------------------------------------------------------- */
-/* VERIFIKASI SESI PENYEDIA VIA REDIS BACKEND */
+/* VERIFIKASI SESI PENYEDIA VIA REDIS BACKEND + LOADER */
 /* ------------------------------------------------------------- */
 async function muatDataUser() {
+    const loader = document.getElementById("authLoader");
     try {
         const res = await fetch("/api/user/login?action=check", {
             method: "GET",
@@ -931,6 +981,12 @@ async function muatDataUser() {
         // Ambil Foto dari Redis, atau fallback ke localStorage jika pernah upload manual
         const fotoProfil = data.user.picture || localStorage.getItem("userProfilePhoto") || "";
         pasangFotoProfil(fotoProfil);
+
+        // Hilangkan loader dengan mulus agar dashboard muncul
+        if (loader) {
+            loader.style.opacity = "0";
+            setTimeout(() => loader.style.display = "none", 300);
+        }
 
     } catch (err) {
         console.error("Gagal memeriksa sesi user:", err);
