@@ -337,7 +337,6 @@
             margin-top: auto;
         }
 
-        /* Mobile: letakkan Logout tepat di bawah Dark Mode */
         @media (max-width: 850px) {
             .nav-drawer {
                 height: 100vh;
@@ -1148,6 +1147,37 @@
                 </div>
             </div>
 
+            <!-- PILIH FEE (BAGIAN NO 4 YANG DITAMBAHKAN) -->
+            <div class="section">
+                <div class="section-title">
+                    <div class="number">4</div>
+                    Pilih Fee
+                </div>
+
+                <div class="options">
+                    <label class="option">
+                        <input
+                            type="radio"
+                            name="feeOption"
+                            value="0.5"
+                            checked
+                            onchange="hitung()"
+                        >
+                        Fee 0,5%
+                    </label>
+
+                    <label class="option">
+                        <input
+                            type="radio"
+                            name="feeOption"
+                            value="0"
+                            onchange="hitung()"
+                        >
+                        Tanpa Fee (0%)
+                    </label>
+                </div>
+            </div>
+
             <!-- HASIL -->
             <div class="result">
                 <div class="result-title">Rincian Perhitungan</div>
@@ -1194,9 +1224,9 @@
                     <div class="amount" id="hasilSubtotal">Rp0</div>
                 </div>
 
-                <div class="row space-top">
+                <div class="row space-top" id="rowFeeContainer">
                     <div>
-                        <div class="row-title">Fee 0,5%</div>
+                        <div class="row-title" id="namaFee">Fee 0,5%</div>
                         <div class="calculation" id="hitungFee">Rp0 × 0,5%</div>
                     </div>
                     <div class="amount" id="hasilFee">Rp0</div>
@@ -1293,12 +1323,16 @@ function hitung() {
         document.querySelector('input[name="pph"]:checked').value
     );
 
+    const feeRate = Number(
+        document.querySelector('input[name="feeOption"]:checked').value
+    );
+
     const dasarPajak = hargaDasar;
     const tarifPajakHitung = pajak === 12 ? 11 : pajak;
     const hasilPajak = dasarPajak * (tarifPajakHitung / 100);
     const hasilPph = dasarPajak * (pph / 100);
     const subtotal = dasarPajak + hasilPajak + hasilPph;
-    const fee = subtotal * 0.005;
+    const fee = subtotal * (feeRate / 100);
     const hargaTayang = subtotal + fee;
 
     const namaPajak =
@@ -1342,11 +1376,17 @@ function hitung() {
     document.getElementById("hasilSubtotal").textContent =
         rupiah(subtotal);
 
-    document.getElementById("hitungFee").textContent =
-        rupiah(subtotal) + " × 0,5%";
-
-    document.getElementById("hasilFee").textContent =
-        rupiah(fee);
+    const rowFeeContainer = document.getElementById("rowFeeContainer");
+    if (feeRate === 0) {
+        rowFeeContainer.style.display = "none";
+    } else {
+        rowFeeContainer.style.display = "flex";
+        document.getElementById("namaFee").textContent = "Fee 0,5%";
+        document.getElementById("hitungFee").textContent =
+            rupiah(subtotal) + " × 0,5%";
+        document.getElementById("hasilFee").textContent =
+            rupiah(fee);
+    }
 
     document.getElementById("hargaTayang").textContent =
         rupiah(hargaTayang);
@@ -1361,6 +1401,10 @@ function resetForm() {
 
     document.querySelector(
         'input[name="pph"][value="1.5"]'
+    ).checked = true;
+
+    document.querySelector(
+        'input[name="feeOption"][value="0.5"]'
     ).checked = true;
 
     hitung();
@@ -1480,7 +1524,6 @@ async function muatDataUser() {
             if (sidebarUserTrigger) sidebarUserTrigger.style.display = "flex";
             if (mobileUserTrigger) mobileUserTrigger.style.display = "flex";
 
-            // Sembunyikan Login User & Login Admin jika sudah login (Desktop & Mobile)
             const sidebarAuthItem = document.getElementById("sidebarAuthItem");
             const sidebarAdminItem = document.getElementById("sidebarAdminItem");
             const sidebarDashboardItem = document.getElementById("sidebarDashboardItem");
