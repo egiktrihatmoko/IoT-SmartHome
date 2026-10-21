@@ -678,6 +678,70 @@
             line-height: 1.5;
         }
 
+        /* LOADING SAAT MEMERIKSA SESI LOGIN */
+        .session-check-loading {
+            position: fixed;
+            inset: 0;
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(255, 245, 245, 0.88);
+            backdrop-filter: blur(3px);
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        .session-check-loading.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .session-check-card {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 18px 22px;
+            max-width: 100%;
+            background: #fff;
+            border: 1px solid #f2dede;
+            border-radius: 14px;
+            box-shadow: 0 8px 28px rgba(150, 0, 0, 0.12);
+            color: #a80000;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .session-check-spinner {
+            width: 23px;
+            height: 23px;
+            flex: 0 0 23px;
+            border: 3px solid #f3caca;
+            border-top-color: #a80000;
+            border-radius: 50%;
+            animation: sessionCheckSpin 0.75s linear infinite;
+        }
+
+        @keyframes sessionCheckSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        body.dark-mode .session-check-loading {
+            background: rgba(18, 18, 18, 0.88);
+        }
+
+        body.dark-mode .session-check-card {
+            background: #1e1e1e;
+            border-color: #383838;
+            color: #ff7777;
+        }
+
+        body.dark-mode .session-check-spinner {
+            border-color: #493030;
+            border-top-color: #ff7777;
+        }
+
         /* ------------------------------------------------------------- */
         /* MODAL POPUP EDIT FOTO PROFIL */
         /* ------------------------------------------------------------- */
@@ -888,6 +952,13 @@
 </head>
 
 <body>
+<!-- LOADING SAAT MEMERIKSA STATUS LOGIN -->
+<div class="session-check-loading" id="sessionCheckLoading" role="status" aria-live="polite">
+    <div class="session-check-card">
+        <span class="session-check-spinner" aria-hidden="true"></span>
+        <span>Sedang Memeriksa sesi akun...</span>
+    </div>
+</div>
 
 <!-- SIDEBAR KIRI (TAMPILAN KHUSUS LAPTOP / DESKTOP) -->
 <aside class="sidebar-desktop">
@@ -1513,6 +1584,8 @@ function pasangFotoProfil(photoUrl) {
 
 /* VERIFIKASI SESI BACKEND & DATA USER */
 async function muatDataUser() {
+    const sessionLoading = document.getElementById("sessionCheckLoading");
+
     try {
         const res = await fetch("/api/user/login?action=check", {
             method: "GET",
@@ -1569,6 +1642,9 @@ async function muatDataUser() {
         }
     } catch (err) {
         console.warn("Belum login atau gagal cek sesi.");
+    } finally {
+        // Loading ditutup setelah pengecekan sesi selesai, baik login maupun belum login.
+        if (sessionLoading) sessionLoading.classList.add("hidden");
     }
 }
 
