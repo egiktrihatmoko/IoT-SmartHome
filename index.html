@@ -21,6 +21,45 @@
             transition: background 0.25s, color 0.25s;
         }
 
+        #authLoader {
+            position: fixed;
+            inset: 0;
+            background: #fff5f5;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            color: #a80000;
+            font-weight: 600;
+            transition: opacity 0.3s ease;
+        }
+
+        .spinner {
+            width: 45px;
+            height: 45px;
+            border: 4px solid #f2dede;
+            border-top: 4px solid #a80000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        body.dark-mode #authLoader {
+            background: #121212;
+            color: #ff7777;
+        }
+
+        body.dark-mode .spinner {
+            border-color: #383838;
+            border-top-color: #ff5555;
+        }
+
         /* ------------------------------------------------------------- */
         /* SIDEBAR KIRI (UNTUK DESKTOP / LAPTOP) */
         /* ------------------------------------------------------------- */
@@ -678,70 +717,6 @@
             line-height: 1.5;
         }
 
-        /* LOADING SAAT MEMERIKSA SESI LOGIN */
-        .session-check-loading {
-            position: fixed;
-            inset: 0;
-            z-index: 3000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: rgba(255, 245, 245, 0.88);
-            backdrop-filter: blur(3px);
-            transition: opacity 0.2s ease, visibility 0.2s ease;
-        }
-
-        .session-check-loading.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .session-check-card {
-            display: flex;
-            align-items: center;
-            gap: 13px;
-            padding: 18px 22px;
-            max-width: 100%;
-            background: #fff;
-            border: 1px solid #f2dede;
-            border-radius: 14px;
-            box-shadow: 0 8px 28px rgba(150, 0, 0, 0.12);
-            color: #a80000;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .session-check-spinner {
-            width: 23px;
-            height: 23px;
-            flex: 0 0 23px;
-            border: 3px solid #f3caca;
-            border-top-color: #a80000;
-            border-radius: 50%;
-            animation: sessionCheckSpin 0.75s linear infinite;
-        }
-
-        @keyframes sessionCheckSpin {
-            to { transform: rotate(360deg); }
-        }
-
-        body.dark-mode .session-check-loading {
-            background: rgba(18, 18, 18, 0.88);
-        }
-
-        body.dark-mode .session-check-card {
-            background: #1e1e1e;
-            border-color: #383838;
-            color: #ff7777;
-        }
-
-        body.dark-mode .session-check-spinner {
-            border-color: #493030;
-            border-top-color: #ff7777;
-        }
-
         /* ------------------------------------------------------------- */
         /* MODAL POPUP EDIT FOTO PROFIL */
         /* ------------------------------------------------------------- */
@@ -952,24 +927,22 @@
 </head>
 
 <body>
-<!-- LOADING SAAT MEMERIKSA STATUS LOGIN -->
-<div class="session-check-loading" id="sessionCheckLoading" role="status" aria-live="polite">
-    <div class="session-check-card">
-        <span class="session-check-spinner" aria-hidden="true"></span>
-        <span>Sedang Memeriksa sesi akun...</span>
-    </div>
+
+<div id="authLoader">
+    <div class="spinner"></div>
+    <span id="authLoaderText">Memeriksa sesi akun...</span>
 </div>
 
 <!-- SIDEBAR KIRI (TAMPILAN KHUSUS LAPTOP / DESKTOP) -->
 <aside class="sidebar-desktop">
     <div class="sidebar-logo">
-        <a href="/beranda.html">
+        <a href="/dashboard-user.html">
             <img src="ykk.png" alt="YUK BERES">
         </a>
     </div>
 
-    <!-- PROFIL PENGGUNA DI SIDEBAR (Hanya tampil jika login) -->
-    <div class="sidebar-user-card" id="sidebarUserTrigger" title="Klik untuk edit profil" style="display: none;">
+    <!-- PROFIL PENGGUNA DI SIDEBAR -->
+    <div class="sidebar-user-card" id="sidebarUserTrigger" title="Klik untuk edit profil">
         <div class="sidebar-user-avatar">
             <span id="sidebarUserAvatarIcon">👤</span>
             <img id="sidebarUserAvatarImg" src="" alt="Avatar" style="display: none;">
@@ -982,16 +955,8 @@
 
     <!-- MENU VERTIKAL SIDEBAR -->
     <ul class="sidebar-menu-list">
-        <!-- TOMBOL LOGIN / DASHBOARD DI PALING ATAS -->
-        <li class="sidebar-menu-item" id="sidebarAuthItem">
-            <a href="/login-user.html" class="sidebar-login-btn">
-                <span class="menu-icon">🔑</span>
-                <span>Login User</span>
-            </a>
-        </li>
-
         <li class="sidebar-menu-item">
-            <a href="/beranda.html">
+            <a href="/dashboard-user.html">
                 <span class="menu-icon">🏠</span>
                 <span>Beranda Utama</span>
             </a>
@@ -1025,15 +990,7 @@
             </button>
         </li>
 
-        <!-- TOMBOL LOGIN ADMIN (DIHILANGKAN JIKA SUDAH LOGIN USER) -->
-        <li class="sidebar-menu-item" id="sidebarAdminItem">
-            <a href="/admin.html">
-                <span class="menu-icon">🔑</span>
-                <span>Login Admin</span>
-            </a>
-        </li>
-
-        <li class="sidebar-menu-item" id="sidebarLogoutItem" style="display: none;">
+        <li class="sidebar-menu-item">
             <button class="sidebar-logout btn-logout-action" type="button">
                 <span class="menu-icon">🚪</span>
                 <span>Keluar / Logout</span>
@@ -1048,7 +1005,7 @@
         <span></span><span></span><span></span>
     </button>
     <div class="mobile-brand">
-        <a href="/beranda.html">
+        <a href="/dashboard-user.html">
             <img src="ykk.png" alt="YUK BERES">
         </a>
     </div>
@@ -1059,8 +1016,8 @@
 <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
     <div class="nav-drawer-content">
         
-        <!-- PROFIL PENGGUNA DI MOBILE DRAWER (Hanya tampil jika sudah login) -->
-        <div class="sidebar-user-card" id="mobileUserTrigger" title="Klik untuk edit profil" style="display: none; margin-bottom: 15px;">
+        <!-- PROFIL PENGGUNA DI MOBILE DRAWER -->
+        <div class="sidebar-user-card" id="mobileUserTrigger" title="Klik untuk edit profil" style="margin-bottom: 15px;">
             <div class="sidebar-user-avatar">
                 <span id="mobileUserAvatarIcon">👤</span>
                 <img id="mobileUserAvatarImg" src="" alt="Avatar" style="display: none;">
@@ -1073,9 +1030,7 @@
 
         <div class="nav-heading">MENU UTAMA</div>
         
-        <!-- TOMBOL LOGIN / DASHBOARD DI PALING ATAS (MOBILE) -->
-        <a class="nav-link login-link" href="/login-user.html" id="mobileAuthMenu"><span class="nav-icon">🔑</span> Login User</a>
-        <a class="nav-link" href="/beranda.html"><span class="nav-icon">🏠</span> Beranda Utama</a>
+        <a class="nav-link" href="/dashboard-user.html"><span class="nav-icon">🏠</span> Beranda Utama</a>
         <a class="nav-link active-link" href="/"><span class="nav-icon">🧮</span> Kalkulator Harga Tayang</a>
         <a class="nav-link" href="/gabung-foto.html"><span class="nav-icon">🖼️</span> Foto ke PDF</a>
         <a class="nav-link" href="/surat-pernyataan.html"><span class="nav-icon">📄</span> Surat Pernyataan</a>
@@ -1087,19 +1042,10 @@
             <span class="nav-icon" id="darkModeIcon">🌙</span>
             <span id="darkModeText">Dark Mode</span>
         </button>
-
-        <!-- TOMBOL LOGOUT MOBILE: tepat di bawah Dark Mode saat user login -->
-        <a class="nav-link logout-link btn-logout-action" id="mobileLogoutBtn" href="#" style="display: none;">
-            <span class="nav-icon">🚪</span>
-            <span>Keluar / Logout</span>
-        </a>
-
-        <!-- TOMBOL LOGIN ADMIN (DIHILANGKAN JIKA SUDAH LOGIN USER) MOBILE -->
-        <a class="nav-link admin-link" href="/admin.html" id="mobileAdminMenu" style="margin-top: 5px;">
-            <span class="nav-icon">🔑</span>
-            <span>Login Admin</span>
-        </a>
     </div>
+    <a href="#" class="nav-link logout-link btn-logout-action">
+        <span>🚪</span> Keluar / Logout
+    </a>
 </nav>
 
 <!-- KONTEN UTAMA (KALKULATOR) -->
@@ -1382,17 +1328,23 @@
             <img id="modalPreviewImg" src="" alt="Preview" style="display: none;">
         </div>
 
-        <input type="file" id="profileInput" accept="image/*" style="display: none;">
+        <input type="file" id="profileInput" accept="image/jpeg,image/png,image/webp" style="display: none;">
 
         <div class="modal-btn-group">
-            <button class="btn-modal btn-primary-modal" onclick="document.getElementById('profileInput').click()">📷 Pilih Foto Baru</button>
-            <button class="btn-modal btn-secondary-modal" id="btnDeletePhoto">🗑️ Hapus Foto Profil</button>
-            <button class="btn-modal btn-logout-modal btn-logout-action">🚪 Keluar / Logout</button>
+            <button class="btn-modal btn-primary-modal" id="btnChoosePhoto" type="button">📷 Pilih Foto Baru</button>
+            <button class="btn-modal btn-secondary-modal" id="btnDeletePhoto" type="button">🗑️ Hapus Foto Profil</button>
+            <button class="btn-modal btn-logout-modal btn-logout-action" type="button">🚪 Keluar / Logout</button>
         </div>
     </div>
 </div>
 
 <script>
+"use strict";
+
+/* PENGATURAN */
+const MAX_PHOTO_SIZE = 200 * 1024;
+const PHOTO_API_URL = "/api/user/login";
+
 function rupiah(angka) {
     return new Intl.NumberFormat('id-ID', {
         style: 'currency',
@@ -1510,39 +1462,43 @@ const navDrawer = document.getElementById("navDrawer");
 const navOverlay = document.getElementById("navOverlay");
 
 function bukaMenu() {
-    menuToggle.classList.add("active");
-    navDrawer.classList.add("show");
-    navOverlay.classList.add("show");
+    menuToggle?.classList.add("active");
+    navDrawer?.classList.add("show");
+    navOverlay?.classList.add("show");
     document.body.style.overflow = "hidden";
 }
 
 function tutupMenu() {
-    menuToggle.classList.remove("active");
-    navDrawer.classList.remove("show");
-    navOverlay.classList.remove("show");
+    menuToggle?.classList.remove("active");
+    navDrawer?.classList.remove("show");
+    navOverlay?.classList.remove("show");
     document.body.style.overflow = "";
 }
 
-if (menuToggle) menuToggle.addEventListener("click", () => navDrawer.classList.contains("show") ? tutupMenu() : bukaMenu());
-if (navOverlay) navOverlay.addEventListener("click", tutupMenu);
+menuToggle?.addEventListener("click", () => {
+    navDrawer?.classList.contains("show") ? tutupMenu() : bukaMenu();
+});
+
+navOverlay?.addEventListener("click", tutupMenu);
 
 /* DARK MODE CONTROLLER */
 const darkModeToggle = document.getElementById("darkModeToggle");
 const desktopDarkModeToggle = document.getElementById("desktopDarkModeToggle");
-const darkModeIcon = document.getElementById("darkModeIcon");
-const desktopDarkModeIcon = document.getElementById("desktopDarkModeIcon");
-const darkModeText = document.getElementById("darkModeText");
-const desktopDarkModeText = document.getElementById("desktopDarkModeText");
 
 function aturDarkMode(aktif) {
     document.body.classList.toggle("dark-mode", aktif);
     const icon = aktif ? "☀️" : "🌙";
     const text = aktif ? "Light Mode" : "Dark Mode";
 
-    if (darkModeIcon) darkModeIcon.textContent = icon;
-    if (desktopDarkModeIcon) desktopDarkModeIcon.textContent = icon;
-    if (darkModeText) darkModeText.textContent = text;
-    if (desktopDarkModeText) desktopDarkModeText.textContent = text;
+    ["darkModeIcon", "desktopDarkModeIcon"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = icon;
+    });
+
+    ["darkModeText", "desktopDarkModeText"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+    });
 
     try { localStorage.setItem("kalkulatorDarkMode", aktif ? "aktif" : "nonaktif"); } catch (e) {}
 }
@@ -1551,142 +1507,396 @@ let darkModeTersimpan = false;
 try { darkModeTersimpan = localStorage.getItem("kalkulatorDarkMode") === "aktif"; } catch (e) {}
 aturDarkMode(darkModeTersimpan);
 
-if (darkModeToggle) darkModeToggle.addEventListener("click", () => { aturDarkMode(!document.body.classList.contains("dark-mode")); tutupMenu(); });
-if (desktopDarkModeToggle) desktopDarkModeToggle.addEventListener("click", () => { aturDarkMode(!document.body.classList.contains("dark-mode")); });
+darkModeToggle?.addEventListener("click", () => {
+    aturDarkMode(!document.body.classList.contains("dark-mode"));
+    tutupMenu();
+});
+
+desktopDarkModeToggle?.addEventListener("click", () => {
+    aturDarkMode(!document.body.classList.contains("dark-mode"));
+});
 
 /* MODAL PROFIL */
+const profileTrigger = document.getElementById("profileTrigger");
 const sidebarUserTrigger = document.getElementById("sidebarUserTrigger");
 const mobileUserTrigger = document.getElementById("mobileUserTrigger");
 const profileModal = document.getElementById("profileModal");
 const closeModal = document.getElementById("closeModal");
 const profileInput = document.getElementById("profileInput");
 const btnDeletePhoto = document.getElementById("btnDeletePhoto");
+const btnChoosePhoto = document.getElementById("btnChoosePhoto");
 
-function bukaModal() { profileModal.classList.add("show"); }
-function tutupModal() { profileModal.classList.remove("show"); }
+function bukaModal() {
+    profileModal?.classList.add("show");
+}
 
-if (sidebarUserTrigger) sidebarUserTrigger.addEventListener("click", bukaModal);
-if (mobileUserTrigger) mobileUserTrigger.addEventListener("click", () => { tutupMenu(); bukaModal(); });
-if (closeModal) closeModal.addEventListener("click", tutupModal);
+function tutupModal() {
+    profileModal?.classList.remove("show");
+}
 
+sidebarUserTrigger?.addEventListener("click", bukaModal);
+mobileUserTrigger?.addEventListener("click", () => { tutupMenu(); bukaModal(); });
+closeModal?.addEventListener("click", tutupModal);
+btnChoosePhoto?.addEventListener("click", () => profileInput?.click());
+
+profileModal?.addEventListener("click", function(event) {
+    if (event.target === profileModal) tutupModal();
+});
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") {
+        tutupModal();
+        tutupMenu();
+    }
+});
+
+/* TAMPILKAN FOTO DI SEMUA BAGIAN */
 function pasangFotoProfil(photoUrl) {
-    const ids = ["modalPreviewImg", "sidebarUserAvatarImg", "mobileUserAvatarImg"];
-    const icons = ["modalPreviewIcon", "sidebarUserAvatarIcon", "mobileUserAvatarIcon"];
+    const ids = [
+        "modalPreviewImg",
+        "sidebarUserAvatarImg",
+        "mobileUserAvatarImg"
+    ];
+
+    const icons = [
+        "modalPreviewIcon",
+        "sidebarUserAvatarIcon",
+        "mobileUserAvatarIcon"
+    ];
 
     if (photoUrl) {
-        ids.forEach(id => { const el = document.getElementById(id); if (el) { el.src = photoUrl; el.style.display = "block"; } });
-        icons.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "none"; });
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.src = photoUrl;
+                el.style.display = "block";
+            }
+        });
+
+        icons.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = "none";
+        });
     } else {
-        ids.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "none"; });
-        icons.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "block"; });
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.removeAttribute("src");
+                el.style.display = "none";
+            }
+        });
+
+        icons.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = "block";
+        });
     }
 }
 
-/* VERIFIKASI SESI BACKEND & DATA USER */
-async function muatDataUser() {
-    const sessionLoading = document.getElementById("sessionCheckLoading");
+/* REQUEST KE API USER */
+async function requestAPI(options = {}, query = "") {
+    const res = await fetch(PHOTO_API_URL + query, {
+        credentials: "same-origin",
+        cache: "no-store",
+        ...options,
+        headers: {
+            "Accept": "application/json",
+            ...(options.headers || {})
+        }
+    });
+
+    let data;
 
     try {
-        const res = await fetch("/api/user/login?action=check", {
-            method: "GET",
-            credentials: "same-origin",
-            cache: "no-store",
-            headers: { "Accept": "application/json" }
-        });
+        data = await res.json();
+    } catch (e) {
+        throw new Error("Respons server tidak valid. Coba lagi.");
+    }
 
-        if (!res.ok) return;
+    if (!res.ok || data.success === false || data.error) {
+        throw new Error(
+            data.message || data.error || "Permintaan gagal diproses."
+        );
+    }
 
-        const data = await res.json();
+    return data;
+}
 
-        if (data.authenticated && data.user) {
-            if (data.user.name) {
-                const modalUser = document.getElementById("modalUserName");
-                const sidebarUser = document.getElementById("sidebarUserName");
-                const mobileUser = document.getElementById("mobileUserName");
+/* CEK LOGIN DAN AMBIL DATA USER */
+async function muatDataUser() {
+    const loader = document.getElementById("authLoader");
+    const loaderText = document.getElementById("authLoaderText");
 
-                if (modalUser) modalUser.textContent = data.user.name;
-                if (sidebarUser) sidebarUser.textContent = data.user.name;
-                if (mobileUser) mobileUser.textContent = data.user.name;
-            }
+    try {
+        const data = await requestAPI(
+            {
+                method: "GET"
+            },
+            "?action=check"
+        );
 
-            if (data.user.email) {
-                const emailEl = document.getElementById("modalUserEmail");
-                if (emailEl) emailEl.textContent = data.user.email;
-            }
+        if (!data.authenticated || !data.user) {
+            window.location.replace("/login-user.html");
+            return;
+        }
 
-            const fotoProfil = data.user.picture || localStorage.getItem("userProfilePhoto") || "";
-            pasangFotoProfil(fotoProfil);
+        const user = data.user;
 
-            if (sidebarUserTrigger) sidebarUserTrigger.style.display = "flex";
-            if (mobileUserTrigger) mobileUserTrigger.style.display = "flex";
+        if (user.name) {
+            document.getElementById("modalUserName").textContent = user.name;
+            document.getElementById("sidebarUserName").textContent = user.name;
+            document.getElementById("mobileUserName").textContent = user.name;
+        }
 
-            const sidebarAuthItem = document.getElementById("sidebarAuthItem");
-            const sidebarAdminItem = document.getElementById("sidebarAdminItem");
-            const sidebarDashboardItem = document.getElementById("sidebarDashboardItem");
-            const sidebarLogoutItem = document.getElementById("sidebarLogoutItem");
+        if (user.email) {
+            document.getElementById("modalUserEmail").textContent = user.email;
+        }
 
-            if (sidebarAuthItem) sidebarAuthItem.style.display = "none";
-            if (sidebarAdminItem) sidebarAdminItem.style.display = "none";
-            if (sidebarDashboardItem) sidebarDashboardItem.style.display = "block";
-            if (sidebarLogoutItem) sidebarLogoutItem.style.display = "block";
+        pasangFotoProfil(user.picture || "");
 
-            const mobileAuthMenu = document.getElementById("mobileAuthMenu");
-            const mobileAdminMenu = document.getElementById("mobileAdminMenu");
-            const mobileDashboardMenu = document.getElementById("mobileDashboardMenu");
-            const mobileLogoutBtn = document.getElementById("mobileLogoutBtn");
+        if (loader) {
+            loader.style.opacity = "0";
 
-            if (mobileAuthMenu) mobileAuthMenu.style.display = "none";
-            if (mobileAdminMenu) mobileAdminMenu.style.display = "none";
-            if (mobileDashboardMenu) mobileDashboardMenu.style.display = "flex";
-            if (mobileLogoutBtn) mobileLogoutBtn.style.display = "flex";
+            setTimeout(() => {
+                loader.style.display = "none";
+            }, 300);
         }
     } catch (err) {
-        console.warn("Belum login atau gagal cek sesi.");
-    } finally {
-        // Loading ditutup setelah pengecekan sesi selesai, baik login maupun belum login.
-        if (sessionLoading) sessionLoading.classList.add("hidden");
+        console.error("Gagal memuat sesi user:", err);
+
+        if (loaderText) {
+            loaderText.textContent =
+                "Gagal memeriksa sesi. Silakan coba muat ulang halaman.";
+        }
     }
 }
 
+/* KOMPRES FOTO SEBELUM DIKIRIM KE SERVER */
+async function siapkanFoto(file) {
+    if (!file) {
+        throw new Error("Pilih foto terlebih dahulu.");
+    }
+
+    const tipeDiizinkan = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ];
+
+    if (!tipeDiizinkan.includes(file.type)) {
+        throw new Error("Format foto harus JPG, PNG, atau WebP.");
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+        throw new Error("Ukuran foto asli maksimal 10 MB.");
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+
+    try {
+        const gambar = new Image();
+
+        await new Promise((resolve, reject) => {
+            gambar.onload = resolve;
+            gambar.onerror = () => reject(
+                new Error("Foto tidak dapat dibaca.")
+            );
+            gambar.src = objectUrl;
+        });
+
+        const canvas = document.createElement("canvas");
+        const batasDimensi = 900;
+
+        const skala = Math.min(
+            1,
+            batasDimensi / Math.max(
+                gambar.naturalWidth,
+                gambar.naturalHeight
+            )
+        );
+
+        canvas.width = Math.max(
+            1,
+            Math.round(gambar.naturalWidth * skala)
+        );
+
+        canvas.height = Math.max(
+            1,
+            Math.round(gambar.naturalHeight * skala)
+        );
+
+        const context = canvas.getContext("2d");
+
+        if (!context) {
+            throw new Error("Browser tidak mendukung pemrosesan foto.");
+        }
+
+        context.drawImage(
+            gambar,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        let kualitas = 0.85;
+        let hasil = canvas.toDataURL("image/jpeg", kualitas);
+
+        while (
+            hasil.length * 0.75 > MAX_PHOTO_SIZE &&
+            kualitas > 0.25
+        ) {
+            kualitas -= 0.1;
+            hasil = canvas.toDataURL("image/jpeg", kualitas);
+        }
+
+        if (hasil.length * 0.75 > MAX_PHOTO_SIZE) {
+            throw new Error(
+                "Foto belum bisa diperkecil hingga 200 KB. " +
+                "Coba gunakan foto lain."
+            );
+        }
+
+        return hasil;
+    } finally {
+        URL.revokeObjectURL(objectUrl);
+    }
+}
+
+/* UPLOAD FOTO KE REDIS MELALUI API */
+let sedangUploadFoto = false;
+
 if (profileInput) {
-    profileInput.addEventListener("change", function() {
-        const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64Image = e.target.result;
-                try {
-                    localStorage.setItem("userProfilePhoto", base64Image);
-                    pasangFotoProfil(base64Image);
-                    tutupModal();
-                } catch (err) { alert("Gambar terlalu besar."); }
-            };
-            reader.readAsDataURL(file);
+    profileInput.addEventListener("change", async function() {
+        const file = this.files?.[0];
+
+        if (!file || sedangUploadFoto) return;
+
+        sedangUploadFoto = true;
+
+        btnChoosePhoto.disabled = true;
+        btnChoosePhoto.textContent = "Mengunggah foto...";
+
+        try {
+            const base64Image = await siapkanFoto(file);
+
+            const data = await requestAPI({
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    action: "profile-photo",
+                    pictureAction: "save",
+                    picture: base64Image
+                })
+            });
+
+            const fotoTersimpan =
+                data.user?.picture ||
+                data.picture ||
+                base64Image;
+
+            pasangFotoProfil(fotoTersimpan);
+            tutupModal();
+
+            alert("Foto profil berhasil disimpan.");
+        } catch (err) {
+            console.error("Upload foto gagal:", err);
+
+            alert(err.message || "Gagal menyimpan foto profil.");
+        } finally {
+            sedangUploadFoto = false;
+            btnChoosePhoto.disabled = false;
+            btnChoosePhoto.textContent = "📷 Pilih Foto Baru";
+            profileInput.value = "";
         }
     });
 }
 
-if (btnDeletePhoto) {
-    btnDeletePhoto.addEventListener("click", function() {
-        localStorage.removeItem("userProfilePhoto");
-        if (profileInput) profileInput.value = "";
-        pasangFotoProfil("");
-        tutupModal();
-    });
-}
+/* HAPUS FOTO DARI REDIS */
+let sedangHapusFoto = false;
 
-async function lakukanLogout() {
+btnDeletePhoto?.addEventListener("click", async function() {
+    if (sedangHapusFoto) return;
+
+    if (!confirm("Yakin ingin menghapus foto profil?")) return;
+
+    sedangHapusFoto = true;
+    btnDeletePhoto.disabled = true;
+    btnDeletePhoto.textContent = "Menghapus foto...";
+
     try {
-        await fetch("/api/user/login", {
+        await requestAPI({
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "logout" })
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                action: "profile-photo",
+                pictureAction: "delete"
+            })
         });
-    } catch (e) {
-        console.warn("Gagal logout di server.");
+
+        pasangFotoProfil("");
+
+        if (profileInput) {
+            profileInput.value = "";
+        }
+
+        tutupModal();
+
+        alert("Foto profil berhasil dihapus.");
+    } catch (err) {
+        console.error("Hapus foto gagal:", err);
+
+        alert(err.message || "Gagal menghapus foto profil.");
     } finally {
-        localStorage.removeItem("userProfilePhoto");
-        window.location.reload();
+        sedangHapusFoto = false;
+        btnDeletePhoto.disabled = false;
+        btnDeletePhoto.textContent = "🗑️ Hapus Foto Profil";
+    }
+});
+
+/* LOGOUT */
+let sedangLogout = false;
+
+async function lakukanLogout(event) {
+    event?.preventDefault();
+
+    if (sedangLogout) return;
+
+    sedangLogout = true;
+
+    document.querySelectorAll(".btn-logout-action").forEach(btn => {
+        btn.style.pointerEvents = "none";
+    });
+
+    try {
+        await requestAPI({
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                action: "logout"
+            })
+        });
+
+        window.location.replace("/login-user.html");
+    } catch (err) {
+        console.error("Logout gagal:", err);
+
+        alert(
+            "Logout belum berhasil dipastikan oleh server. " +
+            "Silakan coba lagi."
+        );
+
+        sedangLogout = false;
+
+        document.querySelectorAll(".btn-logout-action").forEach(btn => {
+            btn.style.pointerEvents = "";
+        });
     }
 }
 
