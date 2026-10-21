@@ -491,6 +491,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            flex-wrap: wrap;
         }
 
         .option {
@@ -503,6 +504,7 @@
             transition: 0.2s;
             background: white;
             flex: 1;
+            min-width: 120px;
         }
 
         .option:hover {
@@ -1147,7 +1149,7 @@
                 </div>
             </div>
 
-            <!-- PILIH FEE (BAGIAN NO 4 YANG DITAMBAHKAN) -->
+            <!-- PILIH FEE (BAGIAN NO 4 DENGAN OPSI 0.5%, 1%, 1.5%, 2%) -->
             <div class="section">
                 <div class="section-title">
                     <div class="number">4</div>
@@ -1170,10 +1172,30 @@
                         <input
                             type="radio"
                             name="feeOption"
-                            value="0"
+                            value="1"
                             onchange="hitung()"
                         >
-                        Tanpa Fee (0%)
+                        Fee 1%
+                    </label>
+
+                    <label class="option">
+                        <input
+                            type="radio"
+                            name="feeOption"
+                            value="1.5"
+                            onchange="hitung()"
+                        >
+                        Fee 1,5%
+                    </label>
+
+                    <label class="option">
+                        <input
+                            type="radio"
+                            name="feeOption"
+                            value="2"
+                            onchange="hitung()"
+                        >
+                        Fee 2%
                     </label>
                 </div>
             </div>
@@ -1224,7 +1246,7 @@
                     <div class="amount" id="hasilSubtotal">Rp0</div>
                 </div>
 
-                <div class="row space-top" id="rowFeeContainer">
+                <div class="row space-top">
                     <div>
                         <div class="row-title" id="namaFee">Fee 0,5%</div>
                         <div class="calculation" id="hitungFee">Rp0 × 0,5%</div>
@@ -1343,6 +1365,11 @@ function hitung() {
             ? "PPh 1,5% — Barang"
             : "PPh 23 2% — Jasa";
 
+    const labelFee = 
+        feeRate === 0.5 ? "Fee 0,5%" :
+        feeRate === 1 ? "Fee 1%" :
+        feeRate === 1.5 ? "Fee 1,5%" : "Fee 2%";
+
     document.getElementById("hasilHargaDasar").textContent =
         rupiah(hargaDasar);
 
@@ -1376,17 +1403,13 @@ function hitung() {
     document.getElementById("hasilSubtotal").textContent =
         rupiah(subtotal);
 
-    const rowFeeContainer = document.getElementById("rowFeeContainer");
-    if (feeRate === 0) {
-        rowFeeContainer.style.display = "none";
-    } else {
-        rowFeeContainer.style.display = "flex";
-        document.getElementById("namaFee").textContent = "Fee 0,5%";
-        document.getElementById("hitungFee").textContent =
-            rupiah(subtotal) + " × 0,5%";
-        document.getElementById("hasilFee").textContent =
-            rupiah(fee);
-    }
+    document.getElementById("namaFee").textContent = labelFee;
+
+    document.getElementById("hitungFee").textContent =
+        rupiah(subtotal) + " × " + (feeRate === 0.5 ? "0,5%" : feeRate + "%");
+
+    document.getElementById("hasilFee").textContent =
+        rupiah(fee);
 
     document.getElementById("hargaTayang").textContent =
         rupiah(hargaTayang);
