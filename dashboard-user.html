@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -320,7 +319,7 @@
             height: 100vh;
             background: #fff;
             z-index: 1001;
-            padding: 85px 18px 25px;
+            padding: 25px 18px;
             box-shadow: 5px 0 25px rgba(0, 0, 0, 0.12);
             transform: translateX(-105%);
             transition: transform 0.25s ease;
@@ -335,6 +334,8 @@
 
         .nav-drawer-content {
             flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .nav-heading {
@@ -342,7 +343,7 @@
             font-size: 12px;
             font-weight: bold;
             letter-spacing: 1px;
-            margin: 0 12px 15px;
+            margin: 10px 12px 15px;
         }
 
         .nav-link {
@@ -365,30 +366,31 @@
             background: #fff0f0;
             color: #a80000;
         }
-.nav-link.logout-link {
-    margin-top: 0;
-    margin-bottom: 0;
-    flex-shrink: 0;
-}
 
-@media (max-width: 850px) {
-    .nav-drawer {
-        height: 100vh;
-        height: 100dvh;
-        padding-bottom: max(25px, env(safe-area-inset-bottom));
-    }
+        .nav-link.logout-link {
+            color: #d31010;
+            background: #fff0f0;
+            border: 1px solid #f2dede;
+            margin-top: auto;
+        }
 
-    .nav-drawer-content {
-        flex: 0 0 auto;
-    }
+        @media (max-width: 850px) {
+            .nav-drawer {
+                height: 100vh;
+                height: 100dvh;
+                padding-bottom: max(25px, env(safe-area-inset-bottom));
+            }
 
-    .nav-link.logout-link {
-        margin-top: 0;
-        margin-bottom: 0;
-        flex-shrink: 0;
-    }
-}
+            .nav-drawer-content {
+                flex: 0 0 auto;
+            }
 
+            .nav-link.logout-link {
+                margin-top: 0;
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+        }
 
         .hero-banner {
             position: relative;
@@ -668,19 +670,23 @@
         }
 
         body.dark-mode .sidebar-menu-item a,
-        body.dark-mode .sidebar-menu-item button {
+        body.dark-mode .sidebar-menu-item button,
+        body.dark-mode .nav-link {
             color: #eee;
         }
 
         body.dark-mode .sidebar-menu-item a:hover,
         body.dark-mode .sidebar-menu-item button:hover,
-        body.dark-mode .sidebar-menu-item a.active-link {
+        body.dark-mode .sidebar-menu-item a.active-link,
+        body.dark-mode .nav-link:hover,
+        body.dark-mode .nav-link.active-link {
             background: #382020;
             color: #ff7777;
         }
 
         body.dark-mode .section-title,
-        body.dark-mode .card-action {
+        body.dark-mode .card-action,
+        body.dark-mode .nav-heading {
             color: #ff6666;
         }
 
@@ -768,7 +774,7 @@
         <li class="sidebar-menu-item">
             <button id="desktopDarkModeToggle" type="button">
                 <span class="menu-icon" id="desktopDarkModeIcon">🌙</span>
-                <span id="desktopDarkModeText">Dark Mode</span>
+                <span id="desktopDarkModeText">DarkMode</span>
             </button>
         </li>
 
@@ -794,8 +800,20 @@
 
 <div class="nav-overlay" id="navOverlay"></div>
 
-<nav class="nav-drawer" id="navDrawer">
+<nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
     <div class="nav-drawer-content">
+        <!-- KARTU PROFIL PENGGUNA DI MOBILE DRAWER (ANDROID) -->
+        <div class="sidebar-user-card" id="mobileUserTrigger" title="Klik untuk edit profil" style="margin-bottom: 15px;">
+            <div class="sidebar-user-avatar">
+                <span id="mobileUserAvatarIcon">👤</span>
+                <img id="mobileUserAvatarImg" src="" alt="Avatar" style="display:none;">
+            </div>
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-name" id="mobileUserName">User</div>
+                <div class="sidebar-user-role">Penyedia</div>
+            </div>
+        </div>
+
         <div class="nav-heading">MENU UTAMA</div>
         <a class="nav-link active-link" href="/dashboard-user.html"><span>🏠</span> Beranda Utama</a>
         <a class="nav-link" href="/"><span>🧮</span> Kalkulator Harga Tayang</a>
@@ -982,6 +1000,7 @@ desktopDarkModeToggle?.addEventListener("click", () => {
 /* MODAL PROFIL */
 const profileTrigger = document.getElementById("profileTrigger");
 const sidebarUserTrigger = document.getElementById("sidebarUserTrigger");
+const mobileUserTrigger = document.getElementById("mobileUserTrigger");
 const profileModal = document.getElementById("profileModal");
 const closeModal = document.getElementById("closeModal");
 const profileInput = document.getElementById("profileInput");
@@ -998,6 +1017,7 @@ function tutupModal() {
 
 profileTrigger?.addEventListener("click", bukaModal);
 sidebarUserTrigger?.addEventListener("click", bukaModal);
+mobileUserTrigger?.addEventListener("click", () => { tutupMenu(); bukaModal(); });
 closeModal?.addEventListener("click", tutupModal);
 btnChoosePhoto?.addEventListener("click", () => profileInput?.click());
 
@@ -1017,13 +1037,15 @@ function pasangFotoProfil(photoUrl) {
     const ids = [
         "headerProfileImg",
         "modalPreviewImg",
-        "sidebarUserAvatarImg"
+        "sidebarUserAvatarImg",
+        "mobileUserAvatarImg"
     ];
 
     const icons = [
         "headerProfileIcon",
         "modalPreviewIcon",
-        "sidebarUserAvatarIcon"
+        "sidebarUserAvatarIcon",
+        "mobileUserAvatarIcon"
     ];
 
     if (photoUrl) {
@@ -1057,15 +1079,7 @@ function pasangFotoProfil(photoUrl) {
     }
 }
 
-/*
-REQUEST KE API USER
-
-Parameter query digunakan agar pengecekan sesi mengarah ke:
-GET /api/user/login?action=check
-
-Request lainnya tetap menggunakan:
-POST /api/user/login
-*/
+/* REQUEST KE API USER */
 async function requestAPI(options = {}, query = "") {
     const res = await fetch(PHOTO_API_URL + query, {
         credentials: "same-origin",
@@ -1123,6 +1137,9 @@ async function muatDataUser() {
 
             document.getElementById("sidebarUserName").textContent =
                 user.name;
+
+            const mobileUserName = document.getElementById("mobileUserName");
+            if (mobileUserName) mobileUserName.textContent = user.name;
         }
 
         if (user.email) {
@@ -1146,11 +1163,6 @@ async function muatDataUser() {
             loaderText.textContent =
                 "Gagal memeriksa sesi. Silakan coba muat ulang halaman.";
         }
-
-        /*
-        Jangan langsung redirect ke login saat server atau jaringan error.
-        Loader tetap menampilkan pesan agar penyebabnya tidak tersembunyi.
-        */
     }
 }
 
@@ -1341,7 +1353,7 @@ btnDeletePhoto?.addEventListener("click", async function() {
     }
 });
 
-/* LOGOUT — FOTO PROFIL TETAP TERSIMPAN */
+/* LOGOUT */
 let sedangLogout = false;
 
 async function lakukanLogout(event) {
@@ -1392,4 +1404,4 @@ muatDataUser();
 </script>
 
 </body>
-</html>
+    </html>
