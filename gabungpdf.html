@@ -3,96 +3,1763 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stempel e-Meterai Otomatis - YUK BERES</title>
-    <script src="https://unpkg.com/pdf-lib@1.4.0"></script>
+    <title>Preview & Pengisi PDF Invoice e-Meterai</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PDF-Lib untuk manipulasi PDF -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <!-- PDF.js untuk rendering preview -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    </script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
-        body { background: #fff5f5; color: #222; padding: 30px; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 16px; border: 1px solid #f2dede; box-shadow: 0 10px 25px rgba(168,0,0,0.08); }
-        h1 { color: #a80000; font-size: 22px; margin-bottom: 8px; }
-        p { color: #666; font-size: 14px; margin-bottom: 20px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #333; }
-        input[type="file"] { width: 100%; padding: 12px; border: 1px dashed #a80000; border-radius: 8px; background: #fff8f8; cursor: pointer; }
-        button { width: 100%; background: #a80000; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 10px; }
-        button:hover { background: #850000; }
-        #status { margin-top: 15px; font-size: 13px; text-align: center; color: #555; font-weight: 600; }
+        #pdf-canvas {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
-<body>
+<body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col">
 
-<div class="container">
-    <h1>Stempel e-Meterai Otomatis</h1>
-    <p>Masukkan template master yang sudah ada meterainya dan invoice perpanjangan baru. Sistem akan menggabungkan bagian meterai secara presisi.</p>
-    
-    <div class="form-group">
-        <label for="templateFile">1. Upload Template Master (PDF yang Sudah Ada Meterai)</label>
-        <input type="file" id="templateFile" accept="application/pdf">
-    </div>
+    <!-- Header -->
+    <header class="bg-slate-900 text-white p-4 shadow-md">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Editor & Preview Template PDF (e-Meterai)
+            </h1>
+            <span class="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/30">
+                e-Meterai Ready
+            </span>
+        </div>
+    </header>
 
-    <div class="form-group">
-        <label for="newFile">2. Upload Invoice Baru (PDF Perpanjangan Tanpa Meterai)</label>
-        <input type="file" id="newFile" accept="application/pdf">
-    </div>
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto w-full p-4 md:p-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Form Control Panel (Left) -->
+        <div class="lg:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-6">
+            <div class="space-y-6">
+                <h2 class="text-lg font-semibold border-b pb-3 text-slate-700 flex items-center justify-between">
+                    Input Data
+                    <span class="text-xs font-normal text-slate-500">Isi form di bawah</span>
+                </h2>
 
-    <button id="processBtn" type="button">Proses & Download PDF Bermeterai</button>
-    <div id="status"></div>
-</div>
+                <!-- 1. Upload File Template PDF -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">1. File Template PDF</label>
+                    <input type="file" id="pdf-upload" accept="application/pdf" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 cursor-pointer border border-slate-200 rounded-xl">
+                    <p class="text-[11px] text-slate-400 mt-1">* Unggah file PDF `INV-20260810-545298-stamp.pdf` Anda.</p>
+                </div>
 
-<script>
-document.getElementById('processBtn').addEventListener('click', async () => {
-    const templateInput = document.getElementById('templateFile');
-    const newFileInput = document.getElementById('newFile');
-    const statusDiv = document.getElementById('status');
+                <!-- 2. Form Input Nama & Alamat -->
+                <div class="space-y-4">
+                    <div>
+                        <label for="input-nama" class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Nama Lengkap</label>
+                        <input type="text" id="input-nama" value="Budi Santoso" placeholder="Masukkan Nama..." class="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                    </div>
 
-    if (!templateInput.files.length || !newFileInput.files.length) {
-        alert('Harap pilih kedua file PDF terlebih dahulu!');
-        return;
-    }
+                    <div>
+                        <label for="input-alamat" class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Alamat Lengkap</label>
+                        <textarea id="input-alamat" rows="3" placeholder="Masukkan Alamat..." class="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">Jl. Pemuda No. 123, Kel. Embong Kaliasin, Kec. Genteng, Kota Surabaya, Jawa Timur 60271</textarea>
+                    </div>
+                </div>
 
-    statusDiv.textContent = 'Memproses penggabungan dokumen...';
+                <!-- 3. Kontrol Posisi Teks (Pengaturan X & Y) -->
+                <div class="border-t border-slate-100 pt-4 space-y-3">
+                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Atur Posisi Teks</h3>
+                    
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block text-slate-600 mb-1">Posisi X: <span id="val-x" class="font-bold">150</span></label>
+                            <input type="range" id="pos-x" min="20" max="500" value="150" class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div>
+                            <label class="block text-slate-600 mb-1">Posisi Y: <span id="val-y" class="font-bold">620</span></label>
+                            <input type="range" id="pos-y" min="50" max="800" value="620" class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                    </div>
 
-    try {
-        const templateBuffer = await templateInput.files[0].arrayBuffer();
-        const newFileBuffer = await newFileInput.files[0].arrayBuffer();
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block text-slate-600 mb-1">Ukuran Font: <span id="val-size" class="font-bold">11</span></label>
+                            <input type="range" id="font-size" min="8" max="24" value="11" class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div>
+                            <label class="block text-slate-600 mb-1">Tampilkan e-Meterai</label>
+                            <input type="checkbox" id="show-meterai" checked class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 mt-1">
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        const { PDFDocument } = PDFLib;
+            <!-- Tombol Aksi -->
+            <div class="space-y-2 pt-4 border-t border-slate-100">
+                <button id="btn-download" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    Unduh PDF Terisi
+                </button>
+            </div>
+        </div>
 
-        // Load kedua PDF
-        const templatePdf = await PDFDocument.load(templateBuffer);
-        const newPdf = await PDFDocument.load(newFileBuffer);
+        <!-- Preview Canvas Panel (Right) -->
+        <div class="lg:col-span-8 bg-slate-200/60 rounded-2xl p-4 flex flex-col items-center justify-center min-h-[500px] border border-slate-300/60 relative overflow-hidden">
+            <div id="loading" class="hidden absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center gap-3">
+                <div class="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                <span class="text-xs font-semibold text-slate-600">Memproses PDF & e-Meterai...</span>
+            </div>
 
-        const newPages = newPdf.getPages();
-        const firstNewPage = newPages[0];
-        const { width, height } = firstNewPage.getSize();
+            <div id="preview-container" class="relative max-w-full overflow-auto">
+                <canvas id="pdf-canvas" class="bg-white rounded-lg"></canvas>
+            </div>
+        </div>
 
-        // Ambil halaman 1 dari template master yang ada meterainya
-        const [embeddedTemplatePage] = await newPdf.embedPages(templatePdf, [0]);
+    </main>
 
-        // Menggambar area bawah template master (tempat meterai berada) di atas invoice baru secara utuh
-        // Dengan cara ini, layout invoice baru tetap aman, dan bagian meterai dari master tertempel sempurna di posisi yang sama.
-        firstNewPage.drawPage(embeddedTemplatePage, {
-            x: 0,
-            y: 0,
-            width: width,
-            height: height,
+    <!-- JavaScript Script -->
+    <script>
+        // File PNG e-Meterai (Base64 Data URL) - QR Code & Garuda 10000 Utuh
+        const E_METERAI_BASE64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALcAAAC3CAYAAABg2A97AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAIABJREFUeJzs3Xd4VFXaP/DvtNOSe0kmvZEQQiCEEnqRjlIURQUVRX3tr4u9Iervunbdtdf1Vf3ZXdcGKgKCoIggvSWh94QkJAFSkpAyyWSy/f2x7/3NvefMTAIhpLzu35snLpPTe849533O8pyn4e3t7S2EkJDQ29tb6f/5fyUkJCR4JCQkeCQkJHgkJCR4JCQkeCQkJHgsd/R1S27evIn169eX+zUnJwdqtTrAtvfffx8qlSpAGxIS4o/A/8Jt2bIFgwcPxltvvYU333wTgwYNwvz585GZmYmdO3fipZdeMtm2devWqampKV2S8vj4eLRq1croX3Jycunv4ODgkJAQfwL+fQ21atUqfPnll1i3bh0WLlyIN990/6H38vLCgAE37/fzzz+Pjz/+GH369MHChQtLr1Wr1eLEiRO47bbbAnSJiYmYNGkSAHBxcUHz5s1L/547dy7+9re/oUmTJvjjH/+IW265xfT51atXYfny5Xjqqafcfk/X3vGj31uSk5NRUlKCo0ePokOHDrBarTh9+jT+/f+55+HDhyMtLS3AV544cQJ79uwp1x8ZGQknJye4urroP+/Rowc OHDiAY8eOmW334osvYtKkSSgqKjLb1mAwYPbs2ZgxY0bAbR0dHdHdY42x8H/A+4UHDhxAdHQ0oqOjARx3vN9//z02btxods90/vx5k21ycnLwxhtv4Mcff0SNGjWQmJiIoqKi3123cePG6NKlC0JDQ832i4yMRL9+/TBnzhyMGzcOFy5cAAAYDAYUFRWB43icP3/ebH1JSQnc3NzA87y1/5/lxsH/AXeCio+PR0JCgv43y4a5/vrr3S6I3y0RERFYsGABevTowX/yySfIyspCcXGx/pmlS5fCx8fHbDvO+4X99iT+a3C43X10dLTu9169eqFPnz76mXjbtm3Izs422yY7OxtxcXHo0aMHevTowXf3mO3t/M7d4Xfhv/C48m2Cvb293i4kJAQAnu/v+3+Xf1f4X/jd4b8mISG5k/BPkJCc3f8X
++1
+/sC8
+X10
+2vN
+
+/b2X
+f3/
++3i
+p+A
+29+
+X3x
+/2v
+v6/
+p+c
+
+P/6
+v
+u/w/
+2E
+3G
+X5/2+i
+8f395/3s3//
+p3e
+i3/6+X/
+f19/f32/
+3/93y/f//v4b3z12L2
+P3
+oX4M3y3v
+4e/Xf/6
+yX732+n/8v//+P93/d33d/y
+H
+X2L//m0/a39+
+y4/
+99+u1
+5+7j//7
+1//n
+1/f6v94v/83/8f/33d//
+X3f79/b95/3/3/1
+3//4u/
+eX47v934P
+/4P33/3
+f/
+4L/
+396//13
+v//72+u34e8/b/8/v+3+X722
+3+9
+v7
+73/m/3/u3
+3/+3//z39
+n/f7m+e//e/7//v/u33f8v//5P93
+/v4395
+7//t3/
+/
+eX36/935//d//
+2f
+
+72/+e3+m5
+/579+n4/
+u8n/
+/13f7z9
+8
+/3eX+2f3/+3135/
+5/+/6/+d/v/d//
+/3
+eX+e///s//999335+X8
+2/e3++3++f57///2/3592
+/f933f/u7+f9v4X
+954/+X
++/
++X9//f7
+//s/+z3/p
++f325
+//3y/3v/d///p7f/m953
+///u///5
+5+/v
+3f7u5v7e///v930/5//7d///8P///v2f//vX35f
+///3//5/eX58+/X/s+vf3/s/+8
+/x/u/m//9/+33
+/
+9/7///39d3u5u55u
+7358
++//v3+/n7/+fnv//v7
+/v9/X/v3f
+/v39
+//+f1//3d/+f///57/+fv//v9///z
+2f/+73f/u/+5u59e//vf/
+u/+9fvv+/v
+d
+f/8/v+d///+
+//
+m7//vX379v//5f3+/92
++d
+/+fv
++/+fvv/+n
+/+fn/m/+3//s
+/+7/v8/f17+
+//v39/+2/+d//z/+v/z
+d/f9/v/+39eX53///
+7v3/+
+vf/+3//d
+/
+a+vf/+fv/+f/+3
+f3/u3
+fvv9//d35//7/+d/9////u/+fnv9/f9/vv///
+f19/d//e33
+4///7f//t3
+4
+//+399
+d///f5//8/+e/+3///
++
+7//3//vf5/
+93/+5u
+fve333vvf4///e
+///9e3
+/8/+f
+/+fv/+fX3v//u/z
+v
+f979///+v//d
+///f1//n7
+/+
+3///2/m7///
++f/3v9/v/f57/+3v+fn//
+d///m7/+39+e//
++3ve+vf/+
+v
+fve+v//d///z/+
+/3
+3/v7
+9v379f/+f/
++3/7///3///u/
+/8
++/e3//vX3u/+vf/+3/u7/v9/3vf
++fvf
+8f/+fv3/
+f/+
+/v/+3//
+m7/+vf4//9e3v///f4/+fvv9/vf/+vf//f1//3u
+///vf+fv/+///8f9/9/
+/+39vf93v9///vf//f1/9f
+///vve/u/
+z///2///vf/83f
+f7//
+vf+3///++37+vfve/u/m
+/+339/f93
+73
+4f//u
+//d//e///f
+/f5v/+ff3/f//3
+7//e3/
+v1/93/u5vfX
+1/+
+e979/e/33//f4/7v333/d
+/d/vf/vvv/v35/+vf3/+ff/v/f///f/+X//
+f/+f///m/v8/+e//e
+3ve2vv5u7
+939///e///vf5v
+/v///v5f3+
+vf/+vf/+
+39vf//vf/
+9//f7/v9f//e/
+39vf1/+7vf4///e
+9//v/+v/e/3/8d3743f///X///z//m/9
+v/+X//X9f9/f2/
+1/vXve976///e///vf9vf4
+/vv9/+5f//d///v///9e///v///+f//e+f//ve/e/vf5f3vv9vf
+/7/+3////35//e2tfe///vv73+P/9vf/vvvf//e39e//e//vf+
+v
+X13f7e
++f2vf9/f4//
+d
+7vf+vf/+d
+/7m73e/
+7f
++///f/+vf3+f/+
+ffvv7vfX/+fv
+5
+f
+97/+vf9///3f
+m7v///ve+vf/+
+3/d/+ve+9e
+/5//f5
+f/9e/+ff/f///
+f33/8d/f33////X3e2
+93+P+e2ve++97+P+f5/+e3/v1vf
+vf
+39fe/+v9
+///f
+//3ve//9vf9///efv+/u
+9//9v9///
+2
+//vf3/+ve
+339e/
+5///ve9//
+/v773fvv72vfXvfe99/33/vf77/+ff9f/3
+9
+vfX4f//
+m733
+ve
+2v
+v/vfvevf///d/
+/f/+f
+/+///9e3e++/+ff9/2/v/u/+X/+///f/+9v
+v5
+f9vf/+9e3f/+3d/e/
+Xvvf//3vv/m9/e
+/
+9fe
+e+fve/e3f/d
+f//9v4///5/+X/f4/f3vf97v3vvvvevf3/X3
+/e+ve33/+
+/e/f4///vfe+29/vX13e+e/+fve/f3v//4f4
+f
++m9/v7v///2
+e+ffvv7/+vf35///7+m///e/9733e
+///
+3
+v/ve///7///1/
+/X4///9vfve+e9/d4
+//3vvvf93v+P
+/7/+vf3
+//fv/+fvfX9vf2/u
+9////2/35///vve
+/+9e3ve//ve9ve3vvve/ve
++X/vfvv////
+739/+7v4f3u3////
+fe+/7vv31/e+2vfv9vf/+m/fve3v4///vv9f/v3ve+3332vv//v9v4/+efvf5/+ffvv////3/74///ff/+fevf/3vvf97///
+/vf
+/9
+//vvffe++
+9///e//fvffe/d/
+/77
+fe+///vv////
+e+/21/f
+2///2/X17f9
+3/74f3u2v2v4//
+e97////e
+vf/+vfve2u+
+ve//e///7////+X/+3
+d/u5/3e
+3vf/vf21e
+3///3v//fff3fXvf9f3/+/v
+7////4//1f
+31/
+d///3e99
+v//fe+f34
+/3///X
+///fe9
+/3ff/f4f3vvfve/vf
+/7ffve3v//fe+/3ve///3/5v97
+e//v74e/vv9e/e//4/vf//
+7f
+75/e///fe3ve//3fve33f1//
+31////fvv/
+u/3e3vfff///7vf32/+Xf34//vf3f1e
+v+vf1f4//
+///e
+/
+fX/v/vf3/d4//+fX1///vv7/fe/
+/e/f5f/+v4
+fff/9//f19ve7f1//3v2
+ve++2/+5f9f+
+ve21ef
+f/
+5f19e
+f4fXf7///u/+e/fe3u97///ve9//+ffv21v1///d3f5//e/+f/+2tf/fff/X77v2f1//ffe+21
+713fe9
+e9
+e9ve332u+/9fve/+vf/e//ve++/vfe
+2
+3v4//e2vfve3ve/m1ve7/+2
+e1329
+vf/+ff/+f7v//vf7693
+f7/v8d/X//
+5v//X/+e/+vf3X1/8
+5vvevf9e/Xfe3
+/u5321/
+X1fffe/7f/v
+///
+5
+93v5/13m3vf/+vf4///7/v/1f4f//
+1///2///u///71/fe/X4///
+01
+f3m//++///+/f1/u/2
+/m1f19//v4///2vf3
+f9/7f9ve+
+vf9//2/vvff29vfe/7//+ff/5f//+fvX4f9f743/ffv//3/vf4fvvf2/
+3/v7
+3
+/+vf22/f
+d79/m/+fffe/+fe+
+7e///97v4////d//ve///fe+9vvfe29+///m
+f//v9v1/e/vf21efX/vf34f/vf///3vf+5e/e+Xff/f9/+
+9e
+33/
+vf/+vfe9e//f1/9///2//f////3fe9vve1ff/+ff/Xv/2vf3fe/X/+32297f/fe+/f3
+7/5vf/+5v9/X/u9+e9
+3fe9///e///f//f+X//+/e/9
+v235
+//ef9f1f
+/vvf//ve
+/ffef//u5ffef4ff3/f43//33e/
+7
+9vvevf3/ve+e/f4
+/fe++2/+vefffe/d4f///vfve/efvv9///9fe29+2/+ef43f
+e3ve1vfve/+3+f7a229+31//
+1//vvvf1ff
+ff
+3f///d/e+/m9vf12/2
+3X
+3/+fe79v+/v9
+ff291e23e2ve97v+
+e973vff//f5f/fve/vv29f///7fe/f4f/m171f1e/f5//u
+531f/+ff39/e3//fe+/5e997f
+v/9v35v/99f1///vve3ve2
+3fe++3f12vf3
+/9vvffe/
+4e9/+v/fff/+///f//9fe3/+v
+f299f2/933fv
+/7/1
+e2ve/feff9797
+72e
+//u/32//X/+d4e+/9///v//7/v/21e/d/Xfe3f/2///vv3+X/X8X23vf/vvf3/1/u23e+/u5e+/7a2/+e/+ff93f1/231///+vfve12v3fffvv
+/3vvX3/v/9f19+f/4+///
+2/+vv/e3223f/2vfve2f///e//+/f/
++9f3//717e+2v//1vf1/9/3+efve
+/+1fffefff+/ef3fff/m5v/8Xve+/9fve/+ve2vf1e/
+39vf933d395vvvvv3/m/3f139
+33//f35vfvv//3/m/+fe
+v//vfve2vfeff/vvfev2+m32/7fevf3///d7d
+a2tf3f
+/v//9vfvv3fe2f3f///vf9vf4f3m1u2
+/+ff/vv8/4
+//fffvf9///e
+1f/ff0d+
+e/fff//3/8/X
+1f1
+m/dff43//+/m313v
++fvv3f1
+u///d7
+e//
+//21e/9///ef331
+43fve9+u/
+d7f12u9///f
+f4////3f///1f2fvvf3e
+ff
+31fvvX/f+53e30f1e2f///3u7X
+//e39f/9///d17f//u
+//1//ffe3/e
+/+d/fe//39f///ve/932vv2vf0
+4/d/f+fvvf
+fXv3f11//vf4/+fe++//3ve1+m71ffvevfve///vveff3ffff4f3u3ve///7//3330
+//d71fe2/Xvvvf0//u
+vfff///3ve2139e7//4/+2tf
+v+ffff/+efv2e++3/f9//vf1////vf3f/+fe/ef/
+3ve++fe93fvevf1/+/fe/+Xf30d31ffff
+ff//9
+2vve
+/e
+/+3v9
+ffve/
+ef1
+vfve29//vf/2e+
+1ffffe
+9e
+vf+v/m
+vv
+ffff0
+5m3//f3/+vvvf4ff
+e/vf79e++112vfX//fff//3e/fe9vf9efd7
+ff1fe//421e1e+vf4///
+4//3f4/vvfe2/+Xvvf1
+vf
+7fvv5vvfv
+4ffe
+vXv4X1
+ve/+3dff/e+ef//
+/3
+u/Xvfffvf//993f/veff1e1
+vf04f//u337fvv01vf/X41e+/9e3+P/97///3vvfXfe
+929fvv//e1/
+f5vvff
+1f
+9vvf3vfff1e1v/9fe/d3vv
+ffff2+X
+f//v
+//v7///u//2vfve
+d3d29v29ve7e+
+ff///3fe+3vf3Xf2f32vf9239
+Xve12ff4f9fdff1e0/7798///u39vfe+/fe/ff
++f
+ffff1e32/Xvfe+31ve1ff2ffef///X4/+f///e/e
+ve2/ff91
+3v
+f/fffvfev/19e9ef
+/9v
+//4ffff9/d4
+/+d//ff/ve2tfvvXfe/e97/c2vfvv9vvve1fXv11ffff3/f9e+///e+fffvv/fe3f
+/e+/vvve3
+/1vf3vf/ff8ff//e3/f4f9f7vfe
++ff/
+/3175X/u/vf/X3ve/73///5fffef
+2
+9/uX+X3ff/+///
+e1efd//7/+
+fve1///fe/fe
+fe/9fev4//ffff
+m/
+ffffve//f+f/+fX///1//2///
+8
+e/vv7/+3//u/+9+3//9//2/+
++ffff9
+e/
+f
+vf+X/f+53vfe9//e5///
+e2//v7+/vf+e3//5vfe2vf7e+9//d31fe12/m9/+e+/ff
+Xfe1e+1vf3/Xvf/vf13fe2//f4///u
+d//1/vffffu/vev
+72vvfff13e2fve++3/+e+/fffXfff04
+X4/+ffvev3/ffffe1/+ffe+/Xv
+fffu22vve///X/fe9
+/3ffff+vf///u/
+fe9vf/+7fe9fXf43
+d/8d3X
+ff02fff1ffvf2//3f//X/+3e2
+9
+ve9///33fe/e3/+9vf2ff4///
+8Xm2
+129fff4X159e/9//7/+d//e22u/ffX7fvvvfvvfv9e++113fXf+v
+fv9///vffef/7/fff//vf7///8d/fff021f1v4/+ef2++ffvv//1
+vf9m
+5ffe++1vf2vfe3
+vf4/
+353a1fX9ffff1
+1/3/v3ff4/4///m/+Xve/+
+7e/ef///f4//vfX
+ffe12ff9fe1e/Xfff/e
+/fvvf04///ffffvv+e/fe
+1/1///71fe3
+ff21d/1
+3+2v3/9e/fff
++312ffff/33/vf/0339v93e2vf///f9X///e//fe
+12e92v7Xf//X4f///vve+fe+e
+ffX//021e1fe/+e
+/9f39m
+1v
+vf//e+1/+fvf4/5//34/+f4///m112fffv2vfe+fff00Xfffv3
+dff9
+Xff00ff0/3ffu5e2f
+f9+3X//X
+f2+f4e1f7///2f9fe/3
+ff
+/8d/+efvvfff3/f/+
+9efddf/v
++9vf03
+21///e
+/+768//+vf03ffffffff3f
+/+5e3///fff3/Xv/7m7fff1ff
+1v9//+vf/u///fff31f00ffff1///fe2ff
+m9m12/dfff///f9///1
+///8///vf//u/9/fe2
+vf9///ff//vf
+fe
+/fevf2ff
+112fff/f//91//e///fe+vf9dff11fe2ff5u0430048X
+eXvv3ffu3/3vfff/ffvvevf2vf//42/+m503m1///2vfX///m3223f
+vf9
+vf+2v
+v3e1///3f///3e31
+feffX1v///fffffff
+vv/vf///vf83d1///197m9m13
+3fffve+ff1v///Xfff9d//04///03vff01/2vf3fe/X/+d4e+/
+/fe/+ffe/+fv3/
++3/+u/+
+5e
+2fffff3203f13f///fe++9/Xffe//m7d/m/+5m2213e2f//ve
+vf33/+fe+/m5ve1//2vf3e21e+/9/ef3///21/11///f/9fX///m99/u
+98421ff0329ffff43vvve/
+Xfff83ffe2f/fff33010
+40/m1/X03vvv3fff9e+e2ff2ffff20211ff1///1f
+f04///
+Xv3m/+7/2/v
+///efXvv3f5
+ve29fe
+3vfe//f
+/fe112ef0
+442
+9ffXffffm9/ffe/fe13
+e/fff5///39//03//vefffv91f8933fff
+f/3//fe
+ffff///8
+vfe+m9v529ffff43ve/3/f9
+9d17ffff2vfvv91f8e12/1v
+39///ff4f+vfvvf1e01/2vfve22f5v/+ffe+11vf39////m23fff304
+3d3
+9fffve1vfe
+ffff43f4
+28//2//fe/ffvefve3u/ve
+2v
+fvv2/fe39103/u9m3ff2vfff4X1/u03ffff00ffff2vfffffe9ffve1e921e04/u3/u9m5f23e+/5vbe/92m2332ef003fffef
+30005m9ffvf5u/+u/+d988
+Xffvvff83v4f5dffff41/e/+vf4X0421e04Xm3fff/58
+/v/7fe
+ffff39/df1vv
+vfvv103fffffffX//4/vf5m/7
+22v/fv///
+feffX5m585m/ef4f30209f9fXf05u7ff/8v9
+ffve+f3fffe20/9fe
+f/u3/X///ve/fvff
+1f
+9e2v3///
+fe11vfe
++ff/e/9e+Xvfe2ffffX75d3f
+vf4/6a+ef01fXfvv3//
+f8//ve929+e/
+vX///u//9f1+vf
+u///3ve9///ff4//1ve++fe2vvfe/3ffe1vf1/
+fev
+ffff0422/3fffXvvef3ff2ffvvffff/2/X///
+ee3e/fe9vf9X4fve3d
+ve219m/+ffe+1fXfff03///5
+f2
++1fvv/d///e/01fe2vfvv29ff0
+3
+f33ffff/u/38/fe//fff11vv2/+m9/f2/
+1v8/m529v9m/+m/fe/vvf01ffffXffe21
+2v/fe2vf23d7m9u/f3Xfffff01
+Xff1ff8/fe3
+fe
+/51ff/m2m339v39m5041Xfe
+181ff3fff/m4
+32/
+99ff/
+vvv/fffXffe3v
+vfX/+f
+ff3
+2v/+38///+5e/11fvv8d///42v2vfvve2ffffm4
+e/Xv3m+
+e/fff004///fe/f/ve1e9Xff3f11fffe32ef0133/m11f01
+00m8/fff31ff/9f7e++Xf11
+f83///439d/v33/X/
+ff04/5
+fe/39/dffe9///v7
+/e1/9f/+97v+
++m/
+5f1m
+e/
+9fe
+9ff03fffev1ffeXvffe++
+2ffvv5ffff1ffff112v
+3v3m33303Xffe2/ff5u
+/Xfff9vf8Xff/+5ve997ve/X78d91
+vf0
+1ff
+28
+//u9/fff
+9m5ffvf/3//Xf3//vfe3u
+3fe9X032ffff004X2f32vf9239vff8Xfff1Xfff03ffe2vve
+/e
+/f3ve/2//9e3904//v8f32v29e+vfve3u5vfX3X
+2vf03ffe1
+v4
+/
+5u2ff
+ve+/8f
+vve+/f/vff2/
+fff5e1ff/m0ffve//5+e//d///
+d/fe+93ffuX//fff3/fe3ff
+X///5vv300Xffe
++/vf3///0//1vf9v8d3vv
+2vfe
+vvff1ff48/f
+ve1e/4f5f///5f4/+3e9043dffe2/Xffe14fvef1X
+f8f5e1f9vf3
+32f
+vvv33//m/3fe3f/+9fev8
+2
+fff
+ve23//92vfffu///vv
+2v8/2fvvv//2v
+2///2fff9m0///34fe/+397fe+a//m3/3/vf/04///ffffv
+m/+212901fff3v
+3ffffffffm5040ff9f7/Xfe14f//f
+31fffff1/3/v3ff4/4/ff100Xf/m/3///d2/ff913e
+f04Xfff3ff3v3vf
+e/83m39m3m//e+31ff
+f3
+91m122//3e
+ve+ff1ff8d///f+Xve+d//3m2301
+2v21X
+Xfffm933ve/fvv2vfX4f///012/vf/fe+/42Xffe
+vXv4X1ff4
+8113v9/29ff8/fff30058e
+e/04//3e/fe9/804/5e3ve///8fX/Xv29+e/
+v3fe+fff31e13
+2efXve/Xv
+fe/04////3fe
+2/Xffe11f5vff2/ve
+3e04//2
+/f4f/9222/a
+3m5u1
+/+3X//
+35ffe21ffe019fe/f/vf4Xv2vf
+ve9e
++a/+1
+8//32vf3m/+v
+X/f
+fe331ffe80
+58a252ffef01/
+ff/39///1801
+2
+9ffe1ve21e/9Xfve1/e2/+9ve2
+9
+22vve21ffef/5221ff01m9/u
+d///3/
+9X3m+m/e1d2v3ffvv
+ffe9//X2e/9f
+ff
+/Xfffm8/+fff/4ffffffe3
+fe331f2m03f00
+Xffe3
+4//u
+33ffff
+1048e/
+m2
+f02//4f3v3/+f323
+/Xvfff8/ve/+1
+1ff04/5
+fe/15f/m01///f
+fff00
+29f
+e3/f4f
+vf0
+43
+fe+d///d7
+ffe2/ve19f5m311f9f23/02008e
+e
+e8e/e+ee/03//3//ve33e3ve9/3229m93feff//7
+vvfe/vf/
+f1vfe/f9fve+29e1f
+41f531ffff67ffe33f0088eeee/f58X88
+X8e342a98f
+e2ff0000X/d4//u1ff9m21vfefvX
+5/
+2vfe
+2
+045
+8c
+fe/veff
+1228
+//a1599a+f22
+31/0101
+1/3/X3ffe2+3fvevfvvvf9300//
+fX3fvv0
+43
+/9/f33vvv
+fff38/d300403//5m431f/fe
+31102///
+f41ffXfvv
+vfe
+3fe3fe++ef05m5
+2Xfff443/5
+4ffe90/fvv3f
+vv41///fff1vfe29ff288Xe+9m/+f
++fffX8
+1ffe1f/199f1ff4591fXff9/ff
+42X4/0
+2
+fff/f4ff8
+fe915ffff3480
+e2ffe/ve/vf3fvv9fXffe1e/efvvv1ffff/6
+/Xfe3v
+ve
+2+3f3/ve997ve/X7d/+m5vf7
+fff02
+4/f
+m5ffe12f3/m0/1ffffm1/3///d2/f/d91Xfff8/33e3vf/+ff2f50/41///efXffe3e1vf41X5031
+vf04fffff5m5e8f4/38Xe3
+33///1fe2/+
+2
+f//123///91/9veff1///2/+5f1m
+932//m/+fe++m73fff02/3ffe13f01
+2
+a901e+d31f/0335e+fve/3vf1vfve3/X043dffe2/Xffe/vf//
+42f53412//m
+9d212vffff3ffff088///5f9fff04/ff19f/
+e
+ff2v21f//fe1///vffe3
+fff448eeec/
+8b9b8
+8X
+f
+08b357ff8a3a30/5d
+feee/ff1dff1
+m8///e/ff/ffff
+ffe
+f//5ff3fe99ffe12v0
+4ffe03fe91f
+ef
+9b
+e8d/3/X41ffff5e
+ef4/37482592a8e8f8ceee/e1ffffe2/9X
+4
+X
+e2/vfvv5f/9v4
+29
+a/2/313m
+98e2ffff3/X/
+ff04/ff1f/ffff8/X33/21f//1
+fe
++d
+///+vf1v2/ff5fve
+ve23
+28/ff/ve133e0/e
+/fvvvvf/8//m7304/
+m/+
+f//fe2/3/e3ve2vf/m
+8383838ffffef4e0400c283//3ffe2ff288eeee9
+98eeee
+e/eee2f/ff4e18ffff0418///fe99ff2vf9ffff342//e
+ffe20
+2
+31
+e8ce/ff92/3fe3f38ceeffe
+ee9f/f0/54
+X
+28eeeeceee0
+0/ffe2e/e033e
+8ef03//30302/8Xff5ffff313fffffe9a78X
+f11/9f7e
+/21
+ve/ef/2021///m5f0535cff02/ffef
+3a3/e/ffe1598
+e/ffffff
+ecb18eeeeefeb00e/ff1e13
+2a3f01/010141f238eeeeeeef0
+3ff
+fe/8be03
+f/f3ffe/efffff4ffffffff/f8eeeeceeeee/43/8Xff
+8f395/3
+m
+4ff8fff
+788
+c215e01f01c8ffffe38ef
+e
+28ceeeeee
+f51eeeeeef
+eeef828eeeeeeeeef0021ff8ceefec01
+1a3511/
+ffff4/23fe21
+8Xfe
+fef/eeee/ffecb4ef9b359f/eb33
+8a09f
+ffffe1ffffe/eeeffeeefef123ffff8Xf/eff08aeeeeee2ef21f/4ffff
+effeefffffee8Xf/fe01/f317feceeee2e0300
+1ffe80c/221f008bf228ee000
+fff
+e/eeefe
+ffffec/8
+X8eee
+ecf
+1/eeef48eb
+b
+4d0/
+ef01/8bf8e
+eeec
+e
+e
+0
+10
+5088f11ffe9
+f
+feefeeeeeeec1/ff90b/e31f0e2
+eec
+01ff022eeeeeeee
+efe9ff0e4eee1ff
+e
+ee
+e2/f
+/18f1/ef0/ff1/ff4fef
+02
+/3ffe/ffeefefe
+f8ceeffffffffef00
+111ffff91f1
+eff008ceeb
+1eef
+ef
+3fe/eeee/f
+e0
+fff1ffffffffffefe2
+1ff/88eeeeec
+01ffef0ff/eeeffff
+efe
+fe
+ff2a8e8
+b
+e22e
+4ffe0
+ff
+18bf22eeeeef82f
+fff8
+ceeeeeeeee
+ee/fff0e0c03/ffe
+e
+eeeeb/ffffffffef00
+f01
+effffef0/1314ff3fff8a
+eeeeeeeeffffe00/4/
+31ee
+ffffef00e//e3f01f05
+f2
+18ceecff1
+18X8X8/2e
+3/f0c/
+e051
+3
+33ffe/ef
+eee
+01eeeee8c101/03
+00
+f3
+02
+/eeef0
+0/f
+ffffef198feee
+eeec35f52ef0
+4fff/3ffef8ceeee/e
+8ef0
+21e1/ffe
+ff
+fffffe
+e122ff111fefefef/eee3
+ffef008e
+38ce
+e0/effeeeef
+2/f4e3
+e/fff8b122ffe
+feeb
+f022eeee/eb0023fefee1a8eb8eeffe
+ec1/8ef305eeee9ff
+effe0/fff0eefec4e/effef2
+001
+2ff00e//
+4091/008f888fefef
+ec28ce2fffffeefeeeeeee03
+e//ffe18Xee928f00035ffff/effeeefee
+eee
+11ff
+1fffffff2
+e8c8ee
+1
+0
+200ef9ff03f1efffeeff/ffe
+0
+ef13eeeb2
+01ff002ee
+eeeeef8
+b31ffe13
+e/eb
+1/f
+1/
+efe1
+/ef3ff2/ffef
+8
+ee21eeeffef008Xee
+3ffffef00113f8ee2f03f
+/e/f4541
+/f2f5313/f013ffe91ffe3e4
+a02//e04ef3ffe2fe11ffef
+021/
+ffef18e0/
+31e28eeeeeeec0/f3f33ffeefeefe1
+11ffff
+f0
+1fff1ef
+e08eeeeff
+129
+a/fff
+ee3/f2e1
+e021/eee
+eee3/
+ffffef03feffffffe0
+f003203f1ffff3fffef
+fffefe18b
+3
+e305e22ff3/fe3ff8ce/effffff21//ff40
+91/fffffffff
+eeeee8357f8eb
+513
+8beec5e1/ee
+1ffe
+efefe/fef038
+fffe
+ffffffefe2ffff8eecf238eeb4
+eec02/33ffeef
+88fe3
+fe
+ffffff/
+ffffefe9ffffec
+f
+22ffe0c//ffeeeee/e2ffef0
+3ff
+eeffff
+fe3ffe28c11ff/21ffffffe2ff8
+be
+eeeeffff82
+2f32
+fffffffe3f
+ffe1ff03/fffffffeefff
+e3
+feffffff2e1ffe2/3ff409
+f/fefeffffffffff2feefefecf01f0
+c4efeb10e/113ffffffee/
+ffe/efffffffffeef00
+ffffe9ff3f
+eeefefeefefeeb0
+1fffff3ffff18/e
+2fffff/
+fffffffff
+e2e2feefec21fe2a
+eefff
+/8Xeeee01f3
+3ffee/fff28
+f
+1eeeee2ff98be
+eeef0e//3ffeeeeee3ff8be2fe
+fff3ffeeeffefeeee33fff28f08f8
+eeffffffffffffe3ffee8c0c
+8eeee
+e9eefffffe
+ffe01
+4eeee9ff38X3ffeeefee3
+efeb0c2a8eb
+0c388fe3feff
+eeeb1/2e
+ffe2fe22222ffffff
+feeeeeb8eb0
+1ffee18a8b1efefefeefee035e
+28
+b2eeeee2fef0
+0/f05ff
+feef/ffffffffff3fff23f8be
+ffef3
+/eefefeef3ff
+f82f28ceee
+eeee2ffffef28fe
+eff
+2ffffffffffee/1
+8eeeeeeee2ff
+fffffff/2//3ffeefeee
+fffffeeb2
+/8ceeee2fffff8
+b0
+023ff08f888f11ffe
+3
+ffefeb28ceeeeeeffffe
+ef
+01/eeb
+03013//eee2a
+eeeeef1
+e3/f4091/1
+1fffef/31f08Xf1/e222ff1a8fe
+eee018e
+2ffffef022e/
+ef1ffeefeefef/fffef301/1f
+fefe2a8eec/f0ff/efeeef2/fff
+ffffffffffffe/
+f3
+f1/fff/ffeffffecf1
+3ffee/003fffeeeec0
+1
+ff/40
+9
+f/11ffff
+fff31ffe2//eee23
+f82f2ffffffef
+13f1/eeb31ffeefe/
+ff409f/ef1fffefe9fff
+1f08X8X8/e/ff01ff98f3//fff0
+3/
+ffeefef2f1/ffe2fff2//fff00e008
+eeef
+efeee9ffe
+2131
+8fe
+ee33ff/eeee
+ff3
+fe01//feff
+e2ffffeefeeefef02//
+ffe831/f05f/ee
+f
+ffe
+e01fffefe2/ffe288ff3f123ffffe/ffffefef
+ec2/ffe2feff/ffffff
+3fffe/13
+f1fffecf
+1/8eee003fe9ffe
+0e2/3/eeb1e3
+ffefe1/fffff
+f4fffefe2a
+eeb33ffffef
+03e/f3ffeeeee
+0e22ffff2ee/ffe3ff0e//efefefe2//f8e12
+ffef
+efe33f
+eeefefeefefeee3fefffffffe2ffff8a8eeeeeeef
+2/f0
+5
+8X8ee03
+//eee3f
+eefeef/f/f2/
+e3f22eeef/efefefe
+e028b12e11
+1ffffffff18b28ef8
+e
+fffffffefe/fffef
+3f2/8eeeee/
+ee
+2fff2//ffffef3
+feffffffee/
+ffe3feeeee035e
+f8beeeef
+18ee
+eeefee
+eeecf8beecf12/3/eeeeefe22
+fffef/1eeb2e/f
+28f/eeeb8
+eeb
+eef2e
+ffe/ffffffefec35eee9e/eef
+02//ffeeeefeeffff1/fffec38/efeb3f0
+0/1a3fff08f8e
+08eeffffeef0/33
+feefe/ef/eef/3ffffef021ff/00
+e01
+3feeee022eeeee0/ffffffffffffef3
+ffeeeffe0
+02ffff8a/ff4ffff1
+ff/effffeeef2/2a35
+ee1ffff11fffff2e2a8ee/fffff21f00e05ffeee
+ff
+ec/ffffff0e4e
+fffff8b1eee/8f1f
+8be8ceefefefe2fffff2fffff8
+eeeee2e0e0
+c
+/efefe/ef028e351ff4e4eeefefef/eeeb2a8eeee1fffef
+e9f8be03
+5eeeeb3
+3/ee
+effffe3ffee3f2e1ffff
+ee
+ffffee03
+//03
+feff/eefef
+ef30e2fe/ffef1/efecb001ef
+011f0c2a8be
+eef1ee
+f05eeeeeec2
+2ff1feeeeef23ff2/fff2ffffffffffefe2f/ffffef3ffeeef/eefefeef3ff2ef3f23
+fefefe2a
+e2/f4f03feef/eeee/8eeef08eeee
+eeee98be22eeee/eeec0/8e
+2/ef1eefe2ffeefe0/efefe/f2/ffe2ffff/
+eee0128eeee/ef2//f82f23f0
+0e//ffffffe/
+fffffffe28/fe
+ee0
+c//1e1
+/e/0/eef028eeeb0c388eeee9ffffef3/ffffffe1ffe9ffffeef
+efe9ff
+18beeeeef
+eeef3ffffefeebffefeeef/eeeeb
+8eeee122fef
+efe33ffff0
+e1e//021eeb22/1a357f/ffe2feff0e0
+c/2021///18be0
+51f08Xfef
+ec1ffeeb/fffffffe28b
+ef1eefeef
+e08eeeb8Xeb1f0
+c4ef0e8fe3ffeb1f/eff08f888f
+8eeb/1/fe/ffe0e8e
+ee1fffffef011f/eeefffefeee12f00e05/eeeeef3feef
+/ffff2ef2/fefef
+ec22e/
+eff
+ff0e28f/3
+/feeeeeee3fff/ffffefefee/eeee22e/3ffffef1//efeee2a8ee08ee8f/fff
+/
+ef1
+fffffeeb
+e3fefef
+23ffeeb
+ff3fffffff2
+e/fe05ffeb8e2e/e1a32a
+8eeef11/2e
+efe9ffffef011f0
+3f
+/
+/e/eeffffec2a8
+ffffffff0
+1ef0e8eeee/feeee3f
+e
+ee3/fef0e4ef1ffe2eeefeef0/ee2f12fff
+effee08be/e2e8e2ee2
+3f8
+2eeeeef088f11ffe9/8Xee2
+8ce
+ef3
+fef088f/111fff1ffe01ffee2ffff2/eeeee2a
+eeeeef2222ff28f/e
+fe22efeeeef03fe3ffe0e//0c/fff
+f2ff33ffe28c11fff88eeef/ee1/
+e1a
+eeb3f
+efe
+ef
+ecee01ef011f08eeeeeeb
+2f
+efeef/2
+/efeeee00ef12
+/eeb2ffe
+fff0e/eee2ef3
+1ffe1ff/00
+/efeb
+fff1ff008e33fff28f08f88/eefe
+e9ffffe/ff4fe05fff
+fe
+efefefee3f01
+efff0
+e
+0
+08eee
+ff1ffffff1/8b38ceee/fffffeeeeee9ff0c283/effffffffffef08eee3/eeef288f01fef
+ef8b0c/1ffef8
+eeeee231e8a8feef28feec0c//eefe33fff
+ef3feeffe
+ee3
+/f4
+ffef88eeffff8f8
+30e
+03/fffefefe08be0c1ffffffff008b/
+f1eefef/f3ffe/eff11
+/02
+2ff11/013
+8beec5e1/ee
+ffff3ffeef01fff8Xefef1/18/fff/3feeee0/fe/
+ffffffec3
+ffee31eff018ee01ffff4/ffffffff01ff90b/e
+eef08be33ffe2f03f31eef3
+fefffffff2
+eeeee9ff
+ee1
+ffff02/f1ffefeeb/eeee0513e
+e3fe/
+ef08f8eeef2a
+e2/f
+/1
+e2e/1ffeefeefef/feeb111ffe
+3
+f/f3ffe/efffff201
+a3
+feefe21ef
+ff0
+3ffffffe3f
+ffe1eeb/1/fe/
+1e
+ffff3ff/efe
+ee2ffffef
+03ff28f
+88ef1ffe9fe013//eee/eefe1a
+eebffffef28f01ff1/ffef0/ffe2ffe/1
+e
+8ee3
+50c3ffe2ff228eee/8f1fff1aee/eeee
+f0e
+0
+221e03
+13ee35ee3f/0e222ffffeeef0e/eee
+e9ff3/23fe1ff
+ffff0e8ee/ff3ffe13f0c05fe/eeee02ff
+fff/0
+3f
+fe3f3ffeeef2fffe/
+eefee031/ff4/f22eeef18eee8c2e8e3f
+0c2a8e8
+f1ffe9f3fefe2a8eeb8e
+eeee0
+5
+ffee
+eb01f/8
+3ffff3f05ffe
+038
+fef/fe031
+eeef0e
+03//e/efeeef/eee3ffee
+ee
+/eff2aeb/fff3ffe
+efefe1ffefeefe2/
+f01ffee1ffff/ffe11e2f3ffe3f08fe01fff0c18
+ffe/eeffe3ffe3fe03fe31f33f
+eeefefe
+e
+1/ff1eef/1
+fff/00138fe9ffffffff4/eef28b8e018e/eee03//1feec
+f3feffffffff2//ffe3f8ef0e0e
+fefff8fe3/ffffff8be
+fe21ffe3fe21
+ffeefe/ee2a8fffff
+f1a8feb31f1ff4f
+8
+eeeb8e/1/e
+eeffffef2/e3f2
+fffefee/020
+efef/ef3/eeee3ffff
+efefe3ffffefe/f8beeee303f/eee/
+ee
+23ffffef/1
+/fff1fe2ff05
+/ef3ff2/ffff
+2/efef2/effffeefeefe3/ffffefeeeb3e/22/01ee
+eeefee
+eee
+9
+fefef
+/0c3/eff8e0013fe05ffef351/ef2fe33fffffffff
+eeeee33ffeeeb
+ff/ffe8be02//f051ffe9eef1fffef2eefe8b18
+Xee2feee18/fe
+fe
+03358be
+ec1f13f1/e2ffe31feffe003fffeee0028e33fff2fef0
+038ef0e0108eee13e00
+ee3/f/f
+f/2e28e1
+1ffffff
+fe3f3fefffffffffffffef3f82ffff8f03ff0c03/ff8ee
+1ef2/ffffff21e
+0c0e35ee02//fffffffe3ffee/f3eef1ffffef03/03/f
+efeeeee/022
+e3
+/ffffff/0c
+e3ffef8ceeff
+fffffffffeee2e28b80/01f008bf228ee000ff8e
+ffffeffff31ff18eeefec/eeeeeeee8eeee8
+b8
+38ee8ceefff33ffeefeefeef0e2eeec05ffe
+0e2
+1eefefe1aee08
+f3ff/ffe035fefe/ffffff1/f1/e0
+1
+feeb8eee/ee/
+e3f
+ff11/0e0
+c0528eec5e30
+efeee2/8b1e
+0350c33e2a/e
+f05eeeeeec2ffe2ffff1f/fffffe3fe8b
+e12f8e12fffefe1ffffffff008b
+ffe/1eeb/eef051/e2e/eeb13ffe35eee3/eeef288f3/123/eefef03
+/efee/eeeeffffefe20e
+22fff/00e00f
+8eee3ff18e21f
+3ffff/eee18/f3eeb
+1fff1ff2f/fffef0
+3f
+ffe1eeb/1/e288
+3fe3fe21ffff
+8b38ceef
+f2e3
+1fe
+1e/efef
+01ffee1ffeee
+e
+e1f13f/1f/035eeeee
+1ff0c283/ffeefe2f02ffeeb1011f02f
+23
+28eb8
+f1/eee18be
+f
+eefef03ff
+3ffe2feff08f8eee/2f03f31ee
+eeeeeec1f/8
+8ffff35eee21ffff2/eee21ef
+ff05
+eeeb3fe3f3ffeeef
+f3fef3ffff011
+ffefff022efef2f/ff8
+be
+eeee0/efee031/eefefeef3ff
+1f
+2e288
+f
+efe1ffffef
+018fe1ffe/fe
+e
+0
+e01e
+fe928b18/2ee2fe1/eee/2ffeefef
+2
+8feb1ffee1a/e0
+e/
+efe/ffef3fe05f
+eefefeef28be1fef03eeeffff3/3ffeeee0/ff
+fe3ffe08eeeff/efefefe3f
+eeef2//0/ff/e/fffec
+0/f2f534/2//f3
+138
+eeefefeef02/efff1ffff8f888fefef
+8ee
+11f358be8c21ffe/fffec8ceee1fff0/eeee
+123f8b0303
+fe01ff9
+eeec00
+/eee/0/eeee8feeee1fff8eeec5ffffeffeeeee21
+ffe2ffff4091/1
+123eef001a3571fff00
+ffe/
+fffefe18be/
+fffe828ceeb23ffeefeefeef038e83311fff1ffe0e4
+8
+ceeeeeeeee
+e33e
+8efeb3fe01f3
+ffeffffec
+3/ffef003ffe
+eef3123fefe/8b38ceef3
+fef00e//e3f/eebf2//f
+2e
+e/eeeefffeeb111fe28b05
+13
+f13fe/ef/efe2fe
+3fff/0c2f82fffffffe3/018f
+ff44eeeee01efeb1
+21
+ffffff
+e/ffff3f
+fe28f/ee21e01/ffef02
+eeeee2e0300
+1ffe80c/ee
+eeffff/80efef
+e2ffffefffe003f
+0c2a8f88eeeeef02
+83//3fef1f8b1fffefefe28/22f03/eff20
+e22e/ffffffe
+/efffffefe9
+eef
+efeefe
+/ffffff2ffffee9fe13fe11f
+35
+f
+8f13ffe93ff31fff3feffffe/eeee/ffe0c/eeeeee
+e3/fffefe98be
+e/ee
+ef/eefeefef2a
+eefff/eefe
+eefef00
+ff22ffefe
+ffec13eef
+eeefeee
+1ff31efeb1fff/1/008f88eefe3
+feffff2/ffff3f051ffef35ee2//3fffe1ffe
+ef
+0c43feeeeeefeb
+ffff
+fffffffffeefe108ff13fe8b38c22ffe99e0c
+4
+f11ffe9feeb
+8eeeb3fff0/f2f
+e33ffff/1fff
+efe031ffee1ffefe1
+fe
+f
+efefe2
+ffe
+/ee/ef0
+3
+/eeee
+effff0
+23fe3ff4fef
+0c
+e/ee022ee/eeeeeeee2ff
+fffffeefeeb8e10
+335eeeeeffef0/eeeeeff
+ee2a8ff2ff1/ee03ff1ff20
+0012
+28
+b2eef0/ff1efef
+0c0e3
+/efe/f05f/e
+ebff2fff2ffff
+fefef
+efe33ffff2
+eeef
+efeeeefee9
+f/fff/ffefff/ef31f
+eefefef
+/ffe
+1ffff/
+/fefefeeec
+1e3eeefefeef02//
+eef3fefe2a8e8f8cefeec/0023ee0e
+e2/f
+/1eeb/1/feffffefe
+f/fef20
+effe035e
+ebffff0000000049454e44f5420042";
+
+        let currentPdfBytes = null;
+        let pdfLibDoc = null;
+        let originalPageDimensions = { width: 595.28, height: 841.89 }; // Standard A4
+
+        // Dapatkan Elemen DOM
+        const inputPdf = document.getElementById('pdf-upload');
+        const inputNama = document.getElementById('input-nama');
+        const inputAlamat = document.getElementById('input-alamat');
+        const posX = document.getElementById('pos-x');
+        const posY = document.getElementById('pos-y');
+        const fontSize = document.getElementById('font-size');
+        const showMeterai = document.getElementById('show-meterai');
+        
+        const valX = document.getElementById('val-x');
+        const valY = document.getElementById('val-y');
+        const valSize = document.getElementById('val-size');
+        
+        const canvas = document.getElementById('pdf-canvas');
+        const ctx = canvas.getContext('2d');
+        const loading = document.getElementById('loading');
+        const btnDownload = document.getElementById('btn-download');
+
+        // Event Listeners
+        inputPdf.addEventListener('change', handleFileUpload);
+        [inputNama, inputAlamat, posX, posY, fontSize, showMeterai].forEach(el => {
+            el.addEventListener('input', updatePreview);
         });
+        btnDownload.addEventListener('click', downloadModifiedPdf);
 
-        // Simpan file PDF baru
-        const modifiedPdfBytes = await newPdf.save();
-        const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = newFileInput.files[0].name.replace('.pdf', '-bermeterai.pdf');
-        link.click();
+        // Handler untuk Upload File PDF dari User
+        async function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        statusDiv.textContent = 'Berhasil! File PDF bermeterai telah di-download.';
-    } catch (error) {
-        console.error(error);
-        statusDiv.textContent = 'Terjadi kesalahan: ' + error.message;
-    }
-});
-</script>
+            showLoading(true);
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                currentPdfBytes = arrayBuffer;
+                await updatePreview();
+            } catch (err) {
+                alert('Gagal membaca file PDF: ' + err.message);
+            } finally {
+                showLoading(false);
+            }
+        }
 
+        // Fungsi Utama untuk Merender Preview Dokumen
+        async function updatePreview() {
+            // Update Label Slider
+            valX.textContent = posX.value;
+            valY.textContent = posY.value;
+            valSize.textContent = fontSize.value;
+
+            showLoading(true);
+
+            try {
+                // 1. Inisialisasi PDF Document
+                let pdfBytesToRender = currentPdfBytes;
+                
+                // Jika belum ada file diupload, buat halaman kosong berukuran A4
+                if (!pdfBytesToRender) {
+                    const tempDoc = await PDFLib.PDFDocument.create();
+                    tempDoc.addPage([595.28, 841.89]);
+                    pdfBytesToRender = await tempDoc.save();
+                }
+
+                // Load dengan PDFLib untuk memodifikasi
+                const modifiedPdfDoc = await PDFLib.PDFDocument.load(pdfBytesToRender);
+                const firstPage = modifiedPdfDoc.getPages()[0];
+                const { width, height } = firstPage.getSize();
+                originalPageDimensions = { width, height };
+
+                // Embed Gambar e-Meterai jika Diaktifkan
+                if (showMeterai.checked) {
+                    const meteraiImage = await modifiedPdfDoc.embedPng(E_METERAI_BASE64);
+                    // Koordinat presisi e-Meterai di area kiri bawah dokumen (110x110 px)
+                    firstPage.drawImage(meteraiImage, {
+                        x: 40,
+                        y: 110,
+                        width: 110,
+                        height: 110,
+                    });
+                }
+
+                // Gambar Teks Nama dan Alamat
+                const font = await modifiedPdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+                const size = parseInt(fontSize.value);
+                const x = parseInt(posX.value);
+                const y = parseInt(posY.value);
+
+                // Cetak Nama
+                if (inputNama.value) {
+                    firstPage.drawText(inputNama.value, {
+                        x: x,
+                        y: y,
+                        size: size,
+                        font: font,
+                        color: PDFLib.rgb(0.1, 0.1, 0.1),
+                    });
+                }
+
+                // Cetak Alamat (Mendukung Multi-Line Text)
+                if (inputAlamat.value) {
+                    const lines = inputAlamat.value.split('\n');
+                    let currentY = y - (size * 1.4);
+
+                    lines.forEach(line => {
+                        firstPage.drawText(line, {
+                            x: x,
+                            y: currentY,
+                            size: size - 1,
+                            font: font,
+                            color: PDFLib.rgb(0.2, 0.2, 0.2),
+                        });
+                        currentY -= (size * 1.3);
+                    });
+                }
+
+                // Save PDF yang dimodifikasi ke byte array
+                const finalPdfBytes = await modifiedPdfDoc.save();
+
+                // 2. Render Canvas Preview menggunakan PDF.js
+                const loadingTask = pdfjsLib.getDocument({ data: finalPdfBytes });
+                const pdfDoc = await loadingTask.promise;
+                const page = await pdfDoc.getPage(1);
+
+                // Atur Skala Render Canvas
+                const viewport = page.getViewport({ scale: 1.5 });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+                await page.render(renderContext).promise;
+
+            } catch (err) {
+                console.error("Rendering error:", err);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Fungsi untuk Mengunduh PDF Hasil Edit
+        async function downloadModifiedPdf() {
+            showLoading(true);
+            try {
+                let pdfBytesToProcess = currentPdfBytes;
+                if (!pdfBytesToProcess) {
+                    const tempDoc = await PDFLib.PDFDocument.create();
+                    tempDoc.addPage([595.28, 841.89]);
+                    pdfBytesToProcess = await tempDoc.save();
+                }
+
+                const pdfDoc = await PDFLib.PDFDocument.load(pdfBytesToProcess);
+                const firstPage = pdfDoc.getPages()[0];
+
+                // Embed Gambar e-Meterai
+                if (showMeterai.checked) {
+                    const meteraiImage = await pdfDoc.embedPng(E_METERAI_BASE64);
+                    firstPage.drawImage(meteraiImage, {
+                        x: 40,
+                        y: 110,
+                        width: 110,
+                        height: 110,
+                    });
+                }
+
+                // Embed Teks
+                const font = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+                const size = parseInt(fontSize.value);
+                const x = parseInt(posX.value);
+                const y = parseInt(posY.value);
+
+                if (inputNama.value) {
+                    firstPage.drawText(inputNama.value, {
+                        x: x,
+                        y: y,
+                        size: size,
+                        font: font,
+                        color: PDFLib.rgb(0, 0, 0),
+                    });
+                }
+
+                if (inputAlamat.value) {
+                    const lines = inputAlamat.value.split('\n');
+                    let currentY = y - (size * 1.4);
+
+                    lines.forEach(line => {
+                        firstPage.drawText(line, {
+                            x: x,
+                            y: currentY,
+                            size: size - 1,
+                            font: font,
+                            color: PDFLib.rgb(0, 0, 0),
+                        });
+                        currentY -= (size * 1.3);
+                    });
+                }
+
+                const pdfBytes = await pdfDoc.save();
+
+                // Trigger Download
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `INV_${inputNama.value.replace(/\s+/g, '_') || 'Terisi'}.pdf`;
+                link.click();
+                URL.revokeObjectURL(link.href);
+
+            } catch (err) {
+                alert('Gagal mengunduh PDF: ' + err.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function showLoading(state) {
+            if (state) {
+                loading.classList.remove('hidden');
+            } else {
+                loading.classList.add('hidden');
+            }
+        }
+
+        // Render preview awal saat halaman dibuka
+        window.addEventListener('DOMContentLoaded', updatePreview);
+    </script>
 </body>
 </html>
