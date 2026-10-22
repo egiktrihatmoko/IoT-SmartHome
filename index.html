@@ -941,8 +941,8 @@
         </a>
     </div>
 
-    <!-- PROFIL PENGGUNA DI SIDEBAR -->
-    <div class="sidebar-user-card" id="sidebarUserTrigger" title="Klik untuk edit profil">
+    <!-- PROFIL PENGGUNA DI SIDEBAR (Sembunyi jika belum login) -->
+    <div class="sidebar-user-card" id="sidebarUserTrigger" title="Klik untuk edit profil" style="display: none;">
         <div class="sidebar-user-avatar">
             <span id="sidebarUserAvatarIcon">👤</span>
             <img id="sidebarUserAvatarImg" src="" alt="Avatar" style="display: none;">
@@ -990,7 +990,16 @@
             </button>
         </li>
 
-        <li class="sidebar-menu-item">
+        <!-- TOMBOL LOGIN (Tampil jika BELUM login) -->
+        <li class="sidebar-menu-item" id="desktopLoginItem">
+            <a href="/login-user.html" class="sidebar-login-btn">
+                <span class="menu-icon">🔑</span>
+                <span>Masuk / Login</span>
+            </a>
+        </li>
+
+        <!-- TOMBOL LOGOUT (Tampil jika SUDAH login) -->
+        <li class="sidebar-menu-item" id="desktopLogoutItem" style="display: none;">
             <button class="sidebar-logout btn-logout-action" type="button">
                 <span class="menu-icon">🚪</span>
                 <span>Keluar / Logout</span>
@@ -1016,8 +1025,8 @@
 <nav class="nav-drawer" id="navDrawer" aria-label="Navigasi utama">
     <div class="nav-drawer-content">
         
-        <!-- PROFIL PENGGUNA DI MOBILE DRAWER -->
-        <div class="sidebar-user-card" id="mobileUserTrigger" title="Klik untuk edit profil" style="margin-bottom: 15px;">
+        <!-- PROFIL PENGGUNA DI MOBILE DRAWER (Sembunyi jika belum login) -->
+        <div class="sidebar-user-card" id="mobileUserTrigger" title="Klik untuk edit profil" style="margin-bottom: 15px; display: none;">
             <div class="sidebar-user-avatar">
                 <span id="mobileUserAvatarIcon">👤</span>
                 <img id="mobileUserAvatarImg" src="" alt="Avatar" style="display: none;">
@@ -1043,7 +1052,14 @@
             <span id="darkModeText">Dark Mode</span>
         </button>
     </div>
-    <a href="#" class="nav-link logout-link btn-logout-action">
+
+    <!-- TOMBOL LOGIN MOBILE -->
+    <a href="/login-user.html" class="nav-link login-link" id="mobileLoginItem">
+        <span>🔑</span> Masuk / Login
+    </a>
+
+    <!-- TOMBOL LOGOUT MOBILE -->
+    <a href="#" class="nav-link logout-link btn-logout-action" id="mobileLogoutItem" style="display: none;">
         <span>🚪</span> Keluar / Logout
     </a>
 </nav>
@@ -1517,7 +1533,6 @@ desktopDarkModeToggle?.addEventListener("click", () => {
 });
 
 /* MODAL PROFIL */
-const profileTrigger = document.getElementById("profileTrigger");
 const sidebarUserTrigger = document.getElementById("sidebarUserTrigger");
 const mobileUserTrigger = document.getElementById("mobileUserTrigger");
 const profileModal = document.getElementById("profileModal");
@@ -1622,53 +1637,72 @@ async function requestAPI(options = {}, query = "") {
     return data;
 }
 
-/* CEK LOGIN DAN AMBIL DATA USER */
-async function muatDataUser() {
+/* MENUTUP LOADER DENGAN HALUS */
+function sembunyikanLoader() {
     const loader = document.getElementById("authLoader");
-    const loaderText = document.getElementById("authLoaderText");
+    if (loader) {
+        loader.style.opacity = "0";
+        setTimeout(() => {
+            loader.style.display = "none";
+        }, 300);
+    }
+}
 
+/* CEK LOGIN DAN ATUR TAMPILAN SESUAI STATUS LOGIN */
+async function muatDataUser() {
     try {
         const data = await requestAPI(
-            {
-                method: "GET"
-            },
+            { method: "GET" },
             "?action=check"
         );
 
-        if (!data.authenticated || !data.user) {
-            window.location.replace("/login-user.html");
-            return;
-        }
+        if (data.authenticated && data.user) {
+            // TAMPILAN USER SUDAH LOGIN
+            const user = data.user;
 
-        const user = data.user;
+            if (user.name) {
+                document.getElementById("modalUserName").textContent = user.name;
+                document.getElementById("sidebarUserName").textContent = user.name;
+                document.getElementById("mobileUserName").textContent = user.name;
+            }
 
-        if (user.name) {
-            document.getElementById("modalUserName").textContent = user.name;
-            document.getElementById("sidebarUserName").textContent = user.name;
-            document.getElementById("mobileUserName").textContent = user.name;
-        }
+            if (user.email) {
+                document.getElementById("modalUserEmail").textContent = user.email;
+            }
 
-        if (user.email) {
-            document.getElementById("modalUserEmail").textContent = user.email;
-        }
+            pasangFotoProfil(user.picture || "");
 
-        pasangFotoProfil(user.picture || "");
+            // Tampilkan elemen profil dan logout
+            document.getElementById("sidebarUserTrigger").style.display = "flex";
+            document.getElementById("mobileUserTrigger").style.display = "flex";
+            document.getElementById("desktopLogoutItem").style.display = "block";
+            document.getElementById("mobileLogoutItem").style.display = "flex";
 
-        if (loader) {
-            loader.style.opacity = "0";
-
-            setTimeout(() => {
-                loader.style.display = "none";
-            }, 300);
+            // Sembunyikan tombol login
+            document.getElementById("desktopLoginItem").style.display = "none";
+            document.getElementById("mobileLoginItem").style.display = "none";
+        } else {
+            // TAMPILAN PENGGUNA BELUM LOGIN
+            setTampilanGuest();
         }
     } catch (err) {
-        console.error("Gagal memuat sesi user:", err);
-
-        if (loaderText) {
-            loaderText.textContent =
-                "Gagal memeriksa sesi. Silakan coba muat ulang halaman.";
-        }
+        console.warn("User belum login atau terjadi kesalahan server:", err);
+        setTampilanGuest();
+    } finally {
+        sembunyikanLoader();
     }
+}
+
+function setTampilanGuest() {
+    // Sembunyikan kartu profil dan tombol logout
+    document.getElementById("sidebarUserTrigger").style.display = "none";
+    document.getElementById("mobileUserTrigger").style.display = "none";
+    document.getElementById("desktopLogoutItem").style.display = "none";
+    document.getElementById("mobileLogoutItem").style.display = "none";
+
+    // Tampilkan tombol login
+    document.getElementById("desktopLoginItem").style.display = "block";
+    document.getElementById("mobileLoginItem").style.display = "flex";
 }
 
 /* KOMPRES FOTO SEBELUM DIKIRIM KE SERVER */
