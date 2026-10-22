@@ -436,11 +436,11 @@
 
     <!-- MENU VERTIKAL SIDEBAR -->
     <ul class="sidebar-menu-list">
-        <!-- TOMBOL LOGIN USER DI PALING ATAS -->
-        <li class="sidebar-menu-item">
-            <a href="/login-user.html" class="sidebar-login-btn" id="sidebarLoginLink">
+        <!-- TOMBOL LOGIN / DASHBOARD DINAMIS -->
+        <li class="sidebar-menu-item" id="sidebarAuthItem">
+            <a href="/login-user.html" class="sidebar-login-btn" id="sidebarAuthLink">
                 <span class="menu-icon">🔑</span>
-                <span id="sidebarLoginText">Login User</span>
+                <span id="sidebarAuthText">Login User</span>
             </a>
         </li>
 
@@ -505,10 +505,10 @@
     <div class="nav-drawer-content">
         <div class="nav-heading">MENU UTAMA</div>
         
-        <!-- TOMBOL LOGIN USER DI PALING ATAS MOBILE -->
-        <a class="nav-link login-link" href="/login-user.html" id="mobileLoginLink">
+        <!-- TOMBOL LOGIN / DASHBOARD MOBILE DINAMIS -->
+        <a class="nav-link login-link" href="/login-user.html" id="mobileAuthLink">
             <span class="nav-icon">🔑</span>
-            <span id="mobileLoginText">Login User</span>
+            <span id="mobileAuthText">Login User</span>
         </a>
 
         <a class="nav-link" href="/beranda.html"><span class="nav-icon">🏠</span> Beranda Utama</a>
@@ -541,7 +541,7 @@
             <div class="hero-content">
                 <span class="hero-badge">YUK BERES</span>
                 <h1 id="bannerGreeting">Selamat Datang!</h1>
-                <p>Pilih fitur yang kamu perlukan untuk mulai bekerja secara efisien.</p>
+                <p id="bannerDesc">Pilih fitur yang kamu perlukan untuk mulai bekerja secara efisien.</p>
             </div>
 
             <a href="/login-user.html" class="auth-trigger-btn" id="headerAuthBtn">
@@ -648,9 +648,17 @@ aturDarkMode(darkModeTersimpan);
 if (darkModeToggle) darkModeToggle.addEventListener("click", () => { aturDarkMode(!document.body.classList.contains("dark-mode")); tutupMenu(); });
 if (desktopDarkModeToggle) desktopDarkModeToggle.addEventListener("click", () => { aturDarkMode(!document.body.classList.contains("dark-mode")); });
 
-/* PENGAMAN & PEMERIKSAAN SESI (JIKA SUDAH LOGIN, LEMPAR KE DASHBOARD) */
-async function cekSesiDanCegahAkses() {
+/* PEMERIKSAAN SESI (MENYESUAIKAN TAMPILAN JIKA SUDAH/BELUM LOGIN) */
+async function cekSesiPengguna() {
     const loader = document.getElementById("authLoader");
+    const sidebarAuthLink = document.getElementById("sidebarAuthLink");
+    const sidebarAuthText = document.getElementById("sidebarAuthText");
+    const mobileAuthLink = document.getElementById("mobileAuthLink");
+    const mobileAuthText = document.getElementById("mobileAuthText");
+    const headerAuthBtn = document.getElementById("headerAuthBtn");
+    const bannerGreeting = document.getElementById("bannerGreeting");
+    const bannerDesc = document.getElementById("bannerDesc");
+
     try {
         const res = await fetch("/api/user/login?action=check", {
             method: "GET",
@@ -662,19 +670,29 @@ async function cekSesiDanCegahAkses() {
         if (res.ok) {
             const data = await res.json();
             if (data.authenticated && data.user) {
-                // Jika sudah login, langsung alihkan ke dashboard tanpa menampilkan halaman beranda
-                window.location.replace("/dashboard-user.html");
-                return;
+                // Jika SUDAH LOGIN: Ubah tombol login menjadi akses Dashboard
+                const namaUser = data.user.name || "User";
+                
+                if (sidebarAuthLink) sidebarAuthLink.href = "/dashboard-user.html";
+                if (sidebarAuthText) sidebarAuthText.textContent = "Dashboard Utama";
+                
+                if (mobileAuthLink) mobileAuthLink.href = "/dashboard-user.html";
+                if (mobileAuthText) mobileAuthText.textContent = "Dashboard Utama";
+
+                if (headerAuthBtn) {
+                    headerAuthBtn.href = "/dashboard-user.html";
+                    headerAuthBtn.textContent = "Buka Dashboard";
+                }
+
+                if (bannerGreeting) {
+                    bannerGreeting.textContent = `Halo, ${namaUser}!`;
+                }
             }
         }
-
-        // Jika belum login, hilangkan loader dan tampilkan halaman beranda publik
-        if (loader) {
-            loader.style.opacity = "0";
-            setTimeout(() => loader.style.display = "none", 300);
-        }
     } catch (err) {
-        // Jika terjadi kendala koneksi/gagal cek sesi, biarkan halaman terbuka untuk tamu
+        console.warn("Gagal memeriksa sesi:", err);
+    } finally {
+        // Selalu hilangkan loader agar halaman tetap bisa dibuka
         if (loader) {
             loader.style.opacity = "0";
             setTimeout(() => loader.style.display = "none", 300);
@@ -683,7 +701,7 @@ async function cekSesiDanCegahAkses() {
 }
 
 // Jalankan pemeriksaan saat halaman dimuat
-cekSesiDanCegahAkses();
+cekSesiPengguna();
 </script>
 
 </body>
