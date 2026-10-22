@@ -13,8 +13,7 @@
         p { color: #666; font-size: 14px; margin-bottom: 20px; }
         .form-group { margin-bottom: 20px; }
         label { display: block; font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #333; }
-        input[type="file"], input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #fff; font-size: 14px; }
-        input[type="file"] { border: 1px dashed #a80000; background: #fff8f8; cursor: pointer; }
+        input[type="file"] { width: 100%; padding: 12px; border: 1px dashed #a80000; border-radius: 8px; background: #fff8f8; cursor: pointer; }
         button { width: 100%; background: #a80000; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 10px; }
         button:hover { background: #850000; }
         #status { margin-top: 15px; font-size: 13px; text-align: center; color: #555; font-weight: 600; }
@@ -23,8 +22,8 @@
 <body>
 
 <div class="container">
-    <h1>Perpanjang Batas Pembayaran Invoice</h1>
-    <p>Gunakan template master bermeterai utuh, lalu perbarui tanggal batas pembayaran tanpa merusak e-meterai.</p>
+    <h1>Stempel e-Meterai Otomatis</h1>
+    <p>Masukkan template master yang sudah ada meterainya dan invoice perpanjangan baru. Sistem akan menggabungkan bagian meterai secara presisi.</p>
     
     <div class="form-group">
         <label for="templateFile">1. Upload Template Master (PDF yang Sudah Ada Meterai)</label>
@@ -32,74 +31,65 @@
     </div>
 
     <div class="form-group">
-        <label for="batasBaru">2. Masukkan Batas Pembayaran Baru</label>
-        <input type="text" id="batasBaru" placeholder="Contoh: 20 November 2026, 15:00:00">
+        <label for="newFile">2. Upload Invoice Baru (PDF Perpanjangan Tanpa Meterai)</label>
+        <input type="file" id="newFile" accept="application/pdf">
     </div>
 
-    <button id="processBtn" type="button">Proses & Download Invoice Baru</button>
+    <button id="processBtn" type="button">Proses & Download PDF Bermeterai</button>
     <div id="status"></div>
 </div>
 
 <script>
 document.getElementById('processBtn').addEventListener('click', async () => {
     const templateInput = document.getElementById('templateFile');
-    const batasBaruInput = document.getElementById('batasBaru').value.trim();
+    const newFileInput = document.getElementById('newFile');
     const statusDiv = document.getElementById('status');
 
-    if (!templateInput.files.length) {
-        alert('Harap upload file template PDF bermeterai terlebih dahulu!');
+    if (!templateInput.files.length || !newFileInput.files.length) {
+        alert('Harap pilih kedua file PDF terlebih dahulu!');
         return;
     }
 
-    if (!batasBaruInput) {
-        alert('Harap isi teks Batas Pembayaran Baru!');
-        return;
-    }
-
-    statusDiv.textContent = 'Memproses pembaharuan invoice...';
+    statusDiv.textContent = 'Memproses penggabungan dokumen...';
 
     try {
         const templateBuffer = await templateInput.files[0].arrayBuffer();
-        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        const newFileBuffer = await newFileInput.files[0].arrayBuffer();
 
-        // Load dokumen template master
-        const pdfDoc = await PDFDocument.load(templateBuffer);
-        const pages = pdfDoc.getPages();
-        const firstPage = pages[0];
-        const { width, height } = firstPage.getSize();
+        const { PDFDocument } = PDFLib;
 
-        // 1. Tutup area Batas Pembayaran LAMA menggunakan kotak putih bersih
-        // Koordinat ini tepat menutup baris teks Batas Pembayaran
-        firstPage.drawRectangle({
-            x: 120,
-            y: height - 355,
-            width: 250,
-            height: 18,
-            color: rgb(1, 1, 1), // Warna putih murni
+        // Load kedua PDF
+        const templatePdf = await PDFDocument.load(templateBuffer);
+        const newPdf = await PDFDocument.load(newFileBuffer);
+
+        const newPages = newPdf.getPages();
+        const firstNewPage = newPages[0];
+        const { width, height } = firstNewPage.getSize();
+
+        // Ambil halaman 1 dari template master yang ada meterainya
+        const [embeddedTemplatePage] = await newPdf.embedPages(templatePdf, [0]);
+
+        // Menggambar area bawah template master (tempat meterai berada) di atas invoice baru secara utuh
+        // Dengan cara ini, layout invoice baru tetap aman, dan bagian meterai dari master tertempel sempurna di posisi yang sama.
+        firstNewPage.drawPage(embeddedTemplatePage, {
+            x: 0,
+            y: 0,
+            width: width,
+            height: height,
         });
 
-        // 2. Tulis Batas Pembayaran BARU di lokasi yang sama persis
-        const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-        firstPage.drawText(batasBaruInput, {
-            x: 122,
-            y: height - 351,
-            size: 9,
-            font: font,
-            color: rgb(0, 0, 0),
-        });
-
-        // Simpan hasil PDF baru
-        const modifiedPdfBytes = await pdfDoc.save();
+        // Simpan file PDF baru
+        const modifiedPdfBytes = await newPdf.save();
         const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = templateInput.files[0].name.replace('.pdf', '-perpanjangan.pdf');
+        link.download = newFileInput.files[0].name.replace('.pdf', '-bermeterai.pdf');
         link.click();
 
-        statusDiv.textContent = 'Berhasil! File invoice perpanjangan telah di-download.';
+        statusDiv.textContent = 'Berhasil! File PDF bermeterai telah di-download.';
     } catch (error) {
         console.error(error);
-        statusDiv.textContent = 'Terjadi kesalahan saat memproses file PDF.';
+        statusDiv.textContent = 'Terjadi kesalahan: ' + error.message;
     }
 });
 </script>
