@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -32,7 +30,7 @@ body {
   background: var(--bg);
 }
 
-button, a {
+button, a, select {
   font: inherit;
 }
 
@@ -437,10 +435,6 @@ h1 {
   line-height: 1.6;
 }
 
-.card-note strong {
-  color: #16834a;
-}
-
 .bottom-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -573,7 +567,7 @@ h1 {
 
   .sidebar nav {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 5px;
     height: 100%;
   }
@@ -584,7 +578,7 @@ h1 {
     gap: 2px;
     margin: 0;
     padding: 5px 3px;
-    font-size: 10px;
+    font-size: 8px;
     border-radius: 9px;
   }
 
@@ -690,12 +684,14 @@ h1 {
 @media (max-width:760px) { .chart-panel { padding:17px; } .chart-wrap { height:225px; } .chart-toolbar { gap:10px; } .chart-controls { width:100%; } .chart-range { flex:1; } }
 
 
-/* Riwayat surat */
+/* Riwayat Akses File IP */
 .history-section { margin: 0 0 28px; scroll-margin-top: 20px; }
 .history-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(165px,1fr)); gap:12px; margin-bottom:16px; }
 .history-toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
 .history-search { flex:1; min-width:180px; min-height:42px; border:1px solid var(--border); border-radius:10px; padding:0 12px; font:inherit; font-size:12px; outline:none; }
 .history-search:focus { border-color:#f1a5ad; box-shadow:0 0 0 3px #c91f2c12; }
+.history-select { min-height:42px; border:1px solid var(--border); border-radius:10px; padding:0 12px; font:inherit; font-size:12px; background:#fff; color:var(--text); outline:none; cursor:pointer; }
+.history-select:focus { border-color:#f1a5ad; }
 .history-table-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; background:#fff; }
 .history-table { width:100%; border-collapse:collapse; min-width:760px; font-size:12px; }
 .history-table th { text-align:left; padding:13px 14px; color:#777985; background:#fafafa; font-size:10px; letter-spacing:.4px; text-transform:uppercase; white-space:nowrap; }
@@ -706,10 +702,11 @@ h1 {
 .history-status { font-size:11px; color:var(--muted); margin-top:12px; line-height:1.6; }
 .history-empty { padding:24px 14px !important; text-align:center; color:var(--muted); }
 .history-badge { display:inline-flex; padding:5px 8px; border-radius:20px; background:#fff1f2; color:#991b1b; font-size:10px; font-weight:750; white-space:nowrap; }
+.history-page-pill { display:inline-flex; padding:4px 8px; border-radius:6px; background:#f4f4f5; color:#3f3f46; font-size:10px; font-weight:700; font-family:monospace; }
+.history-page-pill.index { background:#eff6ff; color:#1d4ed8; }
+.history-page-pill.gabung { background:#f0fdf4; color:#15803d; }
 .history-note { background:#fffafa; border:1px solid #ffe0e3; border-radius:10px; padding:12px 14px; color:#77717a; font-size:11px; line-height:1.7; margin-top:13px; }
 @media (max-width:760px) {
-  .sidebar nav { grid-template-columns:repeat(5,minmax(0,1fr)); }
-  .nav-link { font-size:8px; }
   .history-toolbar .btn { flex:1; }
 }
 
@@ -792,9 +789,9 @@ h1 {
         <span>Akun Admin</span>
       </a>
 
-      <a class="nav-link" href="#riwayat-surat" id="historyNavLink">
-        <span class="nav-icon">▤</span>
-        <span>Riwayat Surat</span>
+      <a class="nav-link" href="#riwayat-akses" id="historyNavLink">
+        <span class="nav-icon">⌘</span>
+        <span>Riwayat Akses IP</span>
       </a>
       <a class="nav-link" href="#pusat-kesehatan" id="healthNavLink">
         <span class="nav-icon">♥</span>
@@ -941,11 +938,11 @@ h1 {
     </section>
 
 
-    <section class="history-section" id="riwayat-surat">
+    <section class="history-section" id="riwayat-akses">
       <div class="section-heading">
         <div>
-          <h2>Riwayat Pembuatan Surat</h2>
-          <p>Data aktivitas pembuatan surat yang tercatat melalui API surat.</p>
+          <h2>Riwayat Akses IP (index.html & gabung-foto.html)</h2>
+          <p>Data pencatatan IP pengakses file index.html dan gabung-foto.html dari Redis.</p>
         </div>
         <button class="btn" id="refreshHistory" type="button">↻ Muat ulang</button>
       </div>
@@ -953,52 +950,66 @@ h1 {
       <div class="history-stats">
         <article class="card">
           <div class="card-top">
-            <div class="card-label">Total Surat Dibuat</div>
+            <div class="card-label">Akses index.html</div>
             <div class="card-icon">▤</div>
           </div>
-          <div class="stats-total" id="letterTotal">—</div>
-          <div class="card-note">Jumlah total dari Upstash Redis.</div>
+          <div class="stats-total" id="indexAccessTotal">—</div>
+          <div class="card-note">Total kali file index.html diakses.</div>
         </article>
         <article class="card">
           <div class="card-top">
-            <div class="card-label">IP Tercatat</div>
+            <div class="card-label">Akses gabung-foto.html</div>
+            <div class="card-icon">🖼</div>
+          </div>
+          <div class="stats-total" id="gabungAccessTotal">—</div>
+          <div class="card-note">Total kali file gabung-foto.html diakses.</div>
+        </article>
+        <article class="card">
+          <div class="card-top">
+            <div class="card-label">IP Unik Tercatat</div>
             <div class="card-icon">⌘</div>
           </div>
           <div class="stats-total" id="letterUniqueIps">—</div>
-          <div class="card-note">Jumlah IP unik pada riwayat yang tersedia.</div>
+          <div class="card-note">Jumlah IP unik pada seluruh riwayat akses.</div>
         </article>
       </div>
 
       <div class="chart-panel">
         <div class="chart-toolbar">
           <div>
-            <h3>Daftar Aktivitas</h3>
-            <p>IP Address, lokasi perkiraan, waktu, dan jumlah surat.</p>
+            <h3>Daftar Akses IP</h3>
+            <p>Halaman diakses, IP Address, lokasi perkiraan, waktu, dan frekuensi.</p>
           </div>
         </div>
         <div class="history-toolbar">
+          <select class="history-select" id="historyPageFilter" aria-label="Filter berdasarkan halaman">
+            <option value="all">Semua Halaman</option>
+            <option value="index.html">index.html</option>
+            <option value="gabung-foto.html">gabung-foto.html</option>
+          </select>
           <input class="history-search" id="historySearch" type="search"
             placeholder="Cari IP, kota, provinsi, atau negara..." autocomplete="off"
-            aria-label="Cari riwayat surat">
+            aria-label="Cari riwayat akses">
           <button class="btn" id="clearHistorySearch" type="button">Hapus pencarian</button>
         </div>
         <div class="history-table-wrap">
           <table class="history-table">
             <thead>
               <tr>
+                <th>Halaman</th>
                 <th>IP Address</th>
                 <th>Lokasi Perkiraan</th>
                 <th>Waktu (WIB)</th>
-                <th>Jumlah Surat</th>
+                <th>Frekuensi Akses</th>
               </tr>
             </thead>
             <tbody id="letterHistoryBody">
-              <tr><td colspan="4" class="history-empty">Memuat riwayat surat...</td></tr>
+              <tr><td colspan="5" class="history-empty">Memuat riwayat akses...</td></tr>
             </tbody>
           </table>
         </div>
         <div class="history-status" id="letterHistoryStatus" aria-live="polite">
-          Memeriksa data riwayat surat...
+          Memeriksa data riwayat akses IP...
         </div>
         <div class="history-note">
           Lokasi berdasarkan IP hanya perkiraan dan tidak menunjukkan alamat rumah atau GPS yang pasti.
@@ -1336,12 +1347,14 @@ document.querySelectorAll(".chart-range").forEach(button => {
 window.addEventListener("resize", () => { if (visitorStats) drawVisitorChart(currentRange); });
 
 
-// Riwayat surat: memerlukan endpoint admin terproteksi /api/admin/surat-history.
-const letterTotalEl = document.getElementById("letterTotal");
+// Riwayat Akses IP index.html dan gabung-foto.html
+const indexAccessTotalEl = document.getElementById("indexAccessTotal");
+const gabungAccessTotalEl = document.getElementById("gabungAccessTotal");
 const letterUniqueIpsEl = document.getElementById("letterUniqueIps");
 const letterHistoryBody = document.getElementById("letterHistoryBody");
 const letterHistoryStatus = document.getElementById("letterHistoryStatus");
 const historySearchEl = document.getElementById("historySearch");
+const historyPageFilterEl = document.getElementById("historyPageFilter");
 let letterHistoryRows = [];
 
 function safeCell(value, fallback = "—") {
@@ -1350,12 +1363,16 @@ function safeCell(value, fallback = "—") {
 
 function renderLetterHistory() {
   const query = (historySearchEl.value || "").trim().toLowerCase();
+  const pageFilter = historyPageFilterEl.value;
+
   const filtered = letterHistoryRows.filter(item => {
+    const pageMatch = pageFilter === "all" || (item.page || "index.html") === pageFilter;
     const searchable = [
-      item.ip, item.city, item.region, item.country, item.location,
+      item.page, item.ip, item.city, item.region, item.country, item.location,
       item.timestamp, item.time, item.date
     ].filter(Boolean).join(" ").toLowerCase();
-    return searchable.includes(query);
+    
+    return pageMatch && searchable.includes(query);
   });
 
   letterHistoryBody.replaceChildren();
@@ -1363,11 +1380,11 @@ function renderLetterHistory() {
   if (!filtered.length) {
     const row = document.createElement("tr");
     const cell = document.createElement("td");
-    cell.colSpan = 4;
+    cell.colSpan = 5;
     cell.className = "history-empty";
     cell.textContent = letterHistoryRows.length
-      ? "Tidak ada riwayat yang cocok dengan pencarian."
-      : "Belum ada data riwayat surat.";
+      ? "Tidak ada riwayat yang cocok dengan filter pencarian."
+      : "Belum ada data riwayat akses IP.";
     row.appendChild(cell);
     letterHistoryBody.appendChild(row);
     return;
@@ -1375,12 +1392,23 @@ function renderLetterHistory() {
 
   filtered.forEach(item => {
     const row = document.createElement("tr");
+
+    // Kolom Page
+    const pageCell = document.createElement("td");
+    const pagePill = document.createElement("span");
+    const pageName = safeCell(item.page, "index.html");
+    pagePill.className = "history-page-pill " + (pageName.includes("gabung") ? "gabung" : "index");
+    pagePill.textContent = pageName;
+    pageCell.appendChild(pagePill);
+
+    // Kolom IP
     const ipCell = document.createElement("td");
     const ip = document.createElement("div");
     ip.className = "history-ip";
     ip.textContent = safeCell(item.ip);
     ipCell.appendChild(ip);
 
+    // Kolom Lokasi
     const locationCell = document.createElement("td");
     const location = document.createElement("div");
     location.textContent = safeCell(
@@ -1389,25 +1417,27 @@ function renderLetterHistory() {
     , "Lokasi tidak tersedia");
     locationCell.appendChild(location);
 
+    // Kolom Waktu
     const timeCell = document.createElement("td");
     timeCell.textContent = safeCell(item.time || item.timestamp || item.date);
 
+    // Kolom Frekuensi
     const countCell = document.createElement("td");
     const badge = document.createElement("span");
     badge.className = "history-badge";
     const count = Number(item.count ?? item.total ?? 1);
     badge.textContent = Number.isSafeInteger(count) && count >= 0
-      ? count.toLocaleString("id-ID") + " surat"
+      ? count.toLocaleString("id-ID") + " kali"
       : "—";
     countCell.appendChild(badge);
 
-    row.append(ipCell, locationCell, timeCell, countCell);
+    row.append(pageCell, ipCell, locationCell, timeCell, countCell);
     letterHistoryBody.appendChild(row);
   });
 }
 
 async function loadLetterHistory() {
-  letterHistoryStatus.textContent = "Memuat riwayat surat...";
+  letterHistoryStatus.textContent = "Memuat riwayat akses IP...";
   const refreshButton = document.getElementById("refreshHistory");
   refreshButton.disabled = true;
 
@@ -1426,11 +1456,18 @@ async function loadLetterHistory() {
       return;
     }
     if (!response.ok || data.success !== true) {
-      throw new Error(data.error || "API riwayat surat belum tersedia.");
+      throw new Error(data.error || "API riwayat akses belum tersedia.");
     }
 
     letterHistoryRows = Array.isArray(data.records) ? data.records : [];
-    letterTotalEl.textContent = formatNumber(data.total);
+    
+    // Hitung total perkategori halaman jika disediakan API, atau dihitung manual dari records
+    const indexCount = data.totalIndex ?? letterHistoryRows.filter(r => (r.page || "index.html") === "index.html").reduce((acc, curr) => acc + Number(curr.count || 1), 0);
+    const gabungCount = data.totalGabung ?? letterHistoryRows.filter(r => r.page === "gabung-foto.html").reduce((acc, curr) => acc + Number(curr.count || 1), 0);
+
+    indexAccessTotalEl.textContent = formatNumber(indexCount);
+    gabungAccessTotalEl.textContent = formatNumber(gabungCount);
+
     const uniqueIps = new Set(
       letterHistoryRows.map(item => item.ip).filter(ip => typeof ip === "string" && ip)
     );
@@ -1446,16 +1483,17 @@ async function loadLetterHistory() {
     letterHistoryBody.replaceChildren();
     const row = document.createElement("tr");
     const cell = document.createElement("td");
-    cell.colSpan = 4;
+    cell.colSpan = 5;
     cell.className = "history-empty";
-    cell.textContent = "Riwayat belum dapat dimuat.";
+    cell.textContent = "Riwayat akses belum dapat dimuat.";
     row.appendChild(cell);
     letterHistoryBody.appendChild(row);
-    letterTotalEl.textContent = "—";
+    indexAccessTotalEl.textContent = "—";
+    gabungAccessTotalEl.textContent = "—";
     letterUniqueIpsEl.textContent = "—";
     letterHistoryStatus.textContent =
-      "Gagal memuat riwayat. Endpoint /api/admin/surat-history perlu dibuat dan dilindungi sesi admin.";
-    console.error("Riwayat surat:", error);
+      "Gagal memuat riwayat. Endpoint /api/admin/surat-history perlu diperbarui untuk mendukung akses index.html & gabung-foto.html.";
+    console.error("Riwayat akses:", error);
   } finally {
     refreshButton.disabled = false;
   }
@@ -1464,15 +1502,17 @@ async function loadLetterHistory() {
 document.getElementById("refreshHistory")
   .addEventListener("click", loadLetterHistory);
 historySearchEl.addEventListener("input", renderLetterHistory);
+historyPageFilterEl.addEventListener("change", renderLetterHistory);
 document.getElementById("clearHistorySearch").addEventListener("click", () => {
   historySearchEl.value = "";
+  historyPageFilterEl.value = "all";
   renderLetterHistory();
 });
 
 
 
 
-// Navigasi tampilan: setiap menu membuka halaman tersendiri, bukan menumpuk panjang ke bawah.
+// Navigasi tampilan
 const navLinks = Array.from(document.querySelectorAll(".nav-link"));
 const dashboardPage = document.getElementById("page-dashboard");
 const healthPage = document.getElementById("page-health");
@@ -1503,10 +1543,9 @@ document.querySelectorAll('.nav-link[href="dashboard.html"]').forEach(link => {
 });
 document.getElementById("historyNavLink").addEventListener("click", event => {
   event.preventDefault();
-  // Riwayat tetap berada di dashboard, lalu digulirkan ke bagiannya.
   activateNav(event.currentTarget);
   showPage("dashboard");
-  setTimeout(() => document.getElementById("riwayat-surat").scrollIntoView({behavior:"smooth", block:"start"}), 80);
+  setTimeout(() => document.getElementById("riwayat-akses").scrollIntoView({behavior:"smooth", block:"start"}), 80);
 });
 document.querySelectorAll('.nav-link[href="index.html"]').forEach(link => {
   link.addEventListener("click", event => { event.preventDefault(); window.location.href = "/index.html"; });
@@ -1529,7 +1568,7 @@ const healthPages = {
     checks: [
       {name:"API pemeriksaan admin", url:()=>"/api/admin/check", kind:"api"},
       {name:"API statistik pengunjung", url:()=>"/api/admin/stats", kind:"api"},
-      {name:"API riwayat surat", url:()=>"/api/admin/surat-history", kind:"api"}
+      {name:"API riwayat akses IP", url:()=>"/api/admin/surat-history", kind:"api"}
     ]
   },
   "health-database": {
@@ -1538,7 +1577,7 @@ const healthPages = {
     note: "Jika API statistik atau riwayat berhasil mengembalikan data, layanan penyimpanan yang digunakan endpoint tersebut kemungkinan berfungsi. Hasil ini bukan ping Redis langsung.",
     checks: [
       {name:"Pembacaan data statistik", url:()=>"/api/admin/stats", kind:"data"},
-      {name:"Pembacaan data riwayat surat", url:()=>"/api/admin/surat-history", kind:"data"}
+      {name:"Pembacaan data riwayat akses IP", url:()=>"/api/admin/surat-history", kind:"data"}
     ]
   },
   "health-security": {
@@ -1548,7 +1587,7 @@ const healthPages = {
     checks: [
       {name:"Validasi sesi login", url:()=>"/api/admin/check", kind:"api"},
       {name:"Akses API statistik", url:()=>"/api/admin/stats", kind:"api"},
-      {name:"Akses API riwayat surat", url:()=>"/api/admin/surat-history", kind:"api"}
+      {name:"Akses API riwayat akses IP", url:()=>"/api/admin/surat-history", kind:"api"}
     ]
   }
 };
@@ -1568,7 +1607,6 @@ document.querySelectorAll("[data-health-page]").forEach(button => {
 document.getElementById("healthBack").addEventListener("click", () => showPage("health"));
 document.getElementById("refreshHealthDetail").addEventListener("click", runHealthDetailChecks);
 document.getElementById("runHealthChecks").addEventListener("click", async () => {
-  // Ringkas: buka status website dan lakukan pemeriksaan awal.
   openHealthDetail("health-overview");
 });
 
