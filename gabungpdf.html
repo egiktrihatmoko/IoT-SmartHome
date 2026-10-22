@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stempel e-Meterai Otomatis - YUK BERES</title>
-    <!-- Memuat pustaka pdf-lib dari CDN untuk memanipulasi PDF langsung di browser -->
+    <title>Stempel e-Meterai Presisi - YUK BERES</title>
+    <!-- Pustaka pdf-lib & pdf.js -->
     <script src="https://unpkg.com/pdf-lib@1.4.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background: #fff5f5; color: #222; padding: 30px; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 16px; border: 1px solid #f2dede; box-shadow: 0 10px 25px rgba(168,0,0,0.08); }
+        .container { max-width: 650px; margin: auto; background: white; padding: 30px; border-radius: 16px; border: 1px solid #f2dede; box-shadow: 0 10px 25px rgba(168,0,0,0.08); }
         h1 { color: #a80000; font-size: 22px; margin-bottom: 8px; }
         p { color: #666; font-size: 14px; margin-bottom: 20px; }
         .form-group { margin-bottom: 20px; }
@@ -17,18 +18,23 @@
         input[type="file"] { width: 100%; padding: 12px; border: 1px dashed #a80000; border-radius: 8px; background: #fff8f8; cursor: pointer; }
         button { width: 100%; background: #a80000; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         button:hover { background: #850000; }
-        #status { margin-top: 15px; font-size: 13px; text-align: center; color: #555; }
+        #status { margin-top: 15px; font-size: 13px; text-align: center; color: #555; font-weight: 600; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Stempel e-Meterai Otomatis</h1>
-    <p>Upload file PDF invoice perpanjangan baru yang belum ada meterainya. Sistem akan otomatis membubuhkan e-Meterai Rp10.000 di halaman pertama.</p>
+    <h1>Stempel e-Meterai Presisi</h1>
+    <p>Fitur otomatisasi penempelan e-meterai dari template master ke PDF invoice perpanjangan baru secara presisi.</p>
     
     <div class="form-group">
-        <label for="pdfFile">Pilih File PDF Invoice (.pdf)</label>
-        <input type="file" id="pdfFile" accept="application/pdf">
+        <label for="masterFile">1. Upload Master PDF (Lama / Yang Ada Meterainya)</label>
+        <input type="file" id="masterFile" accept="application/pdf">
+    </div>
+
+    <div class="form-group">
+        <label for="newFile">2. Upload Invoice Baru (Perpanjangan / Belum Ada Meterai)</label>
+        <input type="file" id="newFile" accept="application/pdf">
     </div>
 
     <button id="processBtn" type="button">Proses & Download PDF Bermeterai</button>
@@ -36,95 +42,102 @@
 </div>
 
 <script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
 document.getElementById('processBtn').addEventListener('click', async () => {
-    const fileInput = document.getElementById('pdfFile');
+    const masterInput = document.getElementById('masterFile');
+    const newFileInput = document.getElementById('newFile');
     const statusDiv = document.getElementById('status');
 
-    if (!fileInput.files || fileInput.files.length === 0) {
-        alert('Silakan pilih file PDF terlebih dahulu!');
+    if (!masterInput.files.length || !newFileInput.files.length) {
+        alert('Harap pilih kedua file PDF terlebih dahulu!');
         return;
     }
 
-    const file = fileInput.files[0];
-    statusDiv.textContent = 'Memproses dokumen PDF...';
+    statusDiv.textContent = 'Mengekstrak e-meterai dari template master...';
 
     try {
-        const arrayBuffer = await file.arrayBuffer();
-        
-        // Memuat dokumen PDF menggunakan pdf-lib
-        const { PDFDocument, rgb } = PDFLib;
-        const pdfDoc = await PDFDocument.load(arrayBuffer);
+        const masterBuffer = await masterInput.files[0].arrayBuffer();
+        const newFileBuffer = await newFileInput.files[0].arrayBuffer();
 
-        // Ambil halaman pertama invoice
-        const pages = pdfDoc.getPages();
+        // 1. Render halaman 1 master PDF ke Canvas dengan resolusi tinggi (scale 3.0 agar e-meterai tidak pecah)
+        const loadingTask = pdfjsLib.getDocument({ data: masterBuffer });
+        const pdfPage = await (await loadingTask.promise).getPage(1);
+        const scale = 3.0;
+        const viewport = pdfPage.getViewport({ scale: scale });
+
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+
+        await pdfPage.render({ canvasContext: context, viewport: viewport }).promise;
+
+        // Koordinat pemotongan gambar e-meterai pada canvas master
+        // Memotong area stempel meterai di sebelah kiri nama penandatangan
+        const cropX = canvas.width * 0.045;   // Mulai dari batas kiri
+        const cropY = canvas.height * 0.69;   // Area vertikal tepat di samping TTD
+        const cropWidth = canvas.width * 0.28; // Lebar e-meterai
+        const cropHeight = canvas.height * 0.14;// Tinggi e-meterai
+
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = cropWidth;
+        croppedCanvas.height = cropHeight;
+        const croppedCtx = croppedCanvas.getContext('2d');
+
+        croppedCtx.drawImage(
+            canvas,
+            cropX, cropY, cropWidth, cropHeight,
+            0, 0, cropWidth, cropHeight
+        );
+
+        const stampImageBytes = dataURItoUint8Array(croppedCanvas.toDataURL('image/png'));
+
+        statusDiv.textContent = 'Menempelkan e-meterai ke PDF perpanjangan...';
+
+        // 2. Tempelkan e-meterai ke PDF baru pada koordinat presisi
+        const { PDFDocument } = PDFLib;
+        const targetPdfDoc = await PDFDocument.load(newFileBuffer);
+        
+        const embeddedStamp = await targetPdfDoc.embedPng(stampImageBytes);
+        const pages = targetPdfDoc.getPages();
         const firstPage = pages[0];
         const { width, height } = firstPage.getSize();
 
-        // Menggambar kotak / area stempel meterai di posisi yang pas (koordinat disesuaikan dengan template asli)
-        // Contoh koordinat di bagian bawah dokumen (mendekati area tanda tangan penjual)
-        const boxX = width - 180;
-        const boxY = 180;
-        const boxWidth = 110;
-        const boxHeight = 65;
-
-        // Gambar background putih/merah muda tipis untuk area meterai
-        firstPage.drawRectangle({
-            x: boxX,
-            y: boxY,
-            width: boxWidth,
-            height: boxHeight,
-            color: PDFLib.rgb(1, 0.95, 0.95),
-            borderColor: PDFLib.rgb(0.66, 0, 0),
-            borderWidth: 1.5,
+        // Posisi X & Y disesuaikan dengan template invoice Anda:
+        // x: 30 (memposisikan e-meterai di sebelah kiri TTD)
+        // y: height - 610 (posisi vertikal sejajar dengan area tanda tangan penjual)
+        firstPage.drawImage(embeddedStamp, {
+            x: 28,
+            y: height - 610,
+            width: 145,
+            height: 70,
         });
 
-        // Tambahkan teks stempel e-Meterai
-        firstPage.drawText('CV. JAYA ABADI SOLUSI', {
-            x: boxX + 6,
-            y: boxY + 48,
-            size: 7,
-            color: rgb(0.2, 0.2, 0.2),
-        });
-
-        firstPage.drawText('MOCH. FIRMAN ANIS R.', {
-            x: boxX + 6,
-            y: boxY + 38,
-            size: 7,
-            color: rgb(0.2, 0.2, 0.2),
-        });
-
-        firstPage.drawText('METERAI', {
-            x: boxX + 32,
-            y: boxY + 25,
-            size: 9,
-            font: await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold),
-            color: rgb(0.66, 0, 0),
-        });
-
-        firstPage.drawText('10000', {
-            x: boxX + 38,
-            y: boxY + 12,
-            size: 11,
-            font: await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold),
-            color: rgb(0.66, 0, 0),
-        });
-
-        // Simpan dokumen PDF yang sudah dimodifikasi
-        const modifiedPdfBytes = await pdfDoc.save();
-
-        // Buat link download otomatis untuk user
+        // 3. Simpan dan download PDF baru
+        const modifiedPdfBytes = await targetPdfDoc.save();
         const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = file.name.replace('.pdf', '-stamped.pdf');
+        link.download = newFileInput.files[0].name.replace('.pdf', '-bermeterai.pdf');
         link.click();
 
-        statusDiv.textContent = 'Berhasil! File PDF bermeterai telah di-download.';
+        statusDiv.textContent = 'Selesai! PDF bermeterai berhasil dibuat dan di-download.';
     } catch (error) {
         console.error(error);
-        statusDiv.textContent = 'Terjadi kesalahan saat memproses PDF.';
+        statusDiv.textContent = 'Gagal memproses dokumen. Pastikan format file PDF sesuai.';
     }
 });
+
+function dataURItoUint8Array(dataURI) {
+    const byteString = atob(dataURI.split(',')[1]);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return ia;
+}
 </script>
 
 </body>
