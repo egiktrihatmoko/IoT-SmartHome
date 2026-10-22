@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stempel e-Meterai Otomatis - YUK BERES</title>
-    <!-- Pustaka pdf-lib & pdf.js -->
+    <!-- Memuat pustaka pdf-lib untuk manipulasi PDF -->
     <script src="https://unpkg.com/pdf-lib@1.4.0"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background: #fff5f5; color: #222; padding: 30px; }
-        .container { max-width: 650px; margin: auto; background: white; padding: 30px; border-radius: 16px; border: 1px solid #f2dede; box-shadow: 0 10px 25px rgba(168,0,0,0.08); }
+        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 16px; border: 1px solid #f2dede; box-shadow: 0 10px 25px rgba(168,0,0,0.08); }
         h1 { color: #a80000; font-size: 22px; margin-bottom: 8px; }
         p { color: #666; font-size: 14px; margin-bottom: 20px; }
         .form-group { margin-bottom: 20px; }
@@ -25,15 +24,15 @@
 
 <div class="container">
     <h1>Stempel e-Meterai Otomatis</h1>
-    <p>Gunakan master template resmi untuk membubuhkan e-meterai 100% persis ke file invoice perpanjangan baru yang belum ada meterainya.</p>
+    <p>Unggah file template master yang sudah ada meterainya secara utuh, lalu gabungkan dengan file invoice perpanjangan baru.</p>
     
     <div class="form-group">
-        <label for="masterFile">1. Upload Master PDF (Template yang Ada e-Meterainya)</label>
-        <input type="file" id="masterFile" accept="application/pdf">
+        <label for="templateFile">1. Upload Template Master (PDF yang Sudah Ada Meterai)</label>
+        <input type="file" id="templateFile" accept="application/pdf">
     </div>
 
     <div class="form-group">
-        <label for="newFile">2. Upload Invoice Perpanjangan (Belum Ada e-Meterai)</label>
+        <label for="newFile">2. Upload Invoice Baru (PDF Perpanjangan Tanpa Meterai)</label>
         <input type="file" id="newFile" accept="application/pdf">
     </div>
 
@@ -42,99 +41,72 @@
 </div>
 
 <script>
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-
 document.getElementById('processBtn').addEventListener('click', async () => {
-    const masterInput = document.getElementById('masterFile');
+    const templateInput = document.getElementById('templateFile');
     const newFileInput = document.getElementById('newFile');
     const statusDiv = document.getElementById('status');
 
-    if (!masterInput.files.length || !newFileInput.files.length) {
-        alert('Harap pilih kedua file PDF (Master dan Invoice Perpanjangan) terlebih dahulu!');
+    if (!templateInput.files.length || !newFileInput.files.length) {
+        alert('Harap pilih kedua file PDF terlebih dahulu!');
         return;
     }
 
-    statusDiv.textContent = 'Mengekstrak e-meterai dari master template...';
+    statusDiv.textContent = 'Memproses dokumen...';
 
     try {
-        const masterBuffer = await masterInput.files[0].arrayBuffer();
+        const templateBuffer = await templateInput.files[0].arrayBuffer();
         const newFileBuffer = await newFileInput.files[0].arrayBuffer();
 
-        // 1. Render halaman 1 master PDF ke Canvas dengan resolusi tinggi (scale 3.0 agar gambar meterai sangat tajam)
-        const loadingTask = pdfjsLib.getDocument({ data: masterBuffer });
-        const pdfPage = await (await loadingTask.promise).getPage(1);
-        const scale = 3.0;
-        const viewport = pdfPage.getViewport({ scale: scale });
-
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-
-        await pdfPage.render({ canvasContext: context, viewport: viewport }).promise;
-
-        // Koordinat pemotongan area e-meterai berdasarkan layout master template
-        const cropX = canvas.width * 0.045;   
-        const cropY = canvas.height * 0.83;   
-        const cropWidth = canvas.width * 0.28; 
-        const cropHeight = canvas.height * 0.14;
-
-        const croppedCanvas = document.createElement('canvas');
-        croppedCanvas.width = cropWidth;
-        croppedCanvas.height = cropHeight;
-        const croppedCtx = croppedCanvas.getContext('2d');
-
-        croppedCtx.drawImage(
-            canvas,
-            cropX, cropY, cropWidth, cropHeight,
-            0, 0, cropWidth, cropHeight
-        );
-
-        const stampImageBytes = dataURItoUint8Array(croppedCanvas.toDataURL('image/png'));
-
-        statusDiv.textContent = 'Menempelkan e-meterai ke invoice perpanjangan...';
-
-        // 2. Masukkan gambar e-meterai yang dipotong ke PDF invoice perpanjangan baru
         const { PDFDocument } = PDFLib;
-        const targetPdfDoc = await PDFDocument.load(newFileBuffer);
-        
-        const embeddedStamp = await targetPdfDoc.embedPng(stampImageBytes);
-        const pages = targetPdfDoc.getPages();
-        const firstPage = pages[0];
-        const { width, height } = firstPage.getSize();
 
-        // Posisi koordinat penempelan di halaman pertama file baru
-        firstPage.drawImage(embeddedStamp, {
-            x: 28,
-            y: height - 680,
-            width: 145,
-            height: 70,
+        // Load dokumen template master dan dokumen baru
+        const templatePdf = await PDFDocument.load(templateBuffer);
+        const newPdf = await PDFDocument.load(newFileBuffer);
+
+        // Ambil halaman pertama dari template master (yang sudah ada meterainya)
+        const [templatePage] = await templatePdf.copyPages(newPdf, [0]); // Contoh logika penyalinan halaman/overlay
+        
+        // Atau jika ingin menimpa halaman, kita bisa menyalin halaman dari invoice baru
+        // lalu menempelkan area meterai utuh dari halaman template master ke file baru:
+        const pages = newPdf.getPages();
+        const firstNewPage = pages[0];
+
+        // Ambil halaman pertama master sebagai acuan utuh atau ambil bagian meterainya saja secara utuh
+        const [masterFirstPage] = await newPdf.copyPages(templatePdf, [0]);
+        
+        // Cara paling aman tanpa merusak template: Kita gabungkan halaman-halaman dari invoice baru, 
+        // lalu pada halaman 1, kita timpa bagian bawahnya menggunakan halaman master yang sudah ada meterainya.
+        
+        // Alternatif langsung: Salin seluruh halaman invoice baru, lalu embed halaman master sebagai layer tambahan di area bawah
+        const embeddedMasterPage = await newPdf.embedPage(templatePdf.getPage(0));
+        
+        // Ambil ukuran halaman
+        const { width, height } = firstNewPage.getSize();
+
+        // Menggambar halaman master secara utuh/bagian bawahnya ke atas halaman invoice baru secara presisi
+        firstNewPage.drawPage(embeddedMasterPage, {
+            x: 0,
+            y: 0,
+            width: width,
+            height: height,
+            // Anda bisa mengatur opacity atau crop jika diperlukan, 
+            // atau menggunakan template master langsung sebagai dasar utama PDF baru.
         });
 
-        // 3. Simpan dan unduh file hasil akhir secara otomatis
-        const modifiedPdfBytes = await targetPdfDoc.save();
+        // Simpan hasil akhir
+        const modifiedPdfBytes = await newPdf.save();
         const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = newFileInput.files[0].name.replace('.pdf', '-bermeterai.pdf');
         link.click();
 
-        statusDiv.textContent = 'Selesai! Invoice bermeterai berhasil di-download.';
+        statusDiv.textContent = 'Berhasil! File PDF bermeterai telah di-download.';
     } catch (error) {
         console.error(error);
-        statusDiv.textContent = 'Gagal memproses dokumen. Pastikan file PDF valid.';
+        statusDiv.textContent = 'Terjadi kesalahan saat memproses file PDF.';
     }
 });
-
-function dataURItoUint8Array(dataURI) {
-    const byteString = atob(dataURI.split(',')[1]);
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-    }
-    return ia;
-}
 </script>
 
 </body>
